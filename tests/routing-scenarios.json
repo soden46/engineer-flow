@@ -1,0 +1,44 @@
+{
+  "scenarios": [
+    {
+      "id": "A_LARAVEL_SPECIALIST_INSTALLED",
+      "description": "Laravel project with Laravel specialist installed prefers Laravel specialist."
+    },
+    {
+      "id": "B_LARAVEL_NO_SPECIALIST",
+      "description": "Laravel project without Laravel specialist uses generic fallback."
+    },
+    {
+      "id": "C_FLUTTER_SPECIALIST",
+      "description": "Flutter project with Flutter specialist installed selects Flutter specialist."
+    },
+    {
+      "id": "D_GENERIC_PYTHON_BUG",
+      "description": "Generic Python bug routes to debugging with testing support."
+    },
+    {
+      "id": "E_PROJECT_LOCAL_PRECEDENCE",
+      "description": "Project-local skill wins over global duplicate."
+    },
+    {
+      "id": "F_MEMORY_INFRASTRUCTURE_ONLY",
+      "description": "Memory-management is discovered but never selected as primary/support."
+    },
+    {
+      "id": "G_UNRELATED_KEYWORD_OVERLAP",
+      "description": "Unrelated keyword-overlap skill is not selected."
+    },
+    {
+      "id": "H_NO_RELEVANT_SPECIALIST",
+      "description": "No relevant specialist yields mode 0."
+    },
+    {
+      "id": "I_CROSS_CUTTING_SUPPORT",
+      "description": "Genuine cross-cutting task yields primary plus one support."
+    },
+    {
+      "id": "J_HUNDREDS_BOUNDED",
+      "description": "Hundreds of installed skills remain bounded and sparse."
+    }
+  ]
+}

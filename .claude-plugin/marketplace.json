@@ -1,0 +1,24 @@
+{
+  "name": "engineer-flow",
+  "owner": {
+    "name": "Syarif",
+    "email": ""
+  },
+  "metadata": {
+    "description": "Framework-agnostic engineering skill orchestrator.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "engineer-flow",
+      "description": "Framework-agnostic engineering skill orchestrator.",
+      "version": "0.1.0",
+      "source": ".",
+      "strict": false,
+      "skills": [
+        "./skills/engineer-flow",
+        "./skills/memory-management"
+      ]
+    }
+  ]
+}

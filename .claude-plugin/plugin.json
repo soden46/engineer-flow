@@ -1,0 +1,5 @@
+{
+  "name": "engineer-flow",
+  "version": "0.1.0",
+  "description": "Framework-agnostic engineering skill orchestrator with dynamic discovery, sparse routing, and memory infrastructure."
+}

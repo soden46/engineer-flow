@@ -1,0 +1,29 @@
+{
+  "plugins": [
+    {
+      "name": "engineer-flow-skills",
+      "description": "Framework-agnostic engineering orchestration with dynamic skill discovery, sparse routing, memory infrastructure, and fallback specialists.",
+      "skills": [
+        "engineer-flow",
+        "memory-management",
+        "minimal-change",
+        "debugging",
+        "testing",
+        "security",
+        "architecture",
+        "database",
+        "performance",
+        "api-integration",
+        "frontend-ui",
+        "infrastructure-devops",
+        "data-processing",
+        "refactoring",
+        "planning",
+        "documentation",
+        "code-review",
+        "dependency-tooling",
+        "ai-llm-engineering"
+      ]
+    }
+  ]
+}

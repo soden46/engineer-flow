@@ -1,0 +1,29 @@
+{
+  "name": "engineer-flow",
+  "version": "0.1.0",
+  "description": "Framework-agnostic engineering skill orchestrator with dynamic discovery, sparse routing, and memory infrastructure.",
+  "author": {
+    "name": "Syarif"
+  },
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "skills",
+    "engineering",
+    "orchestration"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Engineer Flow",
+    "shortDescription": "Universal engineering skill orchestrator with dynamic skill discovery.",
+    "longDescription": "Engineer Flow discovers project and installed skills, routes tasks through family-gated sparse activation, and keeps memory infrastructure separate from specialist slots.",
+    "developerName": "Syarif",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "Use engineer-flow to route and execute this engineering task.",
+      "Discover available skills and choose the smallest useful specialist set."
+    ],
+    "brandColor": "#2563EB"
+  }
+}
