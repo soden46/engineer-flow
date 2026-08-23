@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  Route each task to the smallest relevant capability set, apply stack-specific knowledge only when needed, and finish engineering work with mandatory security verification.
+  Route each task to the smallest relevant capability set, combine generalized engineering knowledge with user-installed specialist skills, and finish development with mandatory security verification.
 </p>
 
 <p align="center">
@@ -13,139 +13,225 @@
     <img alt="Agent Skills" src="https://img.shields.io/badge/Agent_Skills-compatible-2563EB?style=for-the-badge">
   </a>
   <img alt="Framework Agnostic" src="https://img.shields.io/badge/framework-agnostic-7C3AED?style=for-the-badge">
-  <img alt="Internal Skills" src="https://img.shields.io/badge/internal_skills-16-0891B2?style=for-the-badge">
+  <img alt="Internal Capabilities" src="https://img.shields.io/badge/internal_capabilities-16-0891B2?style=for-the-badge">
   <img alt="Security Gate" src="https://img.shields.io/badge/security_gate-enabled-059669?style=for-the-badge">
+  <a href="https://github.com/soden46/engineer-flow/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/badge/license-MIT-0284C7?style=for-the-badge">
+  </a>
   <a href="https://github.com/soden46/engineer-flow/stargazers">
     <img alt="GitHub Stars" src="https://img.shields.io/github/stars/soden46/engineer-flow?style=for-the-badge">
   </a>
 </p>
 
+<p align="center">
+  <strong>
+    Generalized engineering core · Sparse specialist routing · External Agent Skills · Security before completion
+  </strong>
+</p>
+
 ---
 
-## What is Engineer Flow?
+## Overview
 
 **Engineer Flow** is an engineering orchestration layer for AI coding agents.
 
-Instead of giving an agent one giant framework-specific instruction set, Engineer Flow separates:
+It is designed for a common problem in modern AI-assisted development: the more skills, rules, and specialist instructions an agent has access to, the easier it becomes to activate too much context, route tasks to the wrong specialist, or couple otherwise reusable engineering guidance to one framework.
 
-- **engineering concerns**
-- **technology-specific implementation**
-- **user-installed specialist skills**
-- **security verification**
+Engineer Flow takes a different approach.
 
-The result is a workflow that can reason about a database problem as a **database problem**, an API problem as an **API problem**, and only apply Laravel, Odoo, Flutter, Firebase, ML tooling, or another technology when the project or task actually requires it.
+Instead of treating every framework, language, and tool as a separate root workflow, it separates:
 
-```text
-User Task
-   â”‚
-   â–¼
-Engineer Flow
-   â”‚
-   â”œâ”€â”€ Internal generalized skills
-   â”‚
-   â””â”€â”€ User-installed external skills
-   â”‚
-   â–¼
-Relevant capability selection
-   â”‚
-   â”‚  max 2 development specialists
-   â–¼
-Project stack detection
-   â”‚
-   â–¼
-Optional stack adapter
-   â”‚
-   â–¼
-Development
-   â”‚
-   â–¼
-Mandatory Security Review
-   â”‚
-   â”œâ”€â”€ PASS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º Done
-   â”‚
-   â””â”€â”€ NEEDS_FIX â”€â–º Fix â”€â–º Re-test
-```
+- generalized engineering concerns
+- user-installed specialist skills
+- project-specific evidence
+- implementation context
+- verification
+- post-development security review
 
-Engineer Flow is not a framework.
+The result is a workflow that can understand a database problem as a **database problem**, a performance issue as a **performance issue**, and a testing problem as a **testing problem** before introducing stack-specific knowledge.
 
-It is the layer that decides **what engineering knowledge is relevant**, **how much of it should be activated**, and **what must be verified before the work is considered complete**.
+Technology-specific expertise can then come from the project itself or from compatible Agent Skills already installed by the user.
+
+The goal is simple:
+
+> **Use the right engineering capability at the right time, make the smallest correct change, and verify security before declaring the work complete.**
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Why Engineer Flow](#why-engineer-flow)
+- [How It Works](#how-it-works)
+- [Core Architecture](#core-architecture)
+- [Internal Engineering Capabilities](#internal-engineering-capabilities)
+- [Sparse Specialist Routing](#sparse-specialist-routing)
+- [External Skill Discovery](#external-skill-discovery)
+- [Routing Behavior](#routing-behavior)
+- [Project Context](#project-context)
+- [Minimal Change Discipline](#minimal-change-discipline)
+- [Bounded Exploration](#bounded-exploration)
+- [Mandatory Security Verification](#mandatory-security-verification)
+- [Security Coverage](#security-coverage)
+- [Commit-Aware Security Gate](#commit-aware-security-gate)
+- [Installation](#installation)
+- [Manual Installation](#manual-installation)
+- [Quick Start](#quick-start)
+- [Resolver CLI](#resolver-cli)
+- [Examples](#examples)
+- [Repository Structure](#repository-structure)
+- [Compatibility](#compatibility)
+- [Development](#development)
+- [Validation](#validation)
+- [Design Principles](#design-principles)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Security Philosophy](#security-philosophy)
+- [License](#license)
 
 ---
 
 ## Why Engineer Flow?
 
-AI coding agents can become less effective as more instructions and skills are added.
+AI coding agents are increasingly capable of reading large repositories, loading skills dynamically, using tools, and following reusable workflows.
 
-Common failure modes include:
+But more capability does not automatically mean better engineering.
 
-- activating too many specialists for a simple task
-- selecting tools because generic keywords happen to match
-- coupling engineering principles to one framework
-- ignoring skills already installed by the user
-- over-exploring a repository before making a small change
-- declaring work complete without security verification
+As the number of installed skills grows, agents can fail in predictable ways:
 
-Engineer Flow takes a different approach:
+- activating too many specialists for a small task
+- routing from weak keyword matches
+- selecting a framework-specific skill when the task is generic
+- ignoring useful user-installed skills
+- over-exploring the repository before making a small change
+- introducing unnecessary abstractions
+- rewriting more code than the task requires
+- treating generated code as proof of correctness
+- skipping security review after implementation
+- coupling reusable engineering principles to one technology
 
-> **Concern first. Stack second. Minimal relevant capability. Verify before completion.**
+Engineer Flow is designed around the opposite set of behaviors:
+
+```text
+Understand first.
+Concern before technology.
+Use the smallest relevant capability set.
+Prefer project evidence.
+Reuse before invention.
+Keep changes focused.
+Verify behavior.
+Verify security.
+```
 
 ---
 
 ## How It Works
 
-### 1. Understand the engineering concern
-
-Engineer Flow first identifies the underlying engineering problem.
-
-For example:
-
 ```text
-"Fix N+1 queries"
+User Task
+   |
+   v
+Engineer Flow
+   |
+   +-- Internal generalized capabilities
+   |
+   +-- User-installed external Agent Skills
+   |
+   v
+Relevant capability selection
+   |
+   |  max 2 development specialists
+   v
+Project context + available specialist skills
+   |
+   v
+Development
+   |
+   v
+Mandatory Security Review
+   |
+   +-- PASS -----------------> Done
+   |
+   +-- NEEDS_FIX --> Fix --> Re-test
 ```
 
-maps to:
+Engineer Flow is not a framework.
 
-```text
-performance
-```
+It is not a replacement for Laravel knowledge, Odoo knowledge, Spring Boot knowledge, Flutter knowledge, ML knowledge, or any other specialist domain.
 
-rather than immediately mapping to Laravel, Django, Rails, or another framework.
+It is the orchestration layer that decides:
+
+- what engineering concern is actually present
+- what capability is relevant
+- whether an external specialist adds real value
+- how many specialists should be active
+- when project-native evidence should take precedence
+- what must be verified before completion
 
 ---
 
-### 2. Build the capability pool
+## Core Architecture
 
-Engineer Flow combines two capability sources:
+Engineer Flow combines three main layers.
 
-```text
-Engineer Flow internal skills
-+
-user-installed Agent Skills
-```
+### 1. Generalized engineering capabilities
 
-Internal skills cover broad engineering concerns.
+Engineer Flow ships with 16 internal capabilities that cover reusable software engineering concerns.
 
-External skills provide specialized technology or domain expertise.
+These capabilities remain framework and language agnostic.
 
-By default, external Agent Skills are discovered from:
+They describe what good engineering requires, not how one specific framework implements it.
 
-```text
-~/.agents/skills/
-```
+### 2. User-installed external Agent Skills
 
-Additional roots can be supplied with:
+Engineer Flow can discover compatible Agent Skills already installed by the user.
 
-```text
-ENGINEER_FLOW_EXTERNAL_SKILL_ROOTS
-```
+This means technology-specific expertise does not need to be hardcoded into Engineer Flow.
+
+A user can install specialist skills for their preferred stack, tools, framework, platform, or domain.
+
+Engineer Flow can then route to those skills only when the task provides enough evidence that they are relevant.
+
+### 3. Mandatory post-development security
+
+Security is a required verification stage after implementation.
+
+It does not consume one of the normal development specialist slots.
+
+Development is not considered complete until the security review reaches an acceptable final state.
 
 ---
 
-### 3. Activate only relevant specialists
+## Internal Engineering Capabilities
 
-Engineer Flow uses **sparse specialist activation**.
+Engineer Flow currently contains **16 generalized engineering capabilities**.
 
-At most:
+| Capability | Responsibility |
+|---|---|
+| `architecture` | boundaries, modularity, dependency direction, system structure, interfaces |
+| `api-integration` | API contracts, integrations, request and response behavior, resilience |
+| `database` | persistence, transactions, queries, schema design, integrity |
+| `testing` | regression protection, test strategy, behavior verification |
+| `performance` | runtime efficiency, memory usage, query performance, bottlenecks |
+| `debugging` | reproduction, failure tracing, root-cause analysis |
+| `code-quality-refactoring` | maintainability, simplification, safe refactoring |
+| `data-processing` | transformations, pipelines, imports, exports, large datasets |
+| `dependency-tooling` | packages, dependency management, builds, development tooling |
+| `infrastructure-devops` | deployment, runtime, containers, infrastructure, operations |
+| `version-control-review` | Git workflows, diffs, review discipline, change hygiene |
+| `planning-execution` | implementation planning, sequencing, bounded execution |
+| `documentation` | technical documentation, maintainable knowledge, project guidance |
+| `frontend-ui` | UI behavior, frontend implementation, interaction concerns |
+| `ai-llm-engineering` | model training, inference, datasets, LLM engineering workflows |
+| `security` | application security analysis and post-development verification |
+
+These capabilities are intentionally broad enough to remain reusable while focused enough to be selected independently.
+
+---
+
+## Sparse Specialist Routing
+
+Engineer Flow intentionally limits normal development routing to:
 
 ```text
 1 primary specialist
@@ -153,88 +239,305 @@ At most:
 1 optional support specialist
 ```
 
-are selected for normal development work.
-
-Broad engineering concerns can activate internal skills.
-
-Highly specialized external skills require stronger technology or domain evidence.
-
-For example:
+Maximum:
 
 ```text
-"Build a transaction endpoint with database persistence"
+2 specialists
 ```
 
-may resolve to:
+This keeps task context focused.
 
-```text
-database
-```
+More skills do not automatically produce better results.
 
-but should **not** accidentally activate:
+A small task should remain small.
 
-```text
-firebase-database
-```
-
-unless Firebase is actually relevant.
-
----
-
-### 4. Detect the project stack
-
-Engineering concerns remain framework-independent.
-
-Stack-specific knowledge comes from project evidence, native mechanisms, and relevant user-installed specialist skills.
+A highly focused change should not trigger five unrelated skills simply because the task contains generic words such as `database`, `api`, `test`, or `security`.
 
 Example:
 
 ```text
-database concern
-      +
-Laravel detected
-      â†“
-database core
-      +
-Laravel database adapter
+Task:
+Fix N+1 queries and add regression tests
+
+Primary:
+performance
+
+Support:
+testing
 ```
 
-The core defines **what good engineering requires**.
+Another example:
 
-The adapter defines **how that requirement is implemented naturally in the detected stack**.
+```text
+Task:
+Build a transaction endpoint with validation and database persistence
+
+Primary:
+database
+
+Support:
+none
+```
+
+The post-development security review still runs afterward and does not count as a development specialist.
 
 ---
 
-### 5. Implement the smallest correct change
+## External Skill Discovery
 
-Engineer Flow prefers:
+Engineer Flow can include user-installed Agent Skills in its capability pool.
 
-- minimal correct changes
-- existing project conventions
-- native framework mechanisms
-- reuse before new abstractions
-- bounded repository exploration
-- evidence over assumptions
+The default shared Agent Skills directory is:
+
+```text
+~/.agents/skills/
+```
+
+Additional roots can be configured with:
+
+```text
+ENGINEER_FLOW_EXTERNAL_SKILL_ROOTS
+```
+
+### Windows PowerShell
+
+```powershell
+$env:ENGINEER_FLOW_EXTERNAL_SKILL_ROOTS="D:\my-skills;E:\team-skills"
+```
+
+### macOS / Linux
+
+```bash
+export ENGINEER_FLOW_EXTERNAL_SKILL_ROOTS="/opt/team-skills:$HOME/custom-skills"
+```
+
+Engineer Flow keeps external skills native.
+
+It does not rewrite their instructions or merge their content into the generalized core.
+
+External skills remain first-class specialist capabilities.
+
+---
+
+## External Skill Selection
+
+External skills require stronger task evidence than generalized internal capabilities.
+
+This is important because users may have many specialized skills installed at once.
+
+For example, a user might have skills such as:
+
+```text
+odoo-cross-platform-report-consistency
+trl-training
+pytorch-fsdp2
+firebase-auth
+firebase-database
+riverpod
+huggingface-datasets
+playwright
+react-performance
+spring-security
+```
+
+A generic task like:
+
+```text
+Optimize this database query.
+```
+
+should not activate `firebase-database` merely because both contain the word `database`.
+
+But a task like:
+
+```text
+Fix this Firebase database query and security rule.
+```
+
+contains specific evidence that a Firebase specialist may be useful.
+
+Likewise:
+
+```text
+Fine tune this model using TRL.
+```
+
+can activate a `trl-training` specialist if one is installed.
+
+This keeps external skills useful without allowing them to dominate generic engineering work.
+
+---
+
+## Routing Behavior
+
+Engineer Flow follows a concern-first routing model.
+
+### Generic task
+
+```text
+Task:
+Fix N+1 queries.
+
+Resolved concern:
+performance
+```
+
+### Generic database task
+
+```text
+Task:
+Add a transaction around these related writes.
+
+Resolved concern:
+database
+```
+
+### Generic testing task
+
+```text
+Task:
+Add regression protection for this production bug.
+
+Resolved concern:
+testing
+```
+
+### Technology-specific task
+
+```text
+Task:
+Fix this Odoo QWeb report so Windows and Linux output stay consistent.
+
+Resolved specialist:
+odoo-cross-platform-report-consistency
+
+Source:
+external Agent Skill
+```
+
+### Specialized ML task
+
+```text
+Task:
+Fine tune this model using TRL.
+
+Resolved specialist:
+trl-training
+
+Source:
+external Agent Skill
+```
+
+---
+
+## Project Context
+
+Engineer Flow does not treat installed skills as the only source of truth.
+
+The current project remains authoritative.
+
+Useful project evidence includes:
+
+- source code
+- current configuration
+- package manifests
+- framework conventions already in use
+- tests
+- existing abstractions
+- deployment configuration
+- database schema
+- project documentation
+- established naming and module boundaries
+
+When external guidance conflicts with current project reality, the agent should verify against the repository before applying that guidance.
+
+The current codebase is not just an implementation target.
+
+It is evidence.
+
+---
+
+## Minimal Change Discipline
+
+Engineer Flow includes a strong minimal-change bias.
 
 The goal is not to produce the most code.
 
-The goal is to make the **smallest change that correctly solves the engineering problem**.
+The goal is to solve the task correctly with the smallest reasonable change.
+
+Prefer:
+
+```text
+existing project convention
+before new convention
+
+native feature
+before new dependency
+
+existing dependency
+before adding another package
+
+small helper
+before new subsystem
+
+focused diff
+before repository-wide rewrite
+
+reuse
+before abstraction
+
+clear code
+before clever code
+```
+
+Minimal change does not mean avoiding necessary work.
+
+It means avoiding unnecessary work.
 
 ---
 
-### 6. Run mandatory security verification
+## Bounded Exploration
 
-Security is not treated as just another optional specialist.
+AI coding agents can waste time and context by searching too broadly.
 
-After development, Engineer Flow runs:
+Engineer Flow encourages bounded exploration.
+
+Explore until the agent understands:
+
+- the execution path
+- the affected behavior
+- relevant callers
+- important contracts
+- data flow
+- likely regression surface
+- verification surface
+
+Then implement.
+
+Do not scan the entire repository when a small, well-defined execution path is sufficient.
+
+Broader exploration is justified when:
+
+- architecture is unclear
+- behavior crosses multiple modules
+- security boundaries are involved
+- the failure cannot be reproduced locally
+- shared contracts may be affected
+- the change carries high regression risk
+
+---
+
+## Mandatory Security Verification
+
+Security is not treated as an optional final suggestion.
+
+After development, Engineer Flow invokes the generalized security capability:
 
 ```text
-skills/security/SKILL.md
+core/security/SKILL.md
 ```
 
-plus stack-specific project evidence or relevant specialist guidance when needed.
-
-The final security state must be:
+The security review must finish with exactly one final state:
 
 ```text
 SECURITY REVIEW: PASS
@@ -246,118 +549,70 @@ or:
 SECURITY REVIEW: NEEDS_FIX
 ```
 
-If actionable findings remain:
+When actionable issues remain:
 
 ```text
 NEEDS_FIX
-   â†“
-fix
-   â†“
-re-test
-   â†“
+   |
+   v
+Fix root cause
+   |
+   v
+Add regression protection when appropriate
+   |
+   v
+Re-test
+   |
+   v
+Security review
+   |
+   v
 PASS
 ```
 
-Security verification does **not** consume one of the development specialist slots.
+Security verification does not consume one of the two normal development specialist slots.
 
 ---
 
-## Internal Engineering Skills
+## Security Coverage
 
-Engineer Flow currently includes **16 generalized engineering capabilities**.
+The security capability includes guidance for areas such as:
 
-| Skill | Responsibility |
-|---|---|
-| `architecture` | boundaries, modularity, system structure, design decisions |
-| `api-integration` | APIs, contracts, integrations, request/response behavior |
-| `database` | persistence, queries, transactions, schema and data integrity |
-| `testing` | test strategy, regression coverage, behavior verification |
-| `performance` | query efficiency, runtime cost, memory and bottlenecks |
-| `debugging` | root-cause analysis, reproduction and failure tracing |
-| `code-quality-refactoring` | maintainability, simplification and safe refactoring |
-| `data-processing` | transformations, pipelines, imports and exports |
-| `dependency-tooling` | dependencies, packages, builds and developer tooling |
-| `infrastructure-devops` | deployment, runtime, containers and infrastructure |
-| `version-control-review` | Git workflows, diffs, review and change discipline |
-| `planning-execution` | implementation planning and bounded execution |
-| `documentation` | technical documentation and maintainable knowledge |
-| `frontend-ui` | UI behavior, frontend implementation and interaction concerns |
-| `ai-llm-engineering` | model training, inference, datasets and LLM workflows |
-| `security` | application security review and post-development verification |
-
-These skills describe **engineering principles**, not framework APIs.
-
----
-
-## External Skill Discovery
-
-Engineer Flow does not try to replace every specialist skill you already use.
-
-It can discover compatible user-installed Agent Skills and include them in the capability pool.
-
-For example, a user may already have:
-
-```text
-odoo-cross-platform-report-consistency
-trl-training
-pytorch-fsdp2
-firebase-auth
-riverpod
-huggingface-datasets
-playwright
-```
-
-Engineer Flow can select those capabilities when the task provides sufficiently specific evidence.
-
-Example:
-
-```text
-Task:
-"Fix an Odoo cross platform report consistency issue"
-
-Resolved specialist:
-odoo-cross-platform-report-consistency
-```
-
-Another example:
-
-```text
-Task:
-"Fine tune this model using TRL training"
-
-Resolved specialist:
-trl-training
-```
-
-External skills remain responsible for their own native instructions.
-
-Engineer Flow orchestrates them; it does not rewrite them.
-
----
-
-## Security Review
-
-The security capability includes review guidance for areas such as:
-
-- authentication and session handling
-- authorization and IDOR
+- authentication
+- session handling
+- authorization
+- IDOR
 - input validation
-- SQL / command / template injection
-- XSS and output contexts
+- SQL injection
+- command injection
+- template injection
+- cross-site scripting
+- output context handling
 - CSRF
-- SSRF and outbound requests
-- file uploads and path traversal
-- secrets and token exposure
-- API exposure and mass assignment
-- rate limiting and resource abuse
-- webhook authenticity and replay
-- dependency and configuration risk
-- sensitive logging and error handling
+- SSRF
+- unsafe outbound requests
+- file uploads
+- path traversal
+- archive handling
+- secret exposure
+- token handling
+- API exposure
+- mass assignment
+- rate limiting
+- resource abuse
+- webhook authenticity
+- webhook replay
+- idempotency
+- sensitive logging
+- error handling
+- dependency risk
+- configuration risk
 - cryptographic misuse
+- unsafe defaults
 
-Security findings are classified using evidence.
+Security findings should be evidence-based.
 
-The workflow distinguishes between:
+Engineer Flow distinguishes between:
 
 ```text
 confirmed vulnerability
@@ -366,33 +621,74 @@ hardening opportunity
 informational finding
 ```
 
-Dynamic verification should remain minimal, scoped, authorized, and non-destructive.
+Do not report speculative findings as confirmed vulnerabilities.
+
+Dynamic verification should remain:
+
+```text
+authorized
+scoped
+minimal
+non-destructive
+evidence-driven
+```
+
+---
+
+## Direct Security Tasks
+
+Security normally runs after development.
+
+However, security can also become the primary capability when security itself is the task.
+
+Example:
+
+```text
+Audit this endpoint for authorization bypass, IDOR, SSRF,
+and unsafe outbound requests.
+```
+
+In this case:
+
+```text
+Primary:
+security
+```
+
+If remediation is performed, the final security verification still runs again before completion.
 
 ---
 
 ## Commit-Aware Security Gate
 
-Engineer Flow also includes an optional staged-diff security gate.
+Engineer Flow includes an optional staged-diff security gate.
+
+The gate is implemented by:
 
 ```text
-scripts/security-gate.mjs
+skills/engineer-flow/scripts/security-gate.mjs
 ```
+
+It works against the **exact staged Git diff**.
 
 The gate:
 
-1. reads the exact staged Git diff
-2. calculates its SHA-256 hash
-3. creates a security review request
-4. blocks the commit until that exact diff receives a PASS
-5. invalidates previous approval automatically when the diff changes
+1. reads the current staged diff
+2. calculates a SHA-256 hash
+3. records the changed files
+4. creates a security review request
+5. associates the result with the exact diff hash
+6. blocks commit while review is missing
+7. blocks commit when actionable security issues remain
+8. automatically invalidates old approval when the staged diff changes
 
 Example:
 
 ```bash
-node scripts/security-gate.mjs check --cwd .
+node skills/engineer-flow/scripts/security-gate.mjs check --cwd .
 ```
 
-Possible result:
+Possible output:
 
 ```text
 SECURITY_GATE=REVIEW_REQUIRED
@@ -402,79 +698,226 @@ Commit blocked until this exact staged diff receives
 SECURITY REVIEW: PASS.
 ```
 
-This prevents a security approval for one change from being silently reused for another change.
+A PASS for one staged diff cannot silently authorize another diff.
 
-A PowerShell installation helper is also included:
+---
+
+## Install the Git Security Gate
+
+Engineer Flow includes a PowerShell helper:
 
 ```text
-scripts/install-security-gate.ps1
+skills/engineer-flow/scripts/install-security-gate.ps1
 ```
+
+Example:
+
+```powershell
+.\skills\engineer-flow\scripts\install-security-gate.ps1 `
+  -Project "C:\path\to\your\project"
+```
+
+The installer creates or integrates with the target repository's Git pre-commit hook.
+
+If another pre-commit hook already exists, Engineer Flow preserves it and runs the previous hook before the security gate.
+
+The hook does not replace the engineering workflow.
+
+It enforces the final security boundary.
 
 ---
 
 ## Installation
 
-### Agent Skills-compatible agents
+### npx skills - recommended
 
-Clone Engineer Flow into your shared Agent Skills directory.
+Engineer Flow is distributed as one Agent Skill package.
 
-#### Windows PowerShell
-
-```powershell
-git clone https://github.com/soden46/engineer-flow.git `
-  "$env:USERPROFILE\.agents\skills\engineer-flow"
-```
-
-#### macOS / Linux
+List the skill exposed by this repository:
 
 ```bash
-git clone https://github.com/soden46/engineer-flow.git \
-  ~/.agents/skills/engineer-flow
+npx skills add soden46/engineer-flow --list
 ```
 
-Then restart or reload your coding agent if required.
+Install Engineer Flow globally:
+
+```bash
+npx skills add soden46/engineer-flow --skill engineer-flow -g -y
+```
+
+### OpenAI Codex
+
+```bash
+npx skills add soden46/engineer-flow --skill engineer-flow -g -a codex -y
+```
+
+### Claude Code
+
+```bash
+npx skills add soden46/engineer-flow --skill engineer-flow -g -a claude-code -y
+```
+
+### Kilo Code
+
+```bash
+npx skills add soden46/engineer-flow --skill engineer-flow -g -a kilo -y
+```
+
+### Install into the current project
+
+```bash
+npx skills add soden46/engineer-flow --skill engineer-flow -y
+```
+
+### View installed skills
+
+```bash
+npx skills list
+```
+
+### Check for updates
+
+```bash
+npx skills check
+```
+
+### Update installed skills
+
+```bash
+npx skills update
+```
+
+The 16 generalized capabilities are internal implementation components of the root `engineer-flow` skill.
+
+Users install **Engineer Flow once**, not each internal capability individually.
 
 ---
 
-## Generic AI Agent Usage
+## Why Engineer Flow Is Packaged as One Skill
 
-Engineer Flow can also be used by coding assistants that can read Markdown and repository files.
+Engineer Flow is not intended to be a marketplace of 16 independent skills.
 
-Point the agent to:
+The internal capabilities are coordinated by the root orchestration workflow.
+
+Packaging Engineer Flow as one root Agent Skill keeps installation simple:
 
 ```text
-engineer-flow/SKILL.md
+install engineer-flow
 ```
 
-and instruct it to use Engineer Flow as the root engineering workflow.
+instead of:
+
+```text
+install architecture
+install database
+install testing
+install performance
+install security
+...
+```
+
+The user interacts with one engineering workflow.
+
+The internal capability router decides what to load.
+
+---
+
+## Manual Installation
+
+You can also install Engineer Flow manually.
+
+### Windows PowerShell
+
+Clone the repository:
+
+```powershell
+git clone https://github.com/soden46/engineer-flow.git
+```
+
+Then copy:
+
+```text
+skills/engineer-flow/
+```
+
+into the Agent Skills directory used by your coding agent.
+
+A common shared location is:
+
+```text
+%USERPROFILE%\.agents\skills\engineer-flow
+```
+
+### macOS / Linux
+
+```bash
+git clone https://github.com/soden46/engineer-flow.git
+```
+
+Then copy:
+
+```text
+skills/engineer-flow/
+```
+
+into:
+
+```text
+~/.agents/skills/engineer-flow
+```
+
+---
+
+## Quick Start
+
+Once installed, ask your coding agent to use Engineer Flow.
 
 Example:
 
 ```text
 Use Engineer Flow for this task.
 
-Read SKILL.md first, resolve the relevant engineering capabilities,
-apply relevant user-installed specialist skills when useful, complete the task,
-then run the post-development security review.
+Fix the N+1 query problem in this endpoint and add regression protection.
 ```
+
+Another example:
+
+```text
+Use Engineer Flow.
+
+Investigate this production error, identify the root cause,
+make the smallest safe fix, verify the behavior,
+then perform the mandatory security review.
+```
+
+Another example:
+
+```text
+Use Engineer Flow.
+
+Review the staged changes, verify the implementation,
+then complete the post-development security review.
+```
+
+For agents that automatically discover Agent Skills, explicitly naming Engineer Flow may not be necessary once the skill is available.
 
 ---
 
-## CLI Resolver
+## Resolver CLI
 
 Engineer Flow includes a lightweight resolver:
 
 ```text
-scripts/engineer-flow.mjs
+skills/engineer-flow/scripts/engineer-flow.mjs
 ```
 
 ### Self-test
 
 ```bash
-node scripts/engineer-flow.mjs self-test
+node skills/engineer-flow/scripts/engineer-flow.mjs self-test
 ```
 
-Example:
+Expected output:
 
 ```text
 SELF_TEST_PASS=YES
@@ -485,81 +928,46 @@ MAX_SPECIALISTS=2
 POST_DEVELOPMENT_SECURITY=ENABLED
 ```
 
-### Inspect discovered capabilities
+### Inventory
+
+Inspect the capability pool:
 
 ```bash
-node scripts/engineer-flow.mjs inventory
+node skills/engineer-flow/scripts/engineer-flow.mjs inventory
 ```
+
+The inventory includes:
+
+- internal generalized capabilities
+- externally discovered Agent Skills
+- effective capability count after deduplication
 
 ### Resolve a task
 
 ```bash
-node scripts/engineer-flow.mjs resolve \
+node skills/engineer-flow/scripts/engineer-flow.mjs resolve \
   --task "Fix N+1 queries and add regression tests" \
   --cwd .
 ```
 
-Example resolution:
+Example:
 
 ```text
 primary
-â””â”€â”€ performance
++-- performance
 
 support
-â””â”€â”€ testing
++-- testing
 
 post-development
-â””â”€â”€ security
++-- security
 ```
 
 ---
 
-## Repository Structure
+## Examples
 
-```text
-engineer-flow/
-â”‚
-â”œâ”€â”€ SKILL.md
-â”‚
-â”œâ”€â”€ skills/
-â”‚   â”œâ”€â”€ architecture/
-â”‚   â”œâ”€â”€ api-integration/
-â”‚   â”œâ”€â”€ database/
-â”‚   â”œâ”€â”€ testing/
-â”‚   â”œâ”€â”€ performance/
-â”‚   â”œâ”€â”€ debugging/
-â”‚   â”œâ”€â”€ code-quality-refactoring/
-â”‚   â”œâ”€â”€ data-processing/
-â”‚   â”œâ”€â”€ dependency-tooling/
-â”‚   â”œâ”€â”€ infrastructure-devops/
-â”‚   â”œâ”€â”€ version-control-review/
-â”‚   â”œâ”€â”€ planning-execution/
-â”‚   â”œâ”€â”€ documentation/
-â”‚   â”œâ”€â”€ frontend-ui/
-â”‚   â”œâ”€â”€ ai-llm-engineering/
-â”‚   â”œâ”€â”€ security/
-â”‚   â””â”€â”€ core-manifest.json
-â”‚
-â”œâ”€â”€ adapters/
-â”‚   â””â”€â”€ laravel/
-â”‚       â”œâ”€â”€ adapter.json
-â”‚       â”œâ”€â”€ architecture.md
-â”‚       â”œâ”€â”€ database.md
-â”‚       â”œâ”€â”€ testing.md
-â”‚       â”œâ”€â”€ security.md
-â”‚       â””â”€â”€ ...
-â”‚
-â””â”€â”€ scripts/
-    â”œâ”€â”€ engineer-flow.mjs
-    â”œâ”€â”€ security-gate.mjs
-    â””â”€â”€ install-security-gate.ps1
-```
-
----
-
-## Example Resolutions
-
-### Generic Laravel database task
+### Generic database task
 
 ```text
 Task:
@@ -572,75 +980,232 @@ Post-development:
 security
 ```
 
-### Odoo-specific task
+### Performance task
 
 ```text
 Task:
-Fix an Odoo cross platform report consistency issue
+Fix N+1 queries and reduce unnecessary database calls
+
+Primary:
+performance
+
+Possible support:
+database
+
+Post-development:
+security
+```
+
+### Testing task
+
+```text
+Task:
+Add regression protection for this production bug
+
+Primary:
+testing
+
+Post-development:
+security
+```
+
+### Debugging task
+
+```text
+Task:
+Investigate why this command succeeds locally but fails in production
+
+Primary:
+debugging
+
+Possible support:
+infrastructure-devops
+
+Post-development:
+security
+```
+
+### API task
+
+```text
+Task:
+Add retry and timeout handling to this external API integration
+
+Primary:
+api-integration
+
+Possible support:
+testing
+
+Post-development:
+security
+```
+
+### Architecture task
+
+```text
+Task:
+Split this module without changing behavior or introducing unnecessary abstractions
+
+Primary:
+architecture
+
+Possible support:
+code-quality-refactoring
+
+Post-development:
+security
+```
+
+### Odoo-specific task
+
+If an appropriate external skill is installed:
+
+```text
+Task:
+Fix an Odoo cross-platform report consistency issue
 
 Primary:
 odoo-cross-platform-report-consistency
 
 Source:
 external Agent Skill
+
+Post-development:
+security
 ```
 
-### LLM training task
+### TRL training task
+
+If a TRL specialist is installed:
 
 ```text
 Task:
-Fine tune this model using TRL training
+Fine tune this model using TRL
 
 Primary:
 trl-training
 
 Source:
 external Agent Skill
+
+Post-development:
+security
 ```
 
-The same root workflow can therefore coordinate general software engineering and highly specialized user-installed skills without hardcoding every technology into Engineer Flow itself.
+### Firebase task
+
+If a Firebase specialist is installed:
+
+```text
+Task:
+Fix this Firebase authentication flow and review the security rules
+
+Primary:
+firebase-auth
+
+Source:
+external Agent Skill
+
+Post-development:
+security
+```
 
 ---
 
-## Design Principles
+## Repository Structure
 
-### Concern before technology
+```text
+engineer-flow/
+|
++-- README.md
++-- LICENSE
++-- package.json
++-- agent-skills.json
+|
+`-- skills/
+    `-- engineer-flow/
+        |
+        +-- SKILL.md
+        |
+        +-- core/
+        |   +-- core-manifest.json
+        |   |
+        |   +-- architecture/
+        |   +-- api-integration/
+        |   +-- database/
+        |   +-- testing/
+        |   +-- performance/
+        |   +-- debugging/
+        |   +-- code-quality-refactoring/
+        |   +-- data-processing/
+        |   +-- dependency-tooling/
+        |   +-- infrastructure-devops/
+        |   +-- version-control-review/
+        |   +-- planning-execution/
+        |   +-- documentation/
+        |   +-- frontend-ui/
+        |   +-- ai-llm-engineering/
+        |   `-- security/
+        |
+        `-- scripts/
+            +-- engineer-flow.mjs
+            +-- security-gate.mjs
+            `-- install-security-gate.ps1
+```
 
-Database problems should first be understood as database problems.
+---
 
-Framework details come later.
+## Framework Agnostic by Design
 
-### Sparse over broad activation
+Engineer Flow does not ship privileged built-in framework behavior.
 
-More skills do not automatically produce better results.
+The generalized core should not treat one framework as more important than another.
 
-Activate only what materially improves the task.
+Instead:
 
-### External skills are first-class
+```text
+Engineer Flow
+   |
+   +-- generalized engineering capabilities
+   |
+   +-- project evidence
+   |
+   `-- user-installed specialist skills
+```
 
-User-installed skills extend the capability pool instead of being ignored by a closed internal router.
+This allows one root workflow to operate across different ecosystems without duplicating the entire engineering methodology for every framework.
 
-### Minimal change
+For example:
 
-Prefer the smallest correct implementation over unnecessary abstraction or repository-wide changes.
+```text
+Laravel-specific expertise
+-> external Laravel skill
 
-### Evidence before completion
+Odoo-specific expertise
+-> external Odoo skill
 
-Do not treat successful code generation as proof that the task is complete.
+Spring-specific expertise
+-> external Spring skill
 
-Verify behavior.
+Flutter-specific expertise
+-> external Flutter skill
 
-Then verify security.
+ML training expertise
+-> external ML skill
+```
+
+Engineer Flow remains the orchestrator.
 
 ---
 
 ## Compatibility
 
-Engineer Flow is designed around the open `SKILL.md` / Agent Skills model.
+Engineer Flow follows the Agent Skills model built around `SKILL.md`.
 
-It is intended to be usable with Agent Skills-compatible coding environments and generic coding agents capable of reading Markdown instructions and repository files.
+It is designed for compatible AI coding environments and generic agents capable of reading Agent Skills.
 
-Examples include environments around:
+Target environments include:
 
 ```text
 OpenAI Codex
@@ -651,47 +1216,281 @@ Gemini CLI
 OpenCode
 Windsurf
 Cline
-and other compatible agents
+Roo Code
+Continue
+Hermes Agent
+Aider
+and other Agent Skills-compatible tools
 ```
 
-Automatic discovery paths and host-specific integration may vary between agents.
+Host-specific installation behavior may vary.
 
-The engineering model itself remains agent-independent.
+Some agents may support automatic skill discovery.
+
+Others may require explicit activation.
+
+Some may support tools or hooks that others do not.
+
+The engineering orchestration model itself remains agent-independent.
 
 ---
 
-## Direct Security Tasks
+## Agent Skills
 
-Security is normally a mandatory verification stage after development.
+Engineer Flow follows the open Agent Skills approach.
 
-But when security itself is the user's task:
+An Agent Skill is a folder containing a `SKILL.md` file with instructions and metadata, optionally accompanied by scripts, references, templates, assets, or other resources.
 
-```text
-"Audit this endpoint for authorization bypass and SSRF"
-```
+Engineer Flow is packaged as one root Agent Skill because its internal capabilities work together as a coordinated engineering system.
 
-the security capability can become the primary specialist directly.
+Learn more:
 
-It can still perform final verification after remediation.
+https://agentskills.io/
 
 ---
 
-## Philosophy
+## Development
 
-Engineer Flow is built around a small set of ideas:
+Clone the repository:
 
-```text
-Understand before editing.
-Concern before framework.
-Reuse before invention.
-Sparse skills before skill overload.
-Evidence before claims.
-Security before completion.
+```bash
+git clone https://github.com/soden46/engineer-flow.git
+cd engineer-flow
 ```
 
-The goal is not to make an AI agent know everything at once.
+Run the self-test:
 
-The goal is to make it load the **right engineering knowledge at the right time**.
+```bash
+npm run self-test
+```
+
+Inspect capabilities:
+
+```bash
+npm run inventory
+```
+
+Check Agent Skills discovery:
+
+```bash
+npm run skills:list
+```
+
+---
+
+## Validation
+
+Before publishing changes, verify the runtime.
+
+### Resolver syntax
+
+```bash
+node --check skills/engineer-flow/scripts/engineer-flow.mjs
+```
+
+### Security gate syntax
+
+```bash
+node --check skills/engineer-flow/scripts/security-gate.mjs
+```
+
+### Self-test
+
+```bash
+node skills/engineer-flow/scripts/engineer-flow.mjs self-test
+```
+
+Expected invariants:
+
+```text
+INTERNAL_SKILLS=16
+MAX_SPECIALISTS=2
+POST_DEVELOPMENT_SECURITY=ENABLED
+```
+
+### Generic routing smoke test
+
+```bash
+node skills/engineer-flow/scripts/engineer-flow.mjs resolve \
+  --task "Fix N+1 queries and add regression tests" \
+  --cwd .
+```
+
+Expected behavior:
+
+```text
+primary:
+performance
+
+post-development:
+security
+```
+
+### Agent Skills discovery
+
+```bash
+npx skills add . --list
+```
+
+The public install surface should expose the root `engineer-flow` skill rather than requiring users to install internal capabilities separately.
+
+---
+
+## Design Principles
+
+### Concern before technology
+
+A database problem should first be understood as a database problem.
+
+A performance problem should first be understood as a performance problem.
+
+A testing problem should first be understood as a testing problem.
+
+Technology-specific expertise is loaded only when it materially improves the task.
+
+### Sparse over broad activation
+
+More skills do not automatically produce better engineering.
+
+Engineer Flow activates only the smallest relevant specialist set.
+
+### External skills are first-class
+
+User-installed Agent Skills extend the capability pool.
+
+Engineer Flow is not a closed catalog.
+
+### Project evidence stays authoritative
+
+Installed instructions should not blindly override the current codebase.
+
+Verify against current project reality.
+
+### Internal capabilities remain generalized
+
+Framework-specific implementation knowledge should not be permanently coupled to the generalized engineering core.
+
+### Minimal correct change
+
+Prefer the smallest correct implementation over unnecessary abstraction or broad rewrites.
+
+### Bounded exploration
+
+Explore until the execution path, affected behavior, contracts, callers, and verification surface are understood.
+
+Then implement.
+
+### Evidence before claims
+
+Do not treat generated code as proof of correctness.
+
+Verify behavior using the strongest practical evidence available.
+
+### Security before completion
+
+Development is not complete until the final security verification stage passes.
+
+---
+
+## Routing Philosophy
+
+Engineer Flow intentionally avoids treating every keyword as strong evidence.
+
+Words such as:
+
+```text
+database
+api
+test
+security
+performance
+model
+service
+integration
+```
+
+are common across many skills.
+
+A specialized external skill should require stronger evidence than a generic word match.
+
+This reduces false-positive routing and keeps generic engineering tasks inside the generalized core.
+
+The goal is not perfect semantic classification.
+
+The goal is reliable, conservative capability activation.
+
+---
+
+## Failure Handling
+
+Engineer Flow should not hide uncertainty.
+
+When the task cannot be resolved confidently:
+
+- inspect project evidence
+- prefer a generalized capability
+- avoid activating unrelated specialists
+- ask for clarification only when the missing information materially blocks progress
+
+When verification fails:
+
+```text
+do not claim completion
+```
+
+When security review returns:
+
+```text
+SECURITY REVIEW: NEEDS_FIX
+```
+
+the workflow continues until the issue is fixed or explicitly left unresolved.
+
+---
+
+## Security Philosophy
+
+Engineer Flow treats security as an engineering quality boundary, not as a separate afterthought.
+
+Security review should:
+
+- focus on changed behavior first
+- inspect reachable surrounding code when necessary
+- trace source to transformation to authorization to sink
+- distinguish evidence from speculation
+- fix root causes instead of hiding symptoms
+- add regression protection where appropriate
+- avoid destructive verification
+- preserve authorization boundaries
+- avoid persisting secrets
+- avoid unsafe assumptions
+
+The security gate exists to reinforce one rule:
+
+> **A change is not done merely because it compiles or passes a happy-path test.**
+
+---
+
+## Roadmap
+
+- [x] Framework and language agnostic engineering core
+- [x] 16 generalized engineering capabilities
+- [x] Sparse specialist routing
+- [x] User-installed Agent Skill discovery
+- [x] External skill false-positive protection
+- [x] Mandatory post-development security verification
+- [x] Commit-aware staged-diff security gate
+- [x] Agent Skills-compatible package structure
+- [x] npx skills installation flow
+- [ ] Automated GitHub Actions validation
+- [ ] Cross-platform security gate installer
+- [ ] Additional compatibility tests
+- [ ] More real-world routing examples
+- [ ] Release automation
+- [ ] skills.sh listing
+- [ ] Additional documentation
+- [ ] Visual architecture diagram
+- [ ] Optional installer helpers for more agent environments
 
 ---
 
@@ -699,43 +1498,78 @@ The goal is to make it load the **right engineering knowledge at the right time*
 
 Contributions are welcome.
 
+Engineer Flow should remain:
+
+- framework agnostic
+- language agnostic
+- focused on reusable engineering concerns
+- compatible with sparse specialist activation
+- friendly to external Agent Skills
+- evidence-driven
+- security-aware
+- conservative about context expansion
+- minimal-change oriented
+
+Framework-specific expertise should generally live in a separate Agent Skill that Engineer Flow can discover rather than being embedded directly into the generalized core.
+
 Good contributions should:
 
-1. represent a reusable engineering concern or stack translation
-2. avoid unnecessary framework coupling in generalized skills
-3. keep technology-specific guidance outside the generalized internal core
-4. avoid weakening security requirements
-5. include clear activation intent
-6. preserve sparse specialist selection
-7. remain useful across compatible AI coding agents where possible
+1. solve a reusable engineering problem
+2. avoid unnecessary framework coupling
+3. preserve project evidence as an important source of truth
+4. preserve sparse specialist activation
+5. avoid weakening security requirements
+6. avoid inflating context without clear value
+7. include clear verification expectations
+8. remain understandable to multiple coding agents where possible
 
-For framework- or stack-specific expertise, prefer a separate Agent Skill that Engineer Flow can discover instead of coupling that technology into the generalized core.
+Changes should preserve:
+
+```text
+MAX_SPECIALISTS=2
+POST_DEVELOPMENT_SECURITY=ENABLED
+```
 
 ---
 
-## Roadmap
+## Philosophy
 
-- [x] Framework-agnostic engineering core
-- [x] 16 generalized internal skills
-- [x] User-installed external skill discovery
-- [x] Sparse specialist activation
-- [x] Mandatory post-development security review
-- [x] Commit-aware staged-diff security gate
-- [ ] Cross-platform installer
-- [ ] Additional integration examples
-- [ ] Automated compatibility testing
+```text
+Understand before editing.
+
+Concern before technology.
+
+Reuse before invention.
+
+Minimal change before unnecessary abstraction.
+
+Sparse skills before skill overload.
+
+Project evidence before assumptions.
+
+Verification before claims.
+
+Security before completion.
+```
+
+Engineer Flow is not trying to make an AI coding agent know everything at once.
+
+It is trying to make the agent use the **right engineering capability at the right time**.
 
 ---
 
 ## License
 
-MIT License.
+Engineer Flow is released under the MIT License.
 
 See [LICENSE](LICENSE).
 
 ---
 
 <p align="center">
-  <strong>Engineer Flow</strong><br>
+  <strong>Engineer Flow</strong>
+</p>
+
+<p align="center">
   The right engineering capability, at the right time, with security before completion.
 </p>

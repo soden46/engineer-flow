@@ -1,36 +1,18 @@
 {
   "name": "engineer-flow",
   "version": "0.1.0",
-  "description": "Framework-agnostic engineering skill orchestrator with dynamic skill discovery, sparse routing, and memory infrastructure.",
+  "description": "Framework-agnostic engineering orchestration for AI coding agents.",
   "license": "MIT",
+  "repository": "https://github.com/soden46/engineer-flow",
   "author": "Syarif",
   "format": "agent-skills",
   "formatVersion": "1.0.0",
   "skillsPath": "./skills",
   "entrySkill": "engineer-flow",
   "install": {
-    "skillsSh": "npx skills add soden46/engineer-flow -g -s \"*\" -y",
-    "genericPrompt": "Read AGENTS.md, then use skills/engineer-flow/SKILL.md as the entrypoint. Discover project and installed skills before selecting specialists."
-  },
-  "skills": [
-    { "name": "engineer-flow", "path": "./skills/engineer-flow/SKILL.md", "description": "Universal engineering task orchestrator that discovers installed skills, routes sparsely, runs memory preflight, and delegates to 0-2 specialists." },
-    { "name": "memory-management", "path": "./skills/memory-management/SKILL.md", "description": "Framework-agnostic project memory infrastructure for sparse recall and durable checkpointing without consuming specialist slots." },
-    { "name": "minimal-change", "path": "./skills/minimal-change/SKILL.md", "description": "General engineering fallback for smallest safe changes, behavior preservation, narrow diffs, and avoiding overengineering." },
-    { "name": "debugging", "path": "./skills/debugging/SKILL.md", "description": "General debugging fallback for reproducing failures, isolating root causes, and validating fixes." },
-    { "name": "testing", "path": "./skills/testing/SKILL.md", "description": "General testing fallback for selecting focused unit, integration, regression, smoke, and end-to-end checks." },
-    { "name": "security", "path": "./skills/security/SKILL.md", "description": "General security fallback for authorization, input handling, secret safety, injection risks, and dependency exposure." },
-    { "name": "architecture", "path": "./skills/architecture/SKILL.md", "description": "General architecture fallback for boundaries, dependency direction, modularity, interfaces, and data flow." },
-    { "name": "database", "path": "./skills/database/SKILL.md", "description": "General database fallback for schema, queries, transactions, migrations, consistency, indexing, and persistence." },
-    { "name": "performance", "path": "./skills/performance/SKILL.md", "description": "General performance fallback for bottleneck analysis, caching, query efficiency, async work, and large datasets." },
-    { "name": "api-integration", "path": "./skills/api-integration/SKILL.md", "description": "General API and integration fallback for HTTP clients, retries, contracts, pagination, versioning, and webhooks." },
-    { "name": "frontend-ui", "path": "./skills/frontend-ui/SKILL.md", "description": "General frontend and UI fallback for component behavior, accessibility, responsive layout, state, and styling." },
-    { "name": "infrastructure-devops", "path": "./skills/infrastructure-devops/SKILL.md", "description": "General infrastructure and DevOps fallback for CI, deployment, environment config, queues, containers, and cloud services." },
-    { "name": "data-processing", "path": "./skills/data-processing/SKILL.md", "description": "General data processing fallback for ETL, batch jobs, streaming, validation, large files, and transformations." },
-    { "name": "refactoring", "path": "./skills/refactoring/SKILL.md", "description": "General code quality and refactoring fallback for simplifying complex code, reducing duplication, and preserving behavior." },
-    { "name": "planning", "path": "./skills/planning/SKILL.md", "description": "General planning and execution fallback for breaking down work, identifying risks, sequencing changes, and verification." },
-    { "name": "documentation", "path": "./skills/documentation/SKILL.md", "description": "General documentation fallback for README updates, runbooks, design notes, release notes, API docs, and explanations." },
-    { "name": "code-review", "path": "./skills/code-review/SKILL.md", "description": "General code review fallback for bug-risk analysis, regressions, missing tests, maintainability, and release readiness." },
-    { "name": "dependency-tooling", "path": "./skills/dependency-tooling/SKILL.md", "description": "General dependency and tooling fallback for package managers, build tools, linters, formatters, and version upgrades." },
-    { "name": "ai-llm-engineering", "path": "./skills/ai-llm-engineering/SKILL.md", "description": "General AI and LLM engineering fallback for prompts, agents, evals, routing, embeddings, model APIs, and tool calling." }
-  ]
+    "recommended": "npx skills add soden46/engineer-flow --skill engineer-flow -g -y",
+    "codex": "npx skills add soden46/engineer-flow --skill engineer-flow -g -a codex -y",
+    "claudeCode": "npx skills add soden46/engineer-flow --skill engineer-flow -g -a claude-code -y",
+    "kilo": "npx skills add soden46/engineer-flow --skill engineer-flow -g -a kilo -y"
+  }
 }

@@ -1,27 +1,23 @@
 {
   "name": "engineer-flow",
   "version": "0.1.0",
-  "description": "Framework-agnostic engineering skill orchestrator with dynamic skill discovery, sparse routing, and memory infrastructure.",
   "private": true,
   "type": "module",
-  "bin": {
-    "engineer-flow": "./scripts/engineer-flow.mjs"
-  },
+  "description": "Framework-agnostic engineering orchestration for AI coding agents.",
   "scripts": {
-    "discover": "node scripts/engineer-flow.mjs discover",
-    "status": "node scripts/engineer-flow.mjs status",
-    "route": "node scripts/engineer-flow.mjs route",
-    "refresh": "node scripts/engineer-flow.mjs refresh",
-    "validate": "node scripts/validate.mjs",
-    "self-test": "node scripts/engineer-flow.mjs self-test"
+    "self-test": "node skills/engineer-flow/scripts/engineer-flow.mjs self-test",
+    "inventory": "node skills/engineer-flow/scripts/engineer-flow.mjs inventory",
+    "validate": "node skills/engineer-flow/scripts/validate.mjs"
   },
   "keywords": [
-    "ai-skills",
-    "engineering",
-    "orchestration",
+    "agent-skills",
+    "ai-agent",
+    "ai-coding",
+    "software-engineering",
     "codex",
     "claude-code",
-    "skills"
+    "kilo-code",
+    "security"
   ],
   "author": "Syarif",
   "license": "MIT"
