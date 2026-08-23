@@ -6,7 +6,6 @@ node_modules/
 Thumbs.db
 # Engineer Flow local migration artifacts
 migration/
-adapters/laravel/_legacy/
 external-skill-inventory.json
 # Local backups
 *.bak

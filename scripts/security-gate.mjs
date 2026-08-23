@@ -240,12 +240,6 @@ function writeRequest(cwd, diff, files, resolved) {
     security_core:
       resolved.post_development_security.core,
 
-    security_adapter:
-      resolved.post_development_security.adapter,
-
-    detected_adapter:
-      resolved.detected_adapter,
-
     diff_file:
       diffFile,
 
@@ -273,9 +267,6 @@ Review the staged changes for this project.
 Read:
 
 - Core: ${resolved.post_development_security.core}
-${resolved.post_development_security.adapter
-  ? `- Stack adapter: ${resolved.post_development_security.adapter}`
-  : "- Stack adapter: none"}
 
 ## Changed files
 
@@ -424,10 +415,6 @@ function check() {
       `CORE=${resolved.post_development_security.core}`
     );
 
-    console.log(
-      `ADAPTER=${resolved.post_development_security.adapter || "none"}`
-    );
-
     process.exit(0);
   }
 
@@ -456,10 +443,6 @@ function check() {
 
   console.error(
     `CORE=${resolved.post_development_security.core}`
-  );
-
-  console.error(
-    `ADAPTER=${resolved.post_development_security.adapter || "none"}`
   );
 
   console.error(

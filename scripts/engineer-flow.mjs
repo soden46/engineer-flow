@@ -18,11 +18,6 @@ const SKILLS_DIR =
     "skills"
   );
 
-const ADAPTERS_DIR =
-  path.join(
-    ROOT,
-    "adapters"
-  );
 
 const CORE_MANIFEST =
   path.join(
@@ -722,211 +717,15 @@ function chooseSpecialists(
 
 
 /* =========================================================
-   STACK ADAPTER DISCOVERY
-   ========================================================= */
-
-function discoverAdapters() {
-  if (
-    !fs.existsSync(
-      ADAPTERS_DIR
-    )
-  ) {
-    return [];
-  }
-
-  return fs
-    .readdirSync(
-      ADAPTERS_DIR,
-      {
-        withFileTypes:
-          true
-      }
-    )
-    .filter(
-      (entry) =>
-        entry.isDirectory()
-    )
-    .map(
-      (entry) => {
-        const manifestFile =
-          path.join(
-            ADAPTERS_DIR,
-            entry.name,
-            "adapter.json"
-          );
-
-        if (
-          !fs.existsSync(
-            manifestFile
-          )
-        ) {
-          return null;
-        }
-
-        let manifest;
-
-        try {
-          manifest =
-            JSON.parse(
-              fs.readFileSync(
-                manifestFile,
-                "utf8"
-              )
-            );
-        }
-        catch {
-          return null;
-        }
-
-        return {
-          directory:
-            path.join(
-              ADAPTERS_DIR,
-              entry.name
-            ),
-
-          ...manifest
-        };
-      }
-    )
-    .filter(Boolean);
-}
-
-function evidenceMatches(
-  cwd,
-  rule
-) {
-  const file =
-    path.join(
-      cwd,
-      rule.file
-    );
-
-  if (
-    rule.exists === true &&
-    fs.existsSync(file)
-  ) {
-    return true;
-  }
-
-  if (
-    !fs.existsSync(file) ||
-    !Array.isArray(
-      rule.contains_any
-    )
-  ) {
-    return false;
-  }
-
-  let content = "";
-
-  try {
-    content =
-      fs.readFileSync(
-        file,
-        "utf8"
-      )
-      .toLowerCase();
-  }
-  catch {
-    return false;
-  }
-
-  return rule
-    .contains_any
-    .some(
-      (term) =>
-        content.includes(
-          String(term)
-            .toLowerCase()
-        )
-    );
-}
-
-function detectAdapter(
-  cwd,
-  adapters
-) {
-  const ranked =
-    adapters
-      .map(
-        (adapter) => {
-          const evidence =
-            adapter.evidence ||
-            [];
-
-          const matches =
-            evidence.filter(
-              (rule) =>
-                evidenceMatches(
-                  cwd,
-                  rule
-                )
-            ).length;
-
-          return {
-            adapter,
-            matches
-          };
-        }
-      )
-      .filter(
-        (item) =>
-          item.matches > 0
-      )
-      .sort(
-        (a,b) =>
-          b.matches -
-          a.matches
-      );
-
-  return (
-    ranked[0]?.adapter ||
-    null
-  );
-}
-
-
-/* =========================================================
-   SPECIALIST + ADAPTER
+   SPECIALIST MATERIALIZATION
    ========================================================= */
 
 function materializeSpecialist(
   item,
-  role,
-  adapter
+  role
 ) {
   const skill =
     item.skill;
-
-  let adapterFile =
-    null;
-
-  /*
-   * Stack adapters belong to generalized Engineer Flow
-   * core skills.
-   *
-   * External skills keep their own native instructions.
-   */
-  if (
-    skill.internal &&
-    adapter
-  ) {
-    const candidate =
-      path.join(
-        adapter.directory,
-        `${skill.name}.md`
-      );
-
-    if (
-      fs.existsSync(
-        candidate
-      )
-    ) {
-      adapterFile =
-        candidate;
-    }
-  }
 
   return {
     role,
@@ -941,56 +740,25 @@ function materializeSpecialist(
       skill.source,
 
     skill:
-      skill.path,
-
-    adapter:
-      adapterFile
+      skill.path
   };
 }
-
 
 /* =========================================================
    SECURITY VERIFICATION STAGE
    ========================================================= */
 
-function securityStage(
-  adapter
-) {
-  const core =
-    path.join(
-      SKILLS_DIR,
-      "security",
-      "SKILL.md"
-    );
-
-  let adapterFile =
-    null;
-
-  if (adapter) {
-    const candidate =
-      path.join(
-        adapter.directory,
-        "security.md"
-      );
-
-    if (
-      fs.existsSync(
-        candidate
-      )
-    ) {
-      adapterFile =
-        candidate;
-    }
-  }
-
+function securityStage() {
   return {
     required_after_development:
       true,
 
-    core,
-
-    adapter:
-      adapterFile,
+    core:
+      path.join(
+        SKILLS_DIR,
+        "security",
+        "SKILL.md"
+      ),
 
     gate:
       "SECURITY REVIEW: PASS | SECURITY REVIEW: NEEDS_FIX",
@@ -999,7 +767,6 @@ function securityStage(
       false
   };
 }
-
 
 /* =========================================================
    RESOLUTION
@@ -1018,15 +785,6 @@ function resolve({
       pool.capabilities
     );
 
-  const adapters =
-    discoverAdapters();
-
-  const adapter =
-    detectAdapter(
-      cwd,
-      adapters
-    );
-
   const specialists =
     selected.map(
       (item,index) =>
@@ -1034,8 +792,7 @@ function resolve({
           item,
           index === 0
             ? "primary"
-            : "support",
-          adapter
+            : "support"
         )
     );
 
@@ -1066,14 +823,8 @@ function resolve({
       specialists[1] ||
       null,
 
-    detected_adapter:
-      adapter?.name ||
-      null,
-
     post_development_security:
-      securityStage(
-        adapter
-      ),
+      securityStage(),
 
     resolution_model:
       "internal-plus-external-skills-with-post-development-security",
@@ -1186,9 +937,6 @@ else if (
   const pool =
     buildCapabilityPool();
 
-  const adapters =
-    discoverAdapters();
-
   if (
     pool.internal.length !== 16
   ) {
@@ -1225,11 +973,7 @@ else if (
     `EFFECTIVE_CAPABILITIES=${pool.capabilities.length}`
   );
 
-  console.log(
-    `ADAPTER_FAMILIES=${adapters.length}`
-  );
-
-  console.log(
+console.log(
     `MAX_SPECIALISTS=${MAX_SPECIALISTS}`
   );
 

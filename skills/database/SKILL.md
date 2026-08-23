@@ -107,4 +107,4 @@ Relevant checks may include:
 
 Use the project's native ORM/query/database mechanisms when suitable.
 
-Adapters may provide implementation guidance but must not weaken data-integrity requirements.
+Stack-specific guidance may provide implementation details but must not weaken data-integrity requirements.

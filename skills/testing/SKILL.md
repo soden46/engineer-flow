@@ -122,6 +122,6 @@ A useful test should:
 
 Use the project's existing test framework and conventions.
 
-If an adapter exists, translate these principles into native stack mechanisms.
+Translate these principles into native stack mechanisms using project evidence or relevant user-installed specialist guidance when needed.
 
 Do not introduce a second test framework without a clear requirement.

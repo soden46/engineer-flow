@@ -1,6 +1,6 @@
 ---
 name: engineer-flow
-description: Framework and language agnostic engineering orchestrator that combines generalized internal engineering capabilities, user-installed external skills, stack adapters, and post-development security verification.
+description: Framework and language agnostic engineering orchestrator that combines generalized internal engineering capabilities, user-installed external skills, sparse specialist selection, and post-development security verification.
 ---
 
 # Engineer Flow
@@ -17,7 +17,7 @@ Its capability pool consists of:
 
 1. internal generalized engineering skills under `skills/`
 2. compatible external user-installed skills discovered from the user's Agent Skills directories
-3. optional stack adapters under `adapters/`
+3. mandatory post-development security verification
 
 The runtime resolver is:
 
@@ -40,7 +40,7 @@ Examples include:
 - infrastructure
 - dependency tooling
 
-Technology-specific implementation details belong in adapters.
+Technology-specific implementation details should come from project evidence, native stack mechanisms, or relevant user-installed specialist skills.
 
 ### External Skills
 
@@ -67,16 +67,6 @@ Select at most two development specialists:
 
 Do not activate unrelated specialists merely because their documentation contains generic words also present in the task.
 
-### Stack Adapters
-
-Detect the actual project stack from repository evidence.
-
-When an adapter exists, apply it only to the corresponding generalized internal skill.
-
-Adapters translate universal engineering requirements into native stack mechanisms.
-
-Adapters must not redefine or weaken the core requirement.
-
 ### Development
 
 Use the selected internal and/or external capabilities to implement, fix, review, or otherwise complete the engineering task.
@@ -91,7 +81,7 @@ Security verification uses:
 
 `skills/security/SKILL.md`
 
-and, when available, the matching stack security adapter.
+and project-native security mechanisms or relevant user-installed specialist skills when additional stack-specific guidance is needed.
 
 The security stage does not consume one of the two development specialist slots.
 

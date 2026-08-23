@@ -45,6 +45,4 @@ Do not hide failures merely by suppressing exceptions or logs.
 
 Use project evidence to determine the actual language, framework, runtime, and existing conventions.
 
-If a matching technology adapter exists, use it only to translate these principles into native mechanisms.
-
-Do not allow an adapter to redefine the engineering concern or weaken the core requirement.
+When stack-specific implementation guidance is needed, prefer project evidence, native framework or language mechanisms, and relevant user-installed specialist skills. Technology-specific guidance must not redefine or weaken the core engineering requirement.

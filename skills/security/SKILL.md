@@ -17,7 +17,7 @@ Identify the security boundary first.
 
 Then use the safest native mechanism available in the detected project stack.
 
-Technology-specific implementation details belong in adapters, not in this skill.
+Technology-specific implementation details should be derived from project evidence, native stack mechanisms, or relevant user-installed specialist skills rather than hardcoded into this skill.
 
 ## Security Review Scope
 
@@ -400,15 +400,15 @@ Prefer focused tests over broad unrelated rewrites.
 After identifying the required control:
 
 1. Detect the actual project language/framework from project evidence.
-2. Check whether a matching adapter exists.
-3. Use the adapter to translate the control into native framework mechanisms.
-4. If no adapter exists, use the framework's established native mechanism based on project evidence.
+2. Inspect the current project stack and available relevant specialist skills.
+3. Translate the control into established native framework or language mechanisms using repository evidence.
+4. When stack-specific guidance is unavailable, prefer mechanisms already established by the project.
 5. Never invent a framework API.
 6. Never weaken the universal security requirement merely because a convenience API is unavailable.
 
 The core requirement remains authoritative.
 
-The adapter only explains how the current stack implements it.
+Technology-specific guidance only explains how the current stack implements it; the security requirement remains stack-independent.
 <!-- ENGINEER_FLOW_SECURITY_ASSESSMENT_V1 -->
 
 ## Active Application Security Assessment

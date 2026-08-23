@@ -14,7 +14,6 @@
   </a>
   <img alt="Framework Agnostic" src="https://img.shields.io/badge/framework-agnostic-7C3AED?style=for-the-badge">
   <img alt="Internal Skills" src="https://img.shields.io/badge/internal_skills-16-0891B2?style=for-the-badge">
-  <img alt="Laravel Adapters" src="https://img.shields.io/badge/Laravel_adapters-16-DC2626?style=for-the-badge">
   <img alt="Security Gate" src="https://img.shields.io/badge/security_gate-enabled-059669?style=for-the-badge">
   <a href="https://github.com/soden46/engineer-flow/stargazers">
     <img alt="GitHub Stars" src="https://img.shields.io/github/stars/soden46/engineer-flow?style=for-the-badge">
@@ -38,33 +37,33 @@ The result is a workflow that can reason about a database problem as a **databas
 
 ```text
 User Task
-   │
-   ▼
+   â”‚
+   â–¼
 Engineer Flow
-   │
-   ├── Internal generalized skills
-   │
-   └── User-installed external skills
-   │
-   ▼
+   â”‚
+   â”œâ”€â”€ Internal generalized skills
+   â”‚
+   â””â”€â”€ User-installed external skills
+   â”‚
+   â–¼
 Relevant capability selection
-   │
-   │  max 2 development specialists
-   ▼
+   â”‚
+   â”‚  max 2 development specialists
+   â–¼
 Project stack detection
-   │
-   ▼
+   â”‚
+   â–¼
 Optional stack adapter
-   │
-   ▼
+   â”‚
+   â–¼
 Development
-   │
-   ▼
+   â”‚
+   â–¼
 Mandatory Security Review
-   │
-   ├── PASS ───────────────► Done
-   │
-   └── NEEDS_FIX ─► Fix ─► Re-test
+   â”‚
+   â”œâ”€â”€ PASS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º Done
+   â”‚
+   â””â”€â”€ NEEDS_FIX â”€â–º Fix â”€â–º Re-test
 ```
 
 Engineer Flow is not a framework.
@@ -186,7 +185,7 @@ unless Firebase is actually relevant.
 
 Engineering concerns remain framework-independent.
 
-Stack-specific knowledge is applied afterward through adapters.
+Stack-specific knowledge comes from project evidence, native mechanisms, and relevant user-installed specialist skills.
 
 Example:
 
@@ -194,7 +193,7 @@ Example:
 database concern
       +
 Laravel detected
-      ↓
+      â†“
 database core
       +
 Laravel database adapter
@@ -233,7 +232,7 @@ After development, Engineer Flow runs:
 skills/security/SKILL.md
 ```
 
-plus a matching security adapter when available.
+plus stack-specific project evidence or relevant specialist guidance when needed.
 
 The final security state must be:
 
@@ -251,11 +250,11 @@ If actionable findings remain:
 
 ```text
 NEEDS_FIX
-   ↓
+   â†“
 fix
-   ↓
+   â†“
 re-test
-   ↓
+   â†“
 PASS
 ```
 
@@ -333,57 +332,6 @@ trl-training
 External skills remain responsible for their own native instructions.
 
 Engineer Flow orchestrates them; it does not rewrite them.
-
----
-
-## Stack Adapters
-
-Adapters translate generalized engineering requirements into native stack mechanisms.
-
-```text
-skills/
-    database/
-    testing/
-    security/
-    performance/
-        ...
-
-adapters/
-    laravel/
-        database.md
-        testing.md
-        security.md
-        performance.md
-        ...
-```
-
-### Laravel
-
-Laravel is currently the first complete adapter family.
-
-Engineer Flow ships **16 Laravel adapters** corresponding to the generalized internal capabilities.
-
-Example:
-
-```text
-Task
-   ↓
-database
-   ↓
-Laravel project detected
-   ↓
-skills/database/SKILL.md
-+
-adapters/laravel/database.md
-```
-
-Adapters must never weaken or replace the generalized core.
-
-They only answer:
-
-> **How should this engineering requirement be implemented naturally in this stack?**
-
-Future adapter families can follow the same contract.
 
 ---
 
@@ -506,7 +454,7 @@ Example:
 Use Engineer Flow for this task.
 
 Read SKILL.md first, resolve the relevant engineering capabilities,
-apply a matching stack adapter when available, complete the task,
+apply relevant user-installed specialist skills when useful, complete the task,
 then run the post-development security review.
 ```
 
@@ -533,7 +481,6 @@ SELF_TEST_PASS=YES
 INTERNAL_SKILLS=16
 EXTERNAL_SKILLS=<detected>
 EFFECTIVE_CAPABILITIES=<effective>
-ADAPTER_FAMILIES=1
 MAX_SPECIALISTS=2
 POST_DEVELOPMENT_SECURITY=ENABLED
 ```
@@ -556,13 +503,13 @@ Example resolution:
 
 ```text
 primary
-└── performance
+â””â”€â”€ performance
 
 support
-└── testing
+â””â”€â”€ testing
 
 post-development
-└── security
+â””â”€â”€ security
 ```
 
 ---
@@ -571,41 +518,41 @@ post-development
 
 ```text
 engineer-flow/
-│
-├── SKILL.md
-│
-├── skills/
-│   ├── architecture/
-│   ├── api-integration/
-│   ├── database/
-│   ├── testing/
-│   ├── performance/
-│   ├── debugging/
-│   ├── code-quality-refactoring/
-│   ├── data-processing/
-│   ├── dependency-tooling/
-│   ├── infrastructure-devops/
-│   ├── version-control-review/
-│   ├── planning-execution/
-│   ├── documentation/
-│   ├── frontend-ui/
-│   ├── ai-llm-engineering/
-│   ├── security/
-│   └── core-manifest.json
-│
-├── adapters/
-│   └── laravel/
-│       ├── adapter.json
-│       ├── architecture.md
-│       ├── database.md
-│       ├── testing.md
-│       ├── security.md
-│       └── ...
-│
-└── scripts/
-    ├── engineer-flow.mjs
-    ├── security-gate.mjs
-    └── install-security-gate.ps1
+â”‚
+â”œâ”€â”€ SKILL.md
+â”‚
+â”œâ”€â”€ skills/
+â”‚   â”œâ”€â”€ architecture/
+â”‚   â”œâ”€â”€ api-integration/
+â”‚   â”œâ”€â”€ database/
+â”‚   â”œâ”€â”€ testing/
+â”‚   â”œâ”€â”€ performance/
+â”‚   â”œâ”€â”€ debugging/
+â”‚   â”œâ”€â”€ code-quality-refactoring/
+â”‚   â”œâ”€â”€ data-processing/
+â”‚   â”œâ”€â”€ dependency-tooling/
+â”‚   â”œâ”€â”€ infrastructure-devops/
+â”‚   â”œâ”€â”€ version-control-review/
+â”‚   â”œâ”€â”€ planning-execution/
+â”‚   â”œâ”€â”€ documentation/
+â”‚   â”œâ”€â”€ frontend-ui/
+â”‚   â”œâ”€â”€ ai-llm-engineering/
+â”‚   â”œâ”€â”€ security/
+â”‚   â””â”€â”€ core-manifest.json
+â”‚
+â”œâ”€â”€ adapters/
+â”‚   â””â”€â”€ laravel/
+â”‚       â”œâ”€â”€ adapter.json
+â”‚       â”œâ”€â”€ architecture.md
+â”‚       â”œâ”€â”€ database.md
+â”‚       â”œâ”€â”€ testing.md
+â”‚       â”œâ”€â”€ security.md
+â”‚       â””â”€â”€ ...
+â”‚
+â””â”€â”€ scripts/
+    â”œâ”€â”€ engineer-flow.mjs
+    â”œâ”€â”€ security-gate.mjs
+    â””â”€â”€ install-security-gate.ps1
 ```
 
 ---
@@ -621,11 +568,8 @@ Build a transaction endpoint with validation and database persistence
 Primary:
 database
 
-Adapter:
-laravel/database.md
-
 Post-development:
-security + laravel/security.md
+security
 ```
 
 ### Odoo-specific task
@@ -675,12 +619,6 @@ Activate only what materially improves the task.
 ### External skills are first-class
 
 User-installed skills extend the capability pool instead of being ignored by a closed internal router.
-
-### Adapters translate; they do not redefine
-
-The generalized core owns the engineering requirement.
-
-The adapter only maps it to stack-native mechanisms.
 
 ### Minimal change
 
@@ -765,13 +703,13 @@ Good contributions should:
 
 1. represent a reusable engineering concern or stack translation
 2. avoid unnecessary framework coupling in generalized skills
-3. keep adapters faithful to the generalized core
+3. keep technology-specific guidance outside the generalized internal core
 4. avoid weakening security requirements
 5. include clear activation intent
 6. preserve sparse specialist selection
 7. remain useful across compatible AI coding agents where possible
 
-For a new framework or stack, prefer adding an adapter family rather than duplicating the generalized engineering core.
+For framework- or stack-specific expertise, prefer a separate Agent Skill that Engineer Flow can discover instead of coupling that technology into the generalized core.
 
 ---
 
@@ -781,10 +719,8 @@ For a new framework or stack, prefer adding an adapter family rather than duplic
 - [x] 16 generalized internal skills
 - [x] User-installed external skill discovery
 - [x] Sparse specialist activation
-- [x] Laravel adapter family
 - [x] Mandatory post-development security review
 - [x] Commit-aware staged-diff security gate
-- [ ] Additional framework adapters
 - [ ] Cross-platform installer
 - [ ] Additional integration examples
 - [ ] Automated compatibility testing

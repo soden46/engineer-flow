@@ -96,7 +96,7 @@ After refactoring:
 
 Follow the architectural conventions already used by the project.
 
-Adapters may identify framework-native boundaries and patterns.
+Project evidence or relevant specialist skills may identify framework-native boundaries and patterns.
 
 Do not force a framework pattern where a simpler existing project convention is sufficient.
 
