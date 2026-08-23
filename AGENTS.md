@@ -8,6 +8,7 @@ Engineer Flow consists of:
 
 - one public `engineer-flow` Agent Skill
 - 16 generalized internal engineering capabilities under `skills/engineer-flow/core/`
+- conditional persistent project memory under `skills/engineer-flow/infrastructure/memory-management/`
 - compatible user-installed external Agent Skills
 - sparse specialist routing with at most 2 development specialists
 - mandatory post-development security verification
@@ -30,6 +31,19 @@ Do not add built-in framework adapters.
 - Preserve existing project conventions where reasonable.
 - Avoid unnecessary repository-wide exploration.
 
+## Memory Contract
+
+Memory is conditional infrastructure and never consumes a primary or support specialist slot.
+
+Use memory preflight only when prior project/session/workflow context could materially affect correctness.
+
+Prefer a host-provided MCP memory tool when available. Otherwise use:
+
+`skills/engineer-flow/infrastructure/memory-management/scripts/memory.mjs`
+
+Current code and configuration override stale memory.
+
+Checkpoint only durable reusable project knowledge and never store secrets, credentials, `.env` values, raw tokens, or personal data.
 ## Security Contract
 
 After development, run the mandatory security verification stage.

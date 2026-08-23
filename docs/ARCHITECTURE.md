@@ -14,6 +14,10 @@ User Task
    v
 Engineer Flow
    |
+   +-- conditional persistent project memory
+   |      `-- host MCP memory when available
+   |      `-- bundled local fallback otherwise
+   |
    +-- 16 generalized internal capabilities
    |
    +-- user-installed external Agent Skills
@@ -67,6 +71,30 @@ Additional roots:
 
 External skills should activate only when task or project evidence provides sufficiently specific technology or domain evidence.
 
+## Persistent Memory Infrastructure
+
+Memory lives under:
+
+`skills/engineer-flow/infrastructure/memory-management/`
+
+It is conditional orchestration infrastructure, not a development specialist.
+
+Before development, memory preflight may recall sparse durable project context when prior work can materially affect correctness.
+
+The preferred order is:
+
+1. active host-provided MCP memory tool, when available
+2. bundled local persistent memory fallback
+
+The bundled runtime stores project memory outside the repository by default under:
+
+`~/.engineer-flow-memory`
+
+Memory never consumes one of the two development specialist slots.
+
+Current project code and configuration remain authoritative over remembered context.
+
+Only durable reusable knowledge should be checkpointed, and secret-like content must be rejected.
 ## Specialist Selection
 
 Normal development uses at most:

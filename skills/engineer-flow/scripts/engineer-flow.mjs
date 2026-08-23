@@ -27,6 +27,26 @@ const CORE_MANIFEST =
 
 const MAX_SPECIALISTS = 2;
 
+const MEMORY_ROOT =
+  path.join(
+    ROOT,
+    "infrastructure",
+    "memory-management"
+  );
+
+const MEMORY_SKILL =
+  path.join(
+    MEMORY_ROOT,
+    "SKILL.md"
+  );
+
+const MEMORY_RUNNER =
+  path.join(
+    MEMORY_ROOT,
+    "scripts",
+    "memory.mjs"
+  );
+
 
 /* =========================================================
    TEXT / METADATA
@@ -765,6 +785,51 @@ function materializeSpecialist(
 }
 
 /* =========================================================
+   CONDITIONAL PERSISTENT MEMORY INFRASTRUCTURE
+   ========================================================= */
+
+function memoryStage({
+  task,
+  cwd
+}) {
+  const available =
+    fs.existsSync(MEMORY_SKILL) &&
+    fs.existsSync(MEMORY_RUNNER);
+
+  return {
+    mode:
+      "conditional",
+
+    available,
+
+    skill:
+      MEMORY_SKILL,
+
+    runner:
+      MEMORY_RUNNER,
+
+    preflight:
+      "auto",
+
+    task,
+
+    cwd,
+
+    conflict_policy:
+      "current code/config wins",
+
+    checkpoint_policy:
+      "durable reusable project knowledge only",
+
+    prefer_host_mcp_memory:
+      true,
+
+    counted_as_specialist:
+      false
+  };
+}
+
+/* =========================================================
    SECURITY VERIFICATION STAGE
    ========================================================= */
 
@@ -843,11 +908,18 @@ function resolve({
       specialists[1] ||
       null,
 
+
+    memory_infrastructure:
+      memoryStage({
+        task,
+        cwd
+      }),
+
     post_development_security:
       securityStage(),
 
     resolution_model:
-      "internal-plus-external-skills-with-post-development-security",
+      "internal-plus-external-skills-with-memory-and-post-development-security",
 
     max_specialists:
       MAX_SPECIALISTS
@@ -977,12 +1049,25 @@ else if (
     );
   }
 
+  if (
+    !fs.existsSync(MEMORY_SKILL) ||
+    !fs.existsSync(MEMORY_RUNNER)
+  ) {
+    throw new Error(
+      "MEMORY_INFRASTRUCTURE_MISSING"
+    );
+  }
+
   console.log(
     "SELF_TEST_PASS=YES"
   );
 
   console.log(
     `INTERNAL_SKILLS=${pool.internal.length}`
+  );
+
+  console.log(
+    "MEMORY_INFRASTRUCTURE=ENABLED"
   );
 
   console.log(

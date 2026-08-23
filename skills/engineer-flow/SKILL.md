@@ -1,6 +1,6 @@
 ---
 name: engineer-flow
-description: Framework and language agnostic engineering orchestrator that combines generalized internal engineering capabilities, user-installed external skills, sparse specialist selection, and post-development security verification.
+description: Framework and language agnostic engineering orchestrator with conditional persistent project memory, generalized internal capabilities, external skill discovery, sparse specialist routing, and post-development security verification.
 ---
 
 # Engineer Flow
@@ -58,6 +58,40 @@ Internal capabilities handle broad engineering concerns.
 
 External skills should activate only when the task contains sufficiently specific evidence for their technology or domain.
 
+### Memory Infrastructure
+
+Persistent project memory is conditional infrastructure and never consumes a development specialist slot.
+
+Memory implementation:
+
+`infrastructure/memory-management/`
+
+Before development, run memory preflight only when prior project, session, workflow, architecture, migration, deployment, benchmark, or other durable context could materially affect correctness.
+
+Prefer an active host-provided MCP memory tool when available.
+
+Otherwise use the bundled local fallback:
+
+```bash
+node skills/engineer-flow/infrastructure/memory-management/scripts/memory.mjs auto --cwd <project-root> --query "<task intent>" --limit 5
+```
+
+The fallback returns `decision: RUN` or `decision: SKIP`.
+
+When memory is used:
+
+- retrieve only sparse relevant context
+- current code and configuration always override stale memory
+- never store secrets, credentials, `.env` values, raw tokens, or personal data
+- preserve durable project decisions instead of transient conversation noise
+
+After meaningful work, checkpoint only when durable reusable project knowledge changed:
+
+```bash
+node skills/engineer-flow/infrastructure/memory-management/scripts/memory.mjs checkpoint --project <alias> --summary "<durable summary>"
+```
+
+Memory is infrastructure, not primary or support specialist expertise.
 ### Specialist Selection
 
 Select at most two development specialists:
