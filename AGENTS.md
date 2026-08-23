@@ -1,23 +1,70 @@
 # Engineer Flow Agent Instructions
 
-Use `skills/engineer-flow/SKILL.md` as the entrypoint for engineering tasks.
+Use `skills/engineer-flow/SKILL.md` as the canonical entrypoint for engineering tasks.
 
-## Source Of Truth
+## Runtime Model
 
-- Canonical skills live under `skills/<skill-name>/SKILL.md`.
-- The entrypoint skill is `engineer-flow`.
-- Bundled skills are fallback generalists, not a closed universe.
-- Dynamic discovery may find project-local, globally installed, Codex, Claude, or manifest-declared skills.
-- Do not execute scripts from discovered third-party skills during discovery.
+Engineer Flow consists of:
+
+- one public `engineer-flow` Agent Skill
+- 16 generalized internal engineering capabilities under `skills/engineer-flow/core/`
+- compatible user-installed external Agent Skills
+- sparse specialist routing with at most 2 development specialists
+- mandatory post-development security verification
+
+Framework-specific and technology-specific expertise should come from project evidence, native stack mechanisms, or relevant external Agent Skills.
+
+Do not add built-in framework adapters.
 
 ## Routing Rules
 
-- Use family-gated sparse routing.
-- Default specialist count is 0-2.
-- Memory is infrastructure and must not consume specialist slots.
-- Prefer project-local and framework-specific skills over generic bundled fallbacks.
-- Fall back to mode 0 or a bundled generalist when no suitable specialist exists.
-- Current code/config beats memory and skill assumptions.
+- Start from the engineering concern, not the framework.
+- Select at most 2 development specialists:
+  - primary
+  - optional support
+- Prefer generalized internal capabilities for generic engineering tasks.
+- Activate external skills only when task or project evidence specifically supports them.
+- Do not activate unrelated external skills because of generic keyword overlap.
+- Current project code and configuration take precedence over assumptions.
+- Prefer the smallest correct change.
+- Preserve existing project conventions where reasonable.
+- Avoid unnecessary repository-wide exploration.
+
+## Security Contract
+
+After development, run the mandatory security verification stage.
+
+Security capability:
+
+`skills/engineer-flow/core/security/SKILL.md`
+
+Final result must be exactly one of:
+
+`SECURITY REVIEW: PASS`
+
+`SECURITY REVIEW: NEEDS_FIX`
+
+Security verification does not consume one of the two development specialist slots.
+
+If actionable findings remain, fix them and re-test before completion.
+
+## Runtime Files
+
+Resolver:
+
+`skills/engineer-flow/scripts/engineer-flow.mjs`
+
+Security gate:
+
+`skills/engineer-flow/scripts/security-gate.mjs`
+
+Security gate installer:
+
+`skills/engineer-flow/scripts/install-security-gate.ps1`
+
+Validation:
+
+`skills/engineer-flow/scripts/validate.mjs`
 
 ## Validation
 
@@ -26,7 +73,22 @@ Run:
 ```bash
 npm run validate
 npm run self-test
-node scripts/engineer-flow.mjs discover --json
+npm run inventory
+npx --yes skills add . --list
 ```
 
-Do not commit, tag, or publish unless explicitly asked.
+Expected invariants:
+
+```text
+INTERNAL_SKILLS=16
+MAX_SPECIALISTS=2
+POST_DEVELOPMENT_SECURITY=ENABLED
+```
+
+The public Agent Skills install surface should expose only:
+
+```text
+engineer-flow
+```
+
+Do not commit, tag, release, or publish unless explicitly requested.

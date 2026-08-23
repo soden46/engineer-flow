@@ -15,7 +15,7 @@ Engineer Flow is the root engineering orchestrator.
 
 Its capability pool consists of:
 
-1. internal generalized engineering skills under `skills/`
+1. internal generalized engineering capabilities under `core/`
 2. compatible external user-installed skills discovered from the user's Agent Skills directories
 3. mandatory post-development security verification
 
@@ -23,9 +23,9 @@ The runtime resolver is:
 
 `scripts/engineer-flow.mjs`
 
-### Internal Skills
+### Internal Capabilities
 
-Internal skills describe universal engineering concerns and must remain language and framework agnostic.
+Internal capabilities describe universal engineering concerns and must remain language and framework agnostic.
 
 Examples include:
 
@@ -54,7 +54,7 @@ Additional skill roots may be provided through:
 
 External skills supplement Engineer Flow instead of replacing the root orchestrator.
 
-Internal skills handle broad engineering concerns.
+Internal capabilities handle broad engineering concerns.
 
 External skills should activate only when the task contains sufficiently specific evidence for their technology or domain.
 

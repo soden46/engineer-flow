@@ -3,33 +3,9 @@
   "groupings": [
     {
       "title": "Engineer Flow",
-      "description": "Universal orchestration and infrastructure.",
+      "description": "Framework-agnostic engineering orchestration with generalized internal capabilities, external Agent Skills, sparse routing, and mandatory security verification.",
       "skills": [
-        "engineer-flow",
-        "memory-management"
-      ]
-    },
-    {
-      "title": "General Engineering Fallbacks",
-      "description": "Compact fallback specialists used when no stronger installed skill exists.",
-      "skills": [
-        "minimal-change",
-        "debugging",
-        "testing",
-        "security",
-        "architecture",
-        "database",
-        "performance",
-        "api-integration",
-        "frontend-ui",
-        "infrastructure-devops",
-        "data-processing",
-        "refactoring",
-        "planning",
-        "documentation",
-        "code-review",
-        "dependency-tooling",
-        "ai-llm-engineering"
+        "engineer-flow"
       ]
     }
   ]

@@ -1,34 +1,129 @@
 # Engineer Flow Architecture
 
-## Reusable Architecture Extracted From Laravel Skill System
+## Overview
 
-Engineer Flow generalizes these proven ideas:
+Engineer Flow is a framework- and language-agnostic engineering orchestration layer for AI coding agents.
 
-- sparse skill activation;
-- dynamic skill discovery;
-- family-gated routing;
-- conditional memory infrastructure;
-- 0-2 specialists by default;
-- task/risk/context-aware routing;
-- graceful fallback when specialists are unavailable;
-- strict machine-readable routing contracts;
-- benchmarkable routing behavior.
+Its purpose is to select the smallest relevant engineering capability set for a task while allowing specialized knowledge to come from user-installed Agent Skills and current project evidence.
 
-## Laravel-Specific Assumptions Not Carried Over
+## Runtime Model
 
-- Laravel/PHP tags are not required for skills.
-- Laravel family names such as Form Requests, Eloquent, Blade, Livewire, Horizon, and migrations are not core taxonomy families.
-- Laravel specialists are not bundled; they are discovered externally when installed.
-- Candidate B thresholds informed the architecture, but the routing schema is generalized and not copied as Laravel-specific config.
+```text
+User Task
+   |
+   v
+Engineer Flow
+   |
+   +-- 16 generalized internal capabilities
+   |
+   +-- user-installed external Agent Skills
+   |
+   v
+Sparse specialist selection
+   |
+   |  max 2 development specialists
+   v
+Development
+   |
+   v
+Mandatory post-development security review
+   |
+   +-- PASS -------> Done
+   |
+   +-- NEEDS_FIX --> Fix --> Re-test
+```
+
+## Public Skill
+
+Engineer Flow is distributed as one public Agent Skill:
+
+`skills/engineer-flow/SKILL.md`
+
+Users install the root skill once.
+
+The 16 internal capabilities are implementation details of the orchestrator and are not intended to be installed independently.
+
+## Internal Capabilities
+
+Internal generalized capabilities live under:
+
+`skills/engineer-flow/core/`
+
+Canonical capability registry:
+
+`skills/engineer-flow/core/core-manifest.json`
+
+Internal capabilities remain framework and language agnostic.
+
+## External Agent Skills
+
+Default shared root:
+
+`~/.agents/skills/`
+
+Additional roots:
+
+`ENGINEER_FLOW_EXTERNAL_SKILL_ROOTS`
+
+External skills should activate only when task or project evidence provides sufficiently specific technology or domain evidence.
+
+## Specialist Selection
+
+Normal development uses at most:
+
+- 1 primary specialist
+- 1 optional support specialist
+
+Maximum:
+
+`2`
+
+Mandatory post-development security does not consume a development specialist slot.
+
+## Framework-Specific Knowledge
+
+Engineer Flow does not ship built-in framework adapters.
+
+Technology-specific knowledge should come from:
+
+- current project evidence
+- native stack mechanisms
+- user-installed external Agent Skills
+
+## Security
+
+Security capability:
+
+`skills/engineer-flow/core/security/SKILL.md`
+
+Valid final outcomes:
+
+`SECURITY REVIEW: PASS`
+
+`SECURITY REVIEW: NEEDS_FIX`
 
 ## Runtime Components
 
-- `skills/engineer-flow/SKILL.md`: thin entrypoint.
-- `scripts/engineer-flow.mjs`: discovery, registry, routing, memory preflight, and test CLI.
-- `skills/memory-management/`: framework-agnostic memory infrastructure.
-- Bundled fallback skills: compact general specialists used only when no stronger installed skill exists.
-- `tests/routing-scenarios.json`: deterministic development routing scenarios.
+Resolver:
 
-## v0.1 Scope
+`skills/engineer-flow/scripts/engineer-flow.mjs`
 
-This release focuses on local file-aware agents, local skill discovery, deterministic routing heuristics, and self-tests. It intentionally defers remote registries, dashboards, distributed agent delegation, and vector databases.
+Security gate:
+
+`skills/engineer-flow/scripts/security-gate.mjs`
+
+Security gate installer:
+
+`skills/engineer-flow/scripts/install-security-gate.ps1`
+
+Validation:
+
+`skills/engineer-flow/scripts/validate.mjs`
+
+## Core Invariants
+
+```text
+INTERNAL_SKILLS=16
+MAX_SPECIALISTS=2
+POST_DEVELOPMENT_SECURITY=ENABLED
+```
