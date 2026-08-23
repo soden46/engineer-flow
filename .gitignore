@@ -4,3 +4,17 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+# Engineer Flow local migration artifacts
+migration/
+adapters/laravel/_legacy/
+external-skill-inventory.json
+# Local backups
+*.bak
+# Environment / secrets
+.env
+.env.*
+!.env.example
+# Dependencies
+# Editors / OS
+.vscode/
+.idea/

@@ -1,14 +1,39 @@
 ---
 name: documentation
-description: General documentation fallback for README updates, runbooks, design notes, release notes, API docs, and concise engineering explanations.
+description: Create and maintain accurate engineering documentation using project-agnostic documentation principles.
 ---
 
-# Documentation
+# documentation
 
-Write documentation that helps future work.
+Use this skill for README files, setup guides, runbooks, architecture notes, migration guides, and developer documentation.
 
-- Explain why and how to operate, not obvious code mechanics.
-- Keep public docs concise and accurate.
-- Separate current instructions from historical notes.
-- Include commands that were actually validated when relevant.
-- Avoid secrets and private environment details.
+## Principles
+
+Document actual behavior, not assumed behavior.
+
+Prefer concise and actionable instructions.
+
+Include prerequisites when needed.
+
+Commands and examples should match the current project.
+
+Separate:
+
+- installation
+- configuration
+- operation
+- troubleshooting
+
+Avoid duplicating information already maintained authoritatively elsewhere unless necessary.
+
+When code changes invalidate documentation, update both together.
+
+Do not document nonexistent APIs or configuration.
+
+## Adaptation
+
+Use project evidence to determine the actual language, framework, runtime, and existing conventions.
+
+If a matching technology adapter exists, use it only to translate these principles into native mechanisms.
+
+Do not allow an adapter to redefine the engineering concern or weaken the core requirement.

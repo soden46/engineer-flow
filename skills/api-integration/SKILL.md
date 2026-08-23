@@ -1,14 +1,50 @@
 ---
 name: api-integration
-description: General API and integration fallback for HTTP clients, retries, contracts, pagination, versioning, webhooks, and external service reliability.
+description: Design and implement APIs, external integrations, webhooks, clients, and service boundaries using technology-agnostic principles.
 ---
 
-# API Integration
+# api-integration
 
-Treat external systems as unreliable.
+Use this skill for APIs, HTTP clients, webhooks, third-party integrations, service communication, pagination, retries, and integration boundaries.
 
-- Preserve request and response contracts.
-- Use timeouts, retries, and backoff intentionally.
-- Make idempotency explicit for writes and webhooks.
-- Validate error handling and user-visible failure states.
-- Avoid hiding provider errors that matter operationally.
+## Principles
+
+Define explicit contracts for requests, responses, errors, and side effects.
+
+Validate data crossing external boundaries.
+
+Distinguish transport concerns from business logic.
+
+For outbound calls consider:
+
+- timeouts
+- retries
+- retry safety
+- idempotency
+- rate limits
+- pagination
+- partial failure
+- authentication
+- observability
+
+Do not retry non-idempotent operations blindly.
+
+For webhooks consider:
+
+- authenticity
+- replay protection when required
+- duplicate delivery
+- idempotent handling
+- failure recovery
+
+Keep provider-specific assumptions isolated where practical.
+
+Do not leak transport-specific details throughout unrelated application code.
+
+## Adaptation
+
+Use project evidence to determine the actual language, framework, runtime, and existing conventions.
+
+If a matching technology adapter exists, use it only to translate these principles into native mechanisms.
+
+Do not allow an adapter to redefine the engineering concern or weaken the core requirement.

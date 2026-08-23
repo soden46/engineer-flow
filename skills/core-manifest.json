@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "cores": [
+    "security",
+    "testing",
+    "database",
+    "performance",
+    "code-quality-refactoring",
+    "api-integration",
+    "architecture",
+    "data-processing",
+    "dependency-tooling",
+    "infrastructure-devops",
+    "debugging",
+    "version-control-review",
+    "planning-execution",
+    "documentation",
+    "frontend-ui",
+    "ai-llm-engineering"
+  ]
+}

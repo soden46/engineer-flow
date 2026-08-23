@@ -1,14 +1,65 @@
 ---
 name: ai-llm-engineering
-description: General AI and LLM engineering fallback for prompts, agents, evals, routing, embeddings, model APIs, tool calling, and benchmark integrity.
+description: Design, integrate, evaluate, and operate AI/LLM systems using model- and framework-agnostic engineering principles.
 ---
 
-# AI LLM Engineering
+# ai-llm-engineering
 
-Protect evaluation and runtime integrity.
+Use this skill for LLM integrations, agents, prompts, embeddings, retrieval, evaluation, model workflows, and AI pipelines.
 
-- Separate training, validation, heldout, and production data.
-- Use structured contracts for model/tool outputs.
-- Record request hashes and provider usage when benchmarking.
-- Avoid tuning against consumed evaluation sets.
-- Keep prompt, routing, and memory boundaries explicit.
+## Principles
+
+Treat model output as untrusted and nondeterministic.
+
+Separate:
+
+- model instructions
+- application logic
+- tools
+- retrieval
+- persistence
+- evaluation
+
+Define expected outputs and failure behavior.
+
+For structured output use enforceable schemas where available.
+
+For tool use:
+
+- validate arguments
+- enforce authorization outside the model
+- limit tool capability
+- verify side effects
+
+For retrieval systems evaluate both retrieval quality and final answer quality.
+
+For prompts:
+
+- state the task clearly
+- provide relevant context
+- avoid irrelevant context
+- define output constraints where useful
+
+For evaluation use representative cases and frozen test sets when comparing changes.
+
+Do not tune against held-out evaluation cases.
+
+For expensive model workloads consider:
+
+- latency
+- token usage
+- caching
+- batching
+- retries
+- rate limits
+- fallback behavior
+
+Do not treat model confidence as proof of correctness.
+
+## Adaptation
+
+Use project evidence to determine the actual language, framework, runtime, and existing conventions.
+
+If a matching technology adapter exists, use it only to translate these principles into native mechanisms.
+
+Do not allow an adapter to redefine the engineering concern or weaken the core requirement.

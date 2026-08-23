@@ -1,14 +1,47 @@
 ---
 name: frontend-ui
-description: General frontend and UI fallback for component behavior, accessibility, responsive layout, state, styling, and browser-facing workflows.
+description: Build and review user interfaces using framework-agnostic usability, accessibility, state, and rendering principles.
 ---
 
-# Frontend UI
+# frontend-ui
 
-Build usable interfaces, not static decoration.
+Use this skill for UI components, forms, layouts, interaction behavior, responsive design, and accessibility.
 
-- Follow the existing design system and component conventions.
-- Keep common workflows efficient and accessible.
-- Check responsive constraints for text, controls, and layout.
-- Preserve backend contracts and loading/error states.
-- Verify in a browser when visual behavior matters.
+## Principles
+
+Keep UI state explicit.
+
+Separate presentation from unrelated business or persistence logic where practical.
+
+Forms should provide:
+
+- clear labels
+- validation feedback
+- useful error states
+- loading/submission state
+- accessible interaction
+
+Consider:
+
+- keyboard usage
+- focus management
+- semantic structure
+- screen readers
+- responsive layouts
+- empty states
+- loading states
+- error states
+
+Avoid unnecessary rendering or state duplication.
+
+Preserve user input where practical when recoverable errors occur.
+
+Use the project's existing design system and component conventions.
+
+## Adaptation
+
+Use project evidence to determine the actual language, framework, runtime, and existing conventions.
+
+If a matching technology adapter exists, use it only to translate these principles into native mechanisms.
+
+Do not allow an adapter to redefine the engineering concern or weaken the core requirement.

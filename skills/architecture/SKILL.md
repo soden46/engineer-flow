@@ -1,14 +1,40 @@
 ---
 name: architecture
-description: General architecture fallback for boundaries, dependency direction, modularity, interfaces, data flow, and maintainable engineering design.
+description: Design maintainable application boundaries and component relationships using framework-agnostic architecture principles.
 ---
 
-# Architecture
+# architecture
 
-Improve structure only when the task requires it.
+Use this skill for service boundaries, modules, dependency direction, interfaces, adapters, orchestration, and architectural refactoring.
 
-- Respect existing module boundaries.
-- Keep dependency direction clear.
-- Prefer simple composition before new frameworks.
-- Make data flow explicit.
-- Document meaningful decisions when they will affect future work.
+## Principles
+
+Prefer clear responsibilities and explicit dependencies.
+
+Separate concerns when doing so improves:
+
+- maintainability
+- testability
+- replacement
+- ownership
+- failure isolation
+
+Do not introduce abstraction merely for abstraction's sake.
+
+Stable application/business logic should not depend unnecessarily on volatile infrastructure details.
+
+Use interfaces or boundaries where multiple implementations, isolation, or testing value justifies them.
+
+Prefer incremental architectural change over unnecessary rewrites.
+
+Preserve public behavior during structural refactoring unless behavior change is intentional.
+
+Architecture should follow actual project complexity, not pattern names.
+
+## Adaptation
+
+Use project evidence to determine the actual language, framework, runtime, and existing conventions.
+
+If a matching technology adapter exists, use it only to translate these principles into native mechanisms.
+
+Do not allow an adapter to redefine the engineering concern or weaken the core requirement.
