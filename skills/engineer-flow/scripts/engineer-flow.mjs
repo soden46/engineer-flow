@@ -531,6 +531,23 @@ function skillTerms(skill) {
   );
 }
 
+/*
+ * Symmetric delimiter normalization for explicit skill-name
+ * comparison. Generic only: lowercase, unify - _ : separators into
+ * spaces, collapse whitespace, trim. No stemming, no fuzzy matching,
+ * no technology knowledge.
+ */
+function normalizeComparableName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(
+      /[-_:]+/g,
+      " "
+    )
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function scoreSkill(
   task,
   skill
@@ -556,19 +573,13 @@ function scoreSkill(
   }
 
   const normalizedTask =
-    String(task)
-      .toLowerCase();
+    normalizeComparableName(task);
 
   const normalizedName =
-    String(skill.name)
-      .toLowerCase()
-      .replace(
-        /[-_:]+/g,
-        " "
-      );
+    normalizeComparableName(skill.name);
 
   /*
-   * Strong explicit skill-name evidence.
+   * Strong explicit skill-name evidence, compared symmetrically.
    */
   if (
     normalizedName.length >= 3 &&
