@@ -67,6 +67,9 @@ The goal is simple:
 - [Internal Engineering Capabilities](#internal-engineering-capabilities)
 - [Sparse Specialist Routing](#sparse-specialist-routing)
 - [External Skill Discovery](#external-skill-discovery)
+- [Project-Evidence-Aware Retrieval](#project-evidence-aware-retrieval)
+- [Symmetric Explicit Skill-Name Normalization](#symmetric-explicit-skill-name-normalization)
+- [Routing Evaluation Status](#routing-evaluation-status)
 - [Routing Behavior](#routing-behavior)
 - [Project Context](#project-context)
 - [Minimal Change Discipline](#minimal-change-discipline)
@@ -365,6 +368,143 @@ Fine tune this model using TRL.
 can activate a `trl-training` specialist if one is installed.
 
 This keeps external skills useful without allowing them to dominate generic engineering work.
+
+---
+
+## Project-Evidence-Aware Retrieval
+
+Since v0.2.0, external specialist selection can use bounded project evidence in addition to task text.
+
+Before routing, Engineer Flow inspects common dependency manifests at the project root:
+
+```text
+package.json
+composer.json
+pyproject.toml
+requirements*.txt
+pom.xml
+build.gradle / build.gradle.kts
+settings.gradle / settings.gradle.kts
+go.mod
+Cargo.toml
+pubspec.yaml
+Gemfile
+```
+
+Inspection is strictly bounded:
+
+```text
+max 16 manifest files
+max 64 KB read per file
+max 256 KB total evidence
+root-level manifests only; no recursive repository scan
+```
+
+The mechanism is framework- and language-agnostic by construction:
+
+- there is no technology hardcoding anywhere in the resolver
+- there is no dependency-name-to-framework mapping table
+- the matching signal comes from each external skill's own identity terms, derived generically from that skill's name
+- generic anchor vocabulary such as `development`, `configuration`, `database`, or `testing` can never activate an external skill on its own
+
+Evidence only benefits an external skill when one of that skill's own specific identity terms appears in a manifest:
+
+```text
+composer.json contains laravel/framework
++ installed skill named laravel-development
+=> relevant affinity, even if the task text never says "Laravel"
+```
+
+but:
+
+```text
+manifest contains generic word configuration
++ unrelated external skill mentioning configuration
+=> no activation
+```
+
+Task intent (derived only from existing internal capability scoring) gates when evidence may be used; intent anchors never decide final primary/support routing directly.
+
+Bounded diagnostics are emitted in resolver output under `retrieval`. They never contain manifest dumps or secrets and never count as specialists.
+
+---
+
+## Symmetric Explicit Skill-Name Normalization
+
+Since v0.2.0, the exact skill-name bonus compares tasks and skill names through one shared normalization.
+
+The following separators compare consistently:
+
+```text
+-   hyphen
+_   underscore
+:   colon
+    spaces
+```
+
+So these are all equivalent spellings of one identity:
+
+```text
+cache-query-optimizer
+cache_query_optimizer
+cache:query:optimizer
+cache query optimizer
+```
+
+Behavior stays deliberately narrow:
+
+- exact-name behavior only
+- no stemming, no lemmatization, no fuzzy matching, no embeddings
+- partial overlaps such as `cache` or `query optimizer` still do not match a skill named `cache-query-optimizer`
+- unrelated identities remain unrelated after normalization
+
+---
+
+## Routing Evaluation Status
+
+Routing changes are evaluated against frozen benchmark suites before release.
+
+### Calibration V4 (development set) — Candidate J
+
+```text
+PRIMARY_ACCURACY=0.8333
+EXTERNAL_REQUIRED_ACCURACY=1.0
+FALSE_EXTERNAL_ACTIVATION_COUNT=0
+MAX_SPECIALISTS_INVARIANT=PASS
+```
+
+Reproduce with:
+
+```bash
+npm run benchmark:routing
+```
+
+### Fresh Heldout V5 (one-time generalization set)
+
+```text
+MODE_ACCURACY=1.0
+PRIMARY_ACCURACY=1.0
+EXACT_ROUTE_ACCURACY=0.95
+EXPLICIT_NORMALIZED_EXTERNAL_ACCURACY=1.0
+PROJECT_EVIDENCE_REGRESSION_ACCURACY=1.0
+FALSE_EXTERNAL_ACTIVATION_COUNT=0
+ROBUSTNESS_PASS_RATE=1.0
+```
+
+### Burned datasets
+
+Heldout-v4 and heldout-v5 are **BURNED**. Each was executed exactly once for the candidate it was authored for, and neither may be re-run as fresh final evidence for future candidates.
+
+### Known limitations
+
+Routing is not perfect. Documented limitations, kept for future work:
+
+- morphology gaps: singular/plural and inflection mismatches between task wording and skill vocabulary can zero out otherwise relevant matches
+- body-text blindness: internal core scoring reads names, descriptions, and headings only; body prose carries no score signal
+- broad heading over-capture: skills with very large heading surfaces, especially `security`, can occasionally win primaries on loosely related tasks
+- support-selection variance: the support gate can admit or drop a second specialist differently than ideal on cross-cutting tasks
+
+These are known secondary classes. They do not affect the sparse-activation, false-activation, or security guarantees above.
 
 ---
 
@@ -1478,6 +1618,9 @@ The security gate exists to reinforce one rule:
 - [x] Sparse specialist routing
 - [x] User-installed Agent Skill discovery
 - [x] External skill false-positive protection
+- [x] Project-evidence-aware external skill retrieval
+- [x] Symmetric explicit skill-name normalization
+- [x] Routing benchmark suite with heldout generalization gates
 - [x] Mandatory post-development security verification
 - [x] Commit-aware staged-diff security gate
 - [x] Agent Skills-compatible package structure
