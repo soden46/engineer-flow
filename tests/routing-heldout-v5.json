@@ -1,0 +1,507 @@
+{
+  "version": 5,
+  "dataset": "heldout-v5",
+  "status": "fresh",
+  "candidate": "Candidate J",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "calibration_v4_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "scenarios": [
+    {
+      "id": "V5_A1_DASHED_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Hyphenated stored name; hyphenated task mention.",
+      "task": "Apply vector-index-planner guidance before restructuring the catalog.",
+      "external_skills": [
+        {
+          "directory": "vector-index-planner",
+          "name": "vector-index-planner",
+          "description": "Synthetic planner for verification runs: opal gradients, driftwood taxonomies, and quiet orchestration.",
+          "body": "# vector-index-planner\n\n## Opal Gradients\n\n## Driftwood Taxonomies\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "vector-index-planner",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_A2_SPACED_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Hyphenated stored name; space-separated task mention.",
+      "task": "Engage stream replay engineer recommendations during the next maintenance window.",
+      "external_skills": [
+        {
+          "directory": "stream-replay-engineer",
+          "name": "stream-replay-engineer",
+          "description": "Synthetic replay specialist for verification runs: tidal glossaries, parchment inventories, and gentle recalibration.",
+          "body": "# stream-replay-engineer\n\n## Tidal Glossaries\n\n## Parchment Inventories\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "stream-replay-engineer",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_A3_UNDERSCORED_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Underscore-separated task mention of a hyphenated stored name.",
+      "task": "Configure batch_window_scheduler settings across environments.",
+      "external_skills": [
+        {
+          "directory": "batch-window-scheduler",
+          "name": "batch-window-scheduler",
+          "description": "Synthetic scheduling specialist for verification runs: amber terraces, folio rotations, and mellow cadences.",
+          "body": "# batch-window-scheduler\n\n## Amber Terraces\n\n## Folio Rotations\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "batch-window-scheduler",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_A4_COLON_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Colon-separated task mention of a hyphenated stored name.",
+      "task": "Enable quota:ledger:auditor checks this quarter.",
+      "external_skills": [
+        {
+          "directory": "quota-ledger-auditor",
+          "name": "quota-ledger-auditor",
+          "description": "Synthetic audit specialist for verification runs: basalt meadows, willow folklore, and orderly lantern studies.",
+          "body": "# quota-ledger-auditor\n\n## Basalt Meadows\n\n## Willow Folklore\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "quota-ledger-auditor",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_A5_MIXED_SEPARATORS",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Mixed underscore and hyphen separators in the task mention.",
+      "task": "Route mesh_failover-coordinator escalation through the on-call rota.",
+      "external_skills": [
+        {
+          "directory": "mesh-failover-coordinator",
+          "name": "mesh-failover-coordinator",
+          "description": "Synthetic failover specialist for verification runs: cork labyrinths, ember almanacs, and patient cartography.",
+          "body": "# mesh-failover-coordinator\n\n## Cork Labyrinths\n\n## Ember Almanacs\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "mesh-failover-coordinator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_A6_REPEATED_WHITESPACE",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Repeated whitespace inside the task mention must normalize cleanly.",
+      "task": "Invoke the latency   budget   sentinel review before launch.",
+      "external_skills": [
+        {
+          "directory": "latency-budget-sentinel",
+          "name": "latency-budget-sentinel",
+          "description": "Synthetic sentinel specialist for verification runs: flax observatories, ripple registries, and serene bookbinding.",
+          "body": "# latency-budget-sentinel\n\n## Flax Observatories\n\n## Ripple Registries\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "latency-budget-sentinel",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_A7_UPPERCASE_VARIANT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Uppercase task mention of a lowercase stored name.",
+      "task": "Adopt SHADOW-TRAFFIC-MIRROR practices for the rollout rehearsal.",
+      "external_skills": [
+        {
+          "directory": "shadow-traffic-mirror",
+          "name": "shadow-traffic-mirror",
+          "description": "Synthetic mirroring specialist for verification runs: pewter orchards, sable hymnals, and tidy wayfinding.",
+          "body": "# shadow-traffic-mirror\n\n## Pewter Orchards\n\n## Sable Hymnals\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "shadow-traffic-mirror",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_A8_EMBEDDED_IN_SENTENCE",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "description": "Explicit name embedded naturally inside a longer sentence.",
+      "task": "Before we ship, have the idempotency-key-broker review cover our checkout retries.",
+      "external_skills": [
+        {
+          "directory": "idempotency-key-broker",
+          "name": "idempotency-key-broker",
+          "description": "Synthetic broker specialist for verification runs: velvet causeways, thistle ledgers, and unhurried falconry.",
+          "body": "# idempotency-key-broker\n\n## Velvet Causeways\n\n## Thistle Ledgers\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "idempotency-key-broker",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_B1_SINGLE_TOKEN_OVERLAP",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "description": "Task shares one specific name token only; full normalized name never contained.",
+      "task": "Audit the cache defaults documented in the runbook appendix.",
+      "external_skills": [
+        {
+          "directory": "distributed-cache-strategist",
+          "name": "distributed-cache-strategist",
+          "description": "Synthetic strategist for verification runs: cobalt meadows, staple folklore, and placid etymology.",
+          "body": "# distributed-cache-strategist\n\n## Cobalt Meadows\n\n## Staple Folklore\n"
+        }
+      ],
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["distributed-cache-strategist"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_B2_NEAR_PHRASE_NON_EQUIVALENT",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "description": "Similar but non-equivalent phrase must not count as exact-name evidence.",
+      "task": "Tune queue depth alert thresholds listed in the operations handbook.",
+      "external_skills": [
+        {
+          "directory": "queue-depth-prophet",
+          "name": "queue-depth-prophet",
+          "description": "Synthetic prophet for verification runs: gull observatories, linen registries, and modest horology.",
+          "body": "# queue-depth-prophet\n\n## Gull Observatories\n\n## Linen Registries\n"
+        }
+      ],
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["queue-depth-prophet"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_B3_GENERIC_TOKEN_ONLY",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "description": "Only one generic-ish identity token appears in the task.",
+      "task": "Assess observability dashboard coverage for the support rotation.",
+      "external_skills": [
+        {
+          "directory": "telemetry-caravel",
+          "name": "telemetry-caravel",
+          "description": "Synthetic caravel for verification runs: nomadic charts, tidal shelving, and breezy calligraphy.",
+          "body": "# telemetry-caravel\n\n## Nomadic Charts\n\n## Tidal Shelving\n"
+        }
+      ],
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["telemetry-caravel"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_B4_OVERLAPPING_ENGINEERING_WORDS",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "description": "Overlapping generic engineering words must not trigger the named specialist.",
+      "task": "Plan resilience improvements across the nightly consolidation jobs.",
+      "external_skills": [
+        {
+          "directory": "resilience-atlas",
+          "name": "resilience-atlas",
+          "description": "Synthetic atlas for verification runs: juniper archives, drizzle compendiums, and level-headed topiary.",
+          "body": "# resilience-atlas\n\n## Juniper Archives\n\n## Drizzle Compendiums\n"
+        }
+      ],
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["resilience-atlas"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_C1_NUXT_HYDRATION_DEFECTS",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "description": "package.json proves Nuxt; task text never names it. Candidate I regression guard.",
+      "task": "Since the last release, direct visits work but in-app page switches show blank content sections; diagnose the defects behind these broken transitions and add regression tests.",
+      "project_files": {
+        "package.json": "{\n  \"name\": \"marketing-site\",\n  \"private\": true,\n  \"dependencies\": {\n    \"nuxt\": \"^3.11.2\"\n  }\n}\n"
+      },
+      "external_skills": [
+        {
+          "directory": "nuxt-web-specialist",
+          "name": "nuxt-web-specialist",
+          "description": "Meta-framework web specialist: server-side rendering routes, payload hydration, composable modules, and deployment presets.",
+          "body": "# nuxt-web-specialist\n\n## Rendering Routes\n\n## Payload Hydration\n\n## Deployment Presets\n"
+        }
+      ],
+      "expected": {
+        "mode": 2,
+        "primary": "nuxt-web-specialist",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_C2_SYMFONY_DOUBLE_SUBMIT",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "description": "composer.json proves Symfony; task text never names it.",
+      "task": "Form submissions occasionally persist twice after double clicks; diagnose the duplicate-write defects and add regression tests guarding single submission.",
+      "project_files": {
+        "composer.json": "{\n  \"require\": {\n    \"php\": \">=8.2\",\n    \"symfony/framework-bundle\": \"^7.0\",\n    \"symfony/console\": \"^7.0\"\n  }\n}\n"
+      },
+      "external_skills": [
+        {
+          "directory": "symfony-backend-specialist",
+          "name": "symfony-backend-specialist",
+          "description": "Structured PHP application specialist for Symfony-style stacks: kernels, bundles, twig templating, doctrine entities, messenger buses, and test harnesses.",
+          "body": "# symfony-backend-specialist\n\n## Kernels and Bundles\n\n## Twig Templating\n\n## Doctrine Entities\n\n## Test Harnesses\n"
+        }
+      ],
+      "expected": {
+        "mode": 2,
+        "primary": "symfony-backend-specialist",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_C3_FLASK_STALLED_DELIVERY",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "description": "requirements.txt proves Flask; task text never names it.",
+      "task": "Scheduled report emails silently stop sending on weekends; trace the stalled scheduler state and add regression tests around the delivery path.",
+      "project_files": {
+        "requirements.txt": "flask==3.0.3\ngunicorn==21.2.0\n"
+      },
+      "external_skills": [
+        {
+          "directory": "flask-service-specialist",
+          "name": "flask-service-specialist",
+          "description": "Lightweight Python service specialist for WSGI apps: request lifecycle, blueprints, extension wiring, error handlers, and test clients.",
+          "body": "# flask-service-specialist\n\n## Request Lifecycle\n\n## Blueprints\n\n## Error Handlers\n\n## Test Clients\n"
+        }
+      ],
+      "expected": {
+        "mode": 2,
+        "primary": "flask-service-specialist",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_C4_AXUM_HANGING_EXPORTS",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "description": "Cargo.toml proves an axum-based Rust service; task text never names it.",
+      "task": "Inventory export requests hang until timeout under load; diagnose the concurrency defects and add regression tests covering bounded parallel handling.",
+      "project_files": {
+        "Cargo.toml": "[package]\nname = \"inventory-service\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[dependencies]\naxum = \"0.7\"\ntokio = { version = \"1\", features = [\"full\"] }\nserde = \"1\"\n"
+      },
+      "external_skills": [
+        {
+          "directory": "axum-rust-specialist",
+          "name": "axum-rust-specialist",
+          "description": "Rust backend specialist for tower-style web frameworks: router stacks, extractors, middleware layers, shared state, and graceful shutdown.",
+          "body": "# axum-rust-specialist\n\n## Router Stacks\n\n## Extractors\n\n## Middleware Layers\n\n## Graceful Shutdown\n"
+        }
+      ],
+      "expected": {
+        "mode": 2,
+        "primary": "axum-rust-specialist",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_D1_SCALE_WITH_NAMED_SPECIALIST",
+      "group": "D_ROBUSTNESS_SCALE",
+      "family": "scale-invariance",
+      "description": "600 irrelevant skills plus one explicitly named specialist via underscore variant.",
+      "task": "Engage cold_start_flattener recommendations for the launch warmup sequence.",
+      "generated_external_skills": 600,
+      "external_skills": [
+        {
+          "directory": "cold-start-flattener",
+          "name": "cold-start-flattener",
+          "description": "Synthetic flattener for verification runs: chalk terrariums, otter ledgers, and mild permaculture.",
+          "body": "# cold-start-flattener\n\n## Chalk Terrariums\n\n## Otter Ledgers\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "cold-start-flattener",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_D2_MALFORMED_DUPLICATE_MIX",
+      "group": "D_ROBUSTNESS_SCALE",
+      "family": "robustness",
+      "description": "Malformed and duplicate metadata mixed with one valid explicitly named specialist via colon variant.",
+      "task": "Run deadlock:cartographer analysis over the lock contention report before the migration freeze.",
+      "external_skills": [
+        {
+          "directory": "orphan-notes",
+          "raw_content": "Loose notes without any frontmatter.\nErrands, appointments, and reminders only.\nNothing here describes engineering capabilities.\n"
+        },
+        {
+          "directory": "broken-metadata",
+          "raw_content": "---\nname: broken-metadata\ndescription: [unclosed bracket\nAn unterminated frontmatter block follows no parseable structure.\nThe resolver must tolerate this gracefully.\n"
+        },
+        {
+          "directory": "dup-relay-a",
+          "name": "signal-relay-auditor",
+          "description": "Duplicate relay auditor entry one for robustness coverage.",
+          "body": "# signal-relay-auditor\n\n## Duplicate Entry One\n"
+        },
+        {
+          "directory": "dup-relay-b",
+          "name": "signal-relay-auditor",
+          "description": "Duplicate relay auditor entry two for robustness coverage.",
+          "body": "# signal-relay-auditor\n\n## Duplicate Entry Two\n"
+        },
+        {
+          "directory": "deadlock-cartographer",
+          "name": "deadlock-cartographer",
+          "description": "Synthetic cartographer for verification runs: gravel meridians, fern chronicles, and even-tempered surveying.",
+          "body": "# deadlock-cartographer\n\n## Gravel Meridians\n\n## Fern Chronicles\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "deadlock-cartographer",
+        "support": null,
+        "external_required": true,
+        "must_not_select": ["orphan-notes", "broken-metadata", "signal-relay-auditor"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_E1_HOUSEHOLD_BUDGET_RESEMBLANCE",
+      "group": "E_MODE0",
+      "family": "non-engineering",
+      "description": "Non-engineering request whose wording resembles an installed decoy identity.",
+      "task": "Summarize household renovation budgets into a simple spreadsheet overview for the family meeting.",
+      "external_skills": [
+        {
+          "directory": "budget-optimizer-hub",
+          "name": "budget-optimizer-hub",
+          "description": "Synthetic hub for verification runs: picnic logistics, kite inventories, and cheerful stationery.",
+          "body": "# budget-optimizer-hub\n\n## Picnic Logistics\n\n## Kite Inventories\n"
+        }
+      ],
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["budget-optimizer-hub"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V5_E2_VOLUNTEER_NOTES_RESEMBLANCE",
+      "group": "E_MODE0",
+      "family": "non-engineering",
+      "description": "Non-engineering request whose wording resembles an installed decoy identity.",
+      "task": "Compile attendance notes from the volunteer orientation into thank-you messages for each participant.",
+      "external_skills": [
+        {
+          "directory": "meeting-minutes-compiler",
+          "name": "meeting-minutes-compiler",
+          "description": "Synthetic compiler for verification runs: hammock registries, acorn calendars, and friendly marquetry.",
+          "body": "# meeting-minutes-compiler\n\n## Hammock Registries\n\n## Acorn Calendars\n"
+        }
+      ],
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["meeting-minutes-compiler"],
+        "max_specialists": 2
+      }
+    }
+  ]
+}

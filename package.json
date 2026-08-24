@@ -10,6 +10,7 @@
     "validate": "node skills/engineer-flow/scripts/validate.mjs",
     "benchmark:routing": "node tests/run-routing-benchmark.mjs",
     "benchmark:heldout-v4": "node tests/run-routing-heldout-v4.mjs",
+    "benchmark:heldout-v5": "node tests/run-routing-heldout-v5.mjs",
     "test:normalization": "node tests/explicit-name-normalization.mjs"
   },
   "keywords": [

@@ -1,0 +1,775 @@
+{
+  "benchmark_version": 5,
+  "dataset": "heldout-v5",
+  "candidate": "Candidate J",
+  "mechanism": "SYMMETRIC_EXPLICIT_SKILL_NAME_NORMALIZATION",
+  "secondary_regression_mechanism": "INTENT_CONDITIONED_SKILL_RETRIEVAL",
+  "dataset_status": "burned",
+  "generated_at": "2026-08-24T07:17:59.923Z",
+  "git_branch": "research/calibration-v4",
+  "git_commit": "34a417e1d5bc88f3e035b8018846c0ca8ffab7cc",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "calibration_v4_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "metrics": {
+    "scenarios": 20,
+    "mode_accuracy": 1,
+    "primary_accuracy": 1,
+    "support_accuracy": 0.95,
+    "exact_route_accuracy": 0.95,
+    "explicit_normalized_external_accuracy": 1,
+    "partial_name_negative_pass_rate": 1,
+    "project_evidence_regression_accuracy": 1,
+    "robustness_pass_rate": 1,
+    "mode0_accuracy": 1,
+    "false_external_activation_count": 0,
+    "resolver_crash_count": 0,
+    "max_specialists_observed": 2,
+    "max_specialists_invariant": "PASS"
+  },
+  "group_metrics": {
+    "A_EXPLICIT_NORMALIZATION": {
+      "scenarios": 8,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 1
+    },
+    "B_PARTIAL_NEGATIVE": {
+      "scenarios": 4,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 1
+    },
+    "C_EVIDENCE_REGRESSION": {
+      "scenarios": 4,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 0.75,
+      "exact_route_accuracy": 0.75
+    },
+    "D_ROBUSTNESS_SCALE": {
+      "scenarios": 2,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 1
+    },
+    "E_MODE0": {
+      "scenarios": 2,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 1
+    }
+  },
+  "failure_classes": [
+    {
+      "class": "SUPPORT_SELECTION_MISS",
+      "count": 1
+    }
+  ],
+  "retrieval_misses": [],
+  "ranking_misses": [],
+  "support_misses": [
+    "V5_C4_AXUM_HANGING_EXPORTS"
+  ],
+  "mode_misses": [],
+  "false_activations": [],
+  "crashes": [],
+  "new_regressions": [],
+  "cases": [
+    {
+      "id": "V5_A1_DASHED_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "vector-index-planner",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "vector-index-planner",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_A2_SPACED_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "stream-replay-engineer",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "stream-replay-engineer",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_A3_UNDERSCORED_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "batch-window-scheduler",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "batch-window-scheduler",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_A4_COLON_EXPLICIT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "quota-ledger-auditor",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "quota-ledger-auditor",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_A5_MIXED_SEPARATORS",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "mesh-failover-coordinator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "mesh-failover-coordinator",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_A6_REPEATED_WHITESPACE",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "latency-budget-sentinel",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "latency-budget-sentinel",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_A7_UPPERCASE_VARIANT",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "shadow-traffic-mirror",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "shadow-traffic-mirror",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_A8_EMBEDDED_IN_SENTENCE",
+      "group": "A_EXPLICIT_NORMALIZATION",
+      "family": "explicit-name-normalization",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "idempotency-key-broker",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "idempotency-key-broker",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_B1_SINGLE_TOKEN_OVERLAP",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "distributed-cache-strategist"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_B2_NEAR_PHRASE_NON_EQUIVALENT",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "queue-depth-prophet"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_B3_GENERIC_TOKEN_ONLY",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "telemetry-caravel"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_B4_OVERLAPPING_ENGINEERING_WORDS",
+      "group": "B_PARTIAL_NEGATIVE",
+      "family": "partial-name-negative",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "resilience-atlas"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_C1_NUXT_HYDRATION_DEFECTS",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "nuxt-web-specialist",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "nuxt-web-specialist",
+        "support": "debugging",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "matched_identity_terms": [
+          "nuxt"
+        ],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_C2_SYMFONY_DOUBLE_SUBMIT",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "symfony-backend-specialist",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "symfony-backend-specialist",
+        "support": "debugging",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "matched_identity_terms": [
+          "symfony"
+        ],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_C3_FLASK_STALLED_DELIVERY",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "flask-service-specialist",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "flask-service-specialist",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "matched_identity_terms": [
+          "flask"
+        ],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_C4_AXUM_HANGING_EXPORTS",
+      "group": "C_EVIDENCE_REGRESSION",
+      "family": "project-evidence",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "axum-rust-specialist",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "axum-rust-specialist",
+        "support": "data-processing",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "matched_identity_terms": [
+          "axum"
+        ],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [
+        "SUPPORT_MISMATCH: expected \"debugging\", got \"data-processing\""
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_D1_SCALE_WITH_NAMED_SPECIALIST",
+      "group": "D_ROBUSTNESS_SCALE",
+      "family": "scale-invariance",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "cold-start-flattener",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "cold-start-flattener",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_D2_MALFORMED_DUPLICATE_MIX",
+      "group": "D_ROBUSTNESS_SCALE",
+      "family": "robustness",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "deadlock-cartographer",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [
+          "orphan-notes",
+          "broken-metadata",
+          "signal-relay-auditor"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "deadlock-cartographer",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_E1_HOUSEHOLD_BUDGET_RESEMBLANCE",
+      "group": "E_MODE0",
+      "family": "non-engineering",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "budget-optimizer-hub"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V5_E2_VOLUNTEER_NOTES_RESEMBLANCE",
+      "group": "E_MODE0",
+      "family": "non-engineering",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "meeting-minutes-compiler"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    }
+  ]
+}
