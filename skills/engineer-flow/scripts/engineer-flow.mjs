@@ -47,6 +47,47 @@ const MEMORY_RUNNER =
     "memory.mjs"
   );
 
+/*
+ * Intent-conditioned retrieval bounds.
+ *
+ * Generic manifest formats only. Dependency names are never mapped to
+ * technologies manually; affinity emerges from each external skill's
+ * own name-derived identity terms.
+ */
+const MAX_PROJECT_EVIDENCE_FILES = 16;
+
+const MAX_BYTES_PER_EVIDENCE_FILE = 65536;
+
+const MAX_TOTAL_EVIDENCE_BYTES = 262144;
+
+const MAX_EVIDENCE_TOKENS = 4096;
+
+const MAX_INTENT_ANCHORS = 2;
+
+const MAX_RETRIEVAL_DIAGNOSTICS = 16;
+
+/*
+ * Uniform, technology-agnostic weight applied when an external skill's
+ * own specific identity terms appear in project evidence. Any external
+ * skill can earn it; nothing is keyed to a particular technology.
+ */
+const EVIDENCE_IDENTITY_AFFINITY = 3;
+
+const PROJECT_EVIDENCE_MANIFEST_NAMES = new Set([
+  "package.json",
+  "composer.json",
+  "pyproject.toml",
+  "pom.xml",
+  "build.gradle",
+  "build.gradle.kts",
+  "settings.gradle",
+  "settings.gradle.kts",
+  "go.mod",
+  "Cargo.toml",
+  "pubspec.yaml",
+  "Gemfile"
+]);
+
 
 /* =========================================================
    TEXT / METADATA
@@ -490,6 +531,23 @@ function skillTerms(skill) {
   );
 }
 
+/*
+ * Symmetric delimiter normalization for explicit skill-name
+ * comparison. Generic only: lowercase, unify - _ : separators into
+ * spaces, collapse whitespace, trim. No stemming, no fuzzy matching,
+ * no technology knowledge.
+ */
+function normalizeComparableName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(
+      /[-_:]+/g,
+      " "
+    )
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function scoreSkill(
   task,
   skill
@@ -515,19 +573,13 @@ function scoreSkill(
   }
 
   const normalizedTask =
-    String(task)
-      .toLowerCase();
+    normalizeComparableName(task);
 
   const normalizedName =
-    String(skill.name)
-      .toLowerCase()
-      .replace(
-        /[-_:]+/g,
-        " "
-      );
+    normalizeComparableName(skill.name);
 
   /*
-   * Strong explicit skill-name evidence.
+   * Strong explicit skill-name evidence, compared symmetrically.
    */
   if (
     normalizedName.length >= 3 &&
@@ -673,15 +725,211 @@ function externalSkillAnchored(task, skill) {
   );
 }
 
-function chooseSpecialists(
+
+/* =========================================================
+   INTENT-CONDITIONED SKILL RETRIEVAL
+   ========================================================= */
+
+/*
+ * Manifest text is tokenized generically: every run of characters
+ * outside [a-z0-9+#_] acts as a boundary. This covers the required
+ * delimiter family (/ \ . : _ -) plus manifest punctuation such as
+ * quotes, brackets, and angle brackets, without any technology
+ * mapping. org.springframework.boot therefore yields
+ * org / springframework / boot naturally.
+ */
+function evidenceTokens(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9+#_]+/g,
+      " "
+    )
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((token) => token.length >= 2)
+    .filter((token) => !STOP.has(token));
+}
+
+/*
+ * Bounded, generic project-evidence extraction.
+ *
+ * Root-level manifest files only. No recursive repository scan.
+ * Dependency identifiers and manifest text are normalized into
+ * searchable tokens; nothing is mapped to a specific technology.
+ */
+function collectProjectEvidence(cwd) {
+  const result = {
+    files_considered: [],
+    tokens: new Set()
+  };
+
+  let entries = [];
+
+  try {
+    entries =
+      fs.readdirSync(
+        cwd,
+        {
+          withFileTypes: true
+        }
+      );
+  }
+  catch {
+    return result;
+  }
+
+  let totalBytes = 0;
+
+  for (
+    const entry of
+    entries
+  ) {
+    if (
+      result.files_considered.length >=
+        MAX_PROJECT_EVIDENCE_FILES ||
+      totalBytes >=
+        MAX_TOTAL_EVIDENCE_BYTES
+    ) {
+      break;
+    }
+
+    if (!entry.isFile()) {
+      continue;
+    }
+
+    const isManifest =
+      PROJECT_EVIDENCE_MANIFEST_NAMES.has(
+        entry.name
+      ) ||
+      /^requirements(\..+)?\.txt$/.test(
+        entry.name
+      );
+
+    if (!isManifest) {
+      continue;
+    }
+
+    const file =
+      path.join(
+        cwd,
+        entry.name
+      );
+
+    let text = "";
+
+    try {
+      const stats =
+        fs.statSync(file);
+
+      if (stats.size <= 0) {
+        continue;
+      }
+
+      const length =
+        Math.min(
+          stats.size,
+          MAX_BYTES_PER_EVIDENCE_FILE
+        );
+
+      const handle =
+        fs.openSync(file, "r");
+
+      try {
+        const buffer =
+          Buffer.alloc(length);
+
+        fs.readSync(
+          handle,
+          buffer,
+          0,
+          length,
+          0
+        );
+
+        text =
+          buffer.toString("utf8");
+      }
+      finally {
+        fs.closeSync(handle);
+      }
+    }
+    catch {
+      continue;
+    }
+
+    result.files_considered.push(
+      entry.name
+    );
+
+    totalBytes += text.length;
+
+    for (
+      const token of
+      evidenceTokens(text)
+    ) {
+      if (
+        result.tokens.size >=
+        MAX_EVIDENCE_TOKENS
+      ) {
+        break;
+      }
+
+      result.tokens.add(token);
+    }
+  }
+
+  return result;
+}
+
+/*
+ * External skill identity terms derived only from existing data:
+ * the skill's own name. Generic anchor vocabulary is excluded so
+ * broad words can never act as identity.
+ */
+function skillIdentityTerms(skill) {
+  if (skill.internal) {
+    return [];
+  }
+
+  return words(
+    String(skill.name)
+      .replace(/[-_:]+/g, " ")
+  )
+    .filter(
+      (token) =>
+        token.length >= 3 &&
+        !EXTERNAL_GENERIC_ANCHORS.has(token)
+    );
+}
+
+/*
+ * Builds retrieval context combining task intent (derived from the
+ * EXISTING internal capability scoring), bounded project evidence,
+ * and external skill identity.
+ *
+ * Project evidence only benefits an external skill when one of that
+ * skill's own specific identity terms appears in the evidence, and
+ * only when the task itself maps to at least one internal engineering
+ * capability. Intent anchors are context only; they never decide
+ * primary/support routing directly.
+ */
+function buildRetrievalContext({
   task,
-  capabilities
-) {
-  const ranked =
-    capabilities
+  cwd,
+  internalSkills,
+  externalSkills
+}) {
+  const evidence =
+    collectProjectEvidence(cwd);
+
+  const intent =
+    internalSkills
       .map(
         (skill) => ({
-          skill,
+          name:
+            skill.name,
+
           score:
             scoreSkill(
               task,
@@ -691,11 +939,142 @@ function chooseSpecialists(
       )
       .filter(
         (item) =>
-          item.score > 0 &&
-          externalSkillAnchored(
-            task,
-            item.skill
+          item.score > 0
+      )
+      .sort(
+        (a,b) =>
+          b.score -
+            a.score ||
+          a.name.localeCompare(
+            b.name
           )
+      )
+      .slice(0, MAX_INTENT_ANCHORS)
+      .map(
+        (item) =>
+          item.name
+      );
+
+  const affinityByPath =
+    new Map();
+
+  const externalMatches = [];
+
+  if (
+    intent.length &&
+    evidence.tokens.size
+  ) {
+    const normalizedEvidence =
+      ` ${[...evidence.tokens].join(" ")} `;
+
+    for (
+      const skill of
+      externalSkills
+    ) {
+      const identity =
+        skillIdentityTerms(skill);
+
+      if (!identity.length) {
+        continue;
+      }
+
+      const matched =
+        identity.filter(
+          (term) =>
+            evidence.tokens.has(term) ||
+            normalizedEvidence.includes(
+              ` ${term} `
+            )
+        );
+
+      if (!matched.length) {
+        continue;
+      }
+
+      affinityByPath.set(
+        skill.path,
+        matched.length *
+          EVIDENCE_IDENTITY_AFFINITY
+      );
+
+      if (
+        externalMatches.length <
+        MAX_RETRIEVAL_DIAGNOSTICS
+      ) {
+        externalMatches.push({
+          name:
+            skill.name,
+
+          matched_identity_terms:
+            matched.slice(
+              0,
+              MAX_RETRIEVAL_DIAGNOSTICS
+            )
+        });
+      }
+    }
+  }
+
+  return {
+    diagnostics: {
+      intent,
+
+      project_evidence: {
+        files_considered:
+          evidence.files_considered,
+
+        token_count:
+          evidence.tokens.size
+      },
+
+      external_matches:
+        externalMatches
+    },
+
+    affinityByPath
+  };
+}
+
+function chooseSpecialists(
+  task,
+  capabilities,
+  retrieval = null
+) {
+  const affinity =
+    retrieval &&
+    retrieval.affinityByPath instanceof Map
+      ? retrieval.affinityByPath
+      : new Map();
+
+  const ranked =
+    capabilities
+      .map(
+        (skill) => ({
+          skill,
+
+          score:
+            scoreSkill(
+              task,
+              skill
+            ) +
+            (skill.internal
+              ? 0
+              : affinity.get(
+                  skill.path
+                ) || 0)
+        })
+      )
+      .filter(
+        (item) =>
+          item.score > 0 &&
+          (item.skill.internal ||
+            externalSkillAnchored(
+              task,
+              item.skill
+            ) ||
+            affinity.has(
+              item.skill.path
+            ))
       )
       .sort(
         (a,b) =>
@@ -864,10 +1243,24 @@ function resolve({
   const pool =
     buildCapabilityPool();
 
+  const retrieval =
+    buildRetrievalContext({
+      task,
+
+      cwd,
+
+      internalSkills:
+        pool.internal,
+
+      externalSkills:
+        pool.external
+    });
+
   const selected =
     chooseSpecialists(
       task,
-      pool.capabilities
+      pool.capabilities,
+      retrieval
     );
 
   const specialists =
@@ -896,6 +1289,13 @@ function resolve({
       effective_after_dedupe:
         pool.capabilities.length
     },
+
+    /*
+     * Diagnostic only. Bounded arrays; never a manifest dump,
+     * never secrets, never counted as a specialist.
+     */
+    retrieval:
+      retrieval.diagnostics,
 
     specialist_count:
       specialists.length,

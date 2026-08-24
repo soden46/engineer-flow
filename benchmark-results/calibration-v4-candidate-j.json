@@ -1,0 +1,357 @@
+{
+  "benchmark_version": 4,
+  "dataset": "calibration-v4",
+  "generated_at": "2026-08-24T07:04:16.202Z",
+  "git_branch": "research/calibration-v4",
+  "git_commit": "342d1c477e3a8e47fdf354bb18def85f1238ff22",
+  "rules": {
+    "heldout_v2_reuse": false,
+    "heldout_v3_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "metrics": {
+    "scenarios": 12,
+    "mode_accuracy": 0.5833,
+    "primary_accuracy": 0.8333,
+    "support_accuracy": 0.6667,
+    "exact_route_accuracy": 0.5833,
+    "external_required_accuracy": 1,
+    "false_external_activation_count": 0,
+    "max_specialists_observed": 2,
+    "max_specialists_invariant": "PASS"
+  },
+  "failure_classes": [
+    {
+      "class": "MODE_SELECTION_MISS",
+      "count": 5
+    },
+    {
+      "class": "SUPPORT_SELECTION_MISS",
+      "count": 4
+    },
+    {
+      "class": "PRIMARY_RETRIEVAL_MISS",
+      "count": 2
+    }
+  ],
+  "cases": [
+    {
+      "id": "V4_001_GENERIC_DEBUG_TEST",
+      "family": "generic-debug-testing",
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "specialist_count": 2,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": []
+    },
+    {
+      "id": "V4_002_DATABASE_PERFORMANCE",
+      "family": "database-performance",
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "specialist_count": 2,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": []
+    },
+    {
+      "id": "V4_003_API_INTEGRATION",
+      "family": "api-integration",
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "api-integration",
+        "support": "security",
+        "specialist_count": 2,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "SUPPORT_MISMATCH: expected null, got \"security\""
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ]
+    },
+    {
+      "id": "V4_004_LARAVEL_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "laravel-development",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "laravel-development",
+        "support": "testing",
+        "specialist_count": 2,
+        "external_used": true
+      },
+      "failures": [],
+      "classes": []
+    },
+    {
+      "id": "V4_005_REACT_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "react-development",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "react-development",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": true
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"debugging\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ]
+    },
+    {
+      "id": "V4_006_SPRING_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "spring-boot-development",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "spring-boot-development",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": true
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ]
+    },
+    {
+      "id": "V4_007_EXPLICIT_FLUTTER_SPECIALIST",
+      "family": "explicit-technology",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "flutter-development",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "flutter-development",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": true
+      },
+      "failures": [],
+      "classes": []
+    },
+    {
+      "id": "V4_008_UNRELATED_EXTERNAL_OVERLAP",
+      "family": "external-overlap-guard",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "workflow-helper-toolkit"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": []
+    },
+    {
+      "id": "V4_009_NO_ENGINEERING_SPECIALIST",
+      "family": "non-engineering",
+      "pass": false,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 0, got 1",
+        "PRIMARY_MISMATCH: expected null, got \"security\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "MODE_SELECTION_MISS"
+      ]
+    },
+    {
+      "id": "V4_010_SECURITY_DIRECT_TASK",
+      "family": "security",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": []
+    },
+    {
+      "id": "V4_011_LARGE_SKILL_INVENTORY",
+      "family": "scale-invariance",
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"debugging\", got \"testing\"",
+        "SUPPORT_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ]
+    },
+    {
+      "id": "V4_012_MALFORMED_EXTERNAL_METADATA",
+      "family": "robustness",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "broken-metadata",
+          "orphan-notes"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "specialist_count": 1,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": []
+    }
+  ],
+  "candidate": "Candidate J",
+  "mechanism": "SYMMETRIC_EXPLICIT_SKILL_NAME_NORMALIZATION",
+  "previous_candidate": "Candidate I",
+  "focused_normalization_tests": "PASS",
+  "regressions": [],
+  "invariant_status": "PASS",
+  "comparison": {
+    "candidate_i_primary_accuracy": 0.8333,
+    "candidate_j_primary_accuracy": 0.8333,
+    "candidate_i_external_required_accuracy": 1,
+    "candidate_j_external_required_accuracy": 1,
+    "candidate_i_exact_route_accuracy": 0.5833,
+    "candidate_j_exact_route_accuracy": 0.5833,
+    "per_case_changes": []
+  },
+  "enrichment_note": "metrics produced by tests/run-routing-benchmark.mjs; candidate/mechanism/test-status/regression fields added post-hoc without re-execution"
+}

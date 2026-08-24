@@ -1,0 +1,941 @@
+{
+  "heldout_version": 4,
+  "dataset": "heldout-v4",
+  "candidate": "Candidate I",
+  "dataset_status": "burned",
+  "generated_at": "2026-08-24T06:39:25.855Z",
+  "git_branch": "research/calibration-v4",
+  "git_commit": "e1dd8d399e7277010ceb6ce92b0b170912bd85b7",
+  "rules": {
+    "calibration_v4_reuse": false,
+    "heldout_v2_reuse": false,
+    "heldout_v3_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "metrics": {
+    "scenarios": 24,
+    "mode_accuracy": 0.9167,
+    "primary_accuracy": 0.75,
+    "support_accuracy": 0.875,
+    "exact_route_accuracy": 0.6667,
+    "project_evidence_primary_accuracy": 1,
+    "explicit_external_accuracy": 0.5,
+    "mode0_accuracy": 1,
+    "robustness_pass_rate": 1,
+    "false_external_activation_count": 0,
+    "max_specialists_observed": 2,
+    "max_specialists_invariant": "PASS"
+  },
+  "group_metrics": {
+    "A_GENERIC": {
+      "scenarios": 6,
+      "mode_accuracy": 0.8333,
+      "primary_accuracy": 0.5,
+      "support_accuracy": 0.6667,
+      "exact_route_accuracy": 0.3333
+    },
+    "B_PROJECT_EVIDENCE": {
+      "scenarios": 6,
+      "mode_accuracy": 0.8333,
+      "primary_accuracy": 1,
+      "support_accuracy": 0.8333,
+      "exact_route_accuracy": 0.8333
+    },
+    "C_EXPLICIT_EXTERNAL": {
+      "scenarios": 2,
+      "mode_accuracy": 1,
+      "primary_accuracy": 0.5,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 0.5
+    },
+    "D_DISTRACTOR": {
+      "scenarios": 4,
+      "mode_accuracy": 1,
+      "primary_accuracy": 0.5,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 0.5
+    },
+    "E_SCALE_ROBUSTNESS": {
+      "scenarios": 3,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 1
+    },
+    "F_MODE0": {
+      "scenarios": 3,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 1
+    }
+  },
+  "failure_classes": [
+    {
+      "class": "PRIMARY_RETRIEVAL_MISS",
+      "count": 5
+    },
+    {
+      "class": "SUPPORT_SELECTION_MISS",
+      "count": 3
+    },
+    {
+      "class": "MODE_SELECTION_MISS",
+      "count": 2
+    },
+    {
+      "class": "RETRIEVAL_MISS",
+      "count": 1
+    }
+  ],
+  "retrieval_misses": [
+    "V4H_C2_POSTGRESQL_SEQUENTIAL_SCANS"
+  ],
+  "ranking_misses": [],
+  "support_misses": [
+    "V4H_A1_MODULE_BOUNDARY_PERSISTENCE",
+    "V4H_A3_PACKAGE_UPGRADE_REVIEW",
+    "V4H_B2_VUE_WIZARD_STATE_DEFECT"
+  ],
+  "mode_misses": [
+    "V4H_A1_MODULE_BOUNDARY_PERSISTENCE",
+    "V4H_B2_VUE_WIZARD_STATE_DEFECT"
+  ],
+  "cases": [
+    {
+      "id": "V4H_A1_MODULE_BOUNDARY_PERSISTENCE",
+      "group": "A_GENERIC",
+      "family": "generic-internal",
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "architecture",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"architecture\", got \"code-quality-refactoring\"",
+        "SUPPORT_MISMATCH: expected \"database\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_A2_DASHBOARD_RENDERING_COST",
+      "group": "A_GENERIC",
+      "family": "generic-internal",
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "frontend-ui",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "frontend-ui",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_A3_PACKAGE_UPGRADE_REVIEW",
+      "group": "A_GENERIC",
+      "family": "generic-internal",
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "dependency-tooling",
+        "support": "version-control-review",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "dependency-tooling",
+        "support": "frontend-ui",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [
+        "SUPPORT_MISMATCH: expected \"version-control-review\", got \"frontend-ui\""
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_A4_LLM_EVAL_TRACKING",
+      "group": "A_GENERIC",
+      "family": "generic-internal",
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"ai-llm-engineering\", got \"testing\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_A5_ONCALL_RUNBOOK",
+      "group": "A_GENERIC",
+      "family": "generic-internal",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_A6_HTTP_CLIENT_HARDENING",
+      "group": "A_GENERIC",
+      "family": "generic-internal",
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"api-integration\", got \"security\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_B1_DJANGO_ADMIN_FILTER_REGRESSION",
+      "group": "B_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "django-development",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "django-development",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "retrieved": true,
+        "ranked_primary": true,
+        "matched_identity_terms": [
+          "django"
+        ]
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_B2_VUE_WIZARD_STATE_DEFECT",
+      "group": "B_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "vue-development",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "vue-development",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "retrieved": true,
+        "ranked_primary": true,
+        "matched_identity_terms": [
+          "vue"
+        ]
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"debugging\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_B3_RAILS_QUEUE_HALTED",
+      "group": "B_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "rails-development",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "rails-development",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "retrieved": true,
+        "ranked_primary": true,
+        "matched_identity_terms": [
+          "rails"
+        ]
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_B4_FASTAPI_VALIDATION_MIGRATION",
+      "group": "B_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "fastapi-development",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "fastapi-development",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "retrieved": true,
+        "ranked_primary": true,
+        "matched_identity_terms": [
+          "fastapi"
+        ]
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_B5_NESTJS_GATEWAY_BOUNDING",
+      "group": "B_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "nestjs-development",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "nestjs-development",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "retrieved": true,
+        "ranked_primary": true,
+        "matched_identity_terms": [
+          "nestjs"
+        ]
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_B6_SVELTE_ANIMATION_FRAMES",
+      "group": "B_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "svelte-development",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "svelte-development",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": true,
+        "retrieved": true,
+        "ranked_primary": true,
+        "matched_identity_terms": [
+          "svelte"
+        ]
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_C1_KUBERNETES_BLUE_GREEN",
+      "group": "C_EXPLICIT_EXTERNAL",
+      "family": "explicit-technology",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "kubernetes-deployment",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "kubernetes-deployment",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": true,
+        "ranked_primary": true,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_C2_POSTGRESQL_SEQUENTIAL_SCANS",
+      "group": "C_EXPLICIT_EXTERNAL",
+      "family": "explicit-technology",
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "postgresql-performance",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"postgresql-performance\", got \"performance\"",
+        "EXTERNAL_REQUIRED_MISMATCH: expected true, got false"
+      ],
+      "classes": [
+        "RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_D1_WORKFLOW_COMPANION_TRAP",
+      "group": "D_DISTRACTOR",
+      "family": "false-activation-guard",
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "team-workflow-companion"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"documentation\", got \"security\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_D2_MODEL_STUDIO_TRAP",
+      "group": "D_DISTRACTOR",
+      "family": "false-activation-guard",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "ml-model-studio"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_D3_CLOUD_MIGRATOR_TRAP",
+      "group": "D_DISTRACTOR",
+      "family": "false-activation-guard",
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "cloud-database-migrator"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"performance\", got \"testing\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_D4_QUALITY_TOOLKIT_TRAP",
+      "group": "D_DISTRACTOR",
+      "family": "false-activation-guard",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "quality-testing-toolkit"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_E1_SIX_HUNDRED_SKILLS",
+      "group": "E_SCALE_ROBUSTNESS",
+      "family": "scale-invariance",
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_E2_MALFORMED_METADATA_MIX",
+      "group": "E_SCALE_ROBUSTNESS",
+      "family": "robustness",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "orphan-notes",
+          "broken-metadata"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_E3_DUPLICATE_IDENTITIES",
+      "group": "E_SCALE_ROBUSTNESS",
+      "family": "robustness",
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "python-data-pipeline",
+          "python-datapipeline"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_F1_BOARD_DECK_SUMMARY",
+      "group": "F_MODE0",
+      "family": "non-engineering",
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_F2_LEASE_TRANSLATION",
+      "group": "F_MODE0",
+      "family": "non-engineering",
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V4H_F3_STORY_RUBRIC_GRADING",
+      "group": "F_MODE0",
+      "family": "non-engineering",
+      "pass": true,
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "retrieved": false,
+        "ranked_primary": false,
+        "matched_identity_terms": []
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    }
+  ],
+  "label_correction": "classification labels recomputed post-hoc from stored case data after reporter fix; resolver was not re-executed; dataset remains burned"
+}
