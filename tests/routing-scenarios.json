@@ -1,44 +1,246 @@
 {
+  "version": 4,
+  "dataset": "calibration-v4",
+  "rules": {
+    "heldout_v2_reuse": false,
+    "heldout_v3_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
   "scenarios": [
     {
-      "id": "A_LARAVEL_SPECIALIST_INSTALLED",
-      "description": "Laravel project with Laravel specialist installed prefers Laravel specialist."
+      "id": "V4_001_GENERIC_DEBUG_TEST",
+      "family": "generic-debug-testing",
+      "description": "Generic software bug fix that explicitly asks for regression tests.",
+      "task": "Diagnose and fix these recurring software defects, and add regression tests that lock in the corrected behavior.",
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "B_LARAVEL_NO_SPECIALIST",
-      "description": "Laravel project without Laravel specialist uses generic fallback."
+      "id": "V4_002_DATABASE_PERFORMANCE",
+      "family": "database-performance",
+      "description": "Slow SQL query caused by missing index and degraded query performance.",
+      "task": "Our main listing query is slow under load; analyze the execution plan, add the missing database index, and optimize the related queries to bring back acceptable performance.",
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "C_FLUTTER_SPECIALIST",
-      "description": "Flutter project with Flutter specialist installed selects Flutter specialist."
+      "id": "V4_003_API_INTEGRATION",
+      "family": "api-integration",
+      "description": "Bounded third-party REST API integration implementation.",
+      "task": "Implement a bounded REST API integration with a third-party service, including retries with exponential backoff, pagination handling, and rate-limit safety.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "D_GENERIC_PYTHON_BUG",
-      "description": "Generic Python bug routes to debugging with testing support."
+      "id": "V4_004_LARAVEL_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "description": "composer.json proves Laravel; task text never names it. Reveals whether project evidence feeds specialist retrieval. Intentionally expected to fail against the current resolver; do not fix the resolver.",
+      "task": "Fix the incorrect discount total shown during checkout and add regression tests covering the corrected pricing behavior.",
+      "project_files": {
+        "composer.json": "{\n  \"name\": \"acme/shop-app\",\n  \"require\": {\n    \"php\": \">=8.1\",\n    \"laravel/framework\": \"^10.0\"\n  },\n  \"require-dev\": {\n    \"phpunit/phpunit\": \"^10.0\"\n  }\n}\n"
+      },
+      "external_skills": [
+        {
+          "directory": "laravel-development",
+          "name": "laravel-development",
+          "description": "Framework specialist for Laravel applications: Eloquent models, migrations, queues, validation, service container, Blade views, configuration, and testing conventions.",
+          "body": "# laravel-development\n\nUse this specialist when project evidence identifies a Laravel application.\n\n## Eloquent and Migrations\n\n## Queues and Jobs\n\n## Validation and Forms\n\n## HTTP and Routes\n\n## Testing Conventions\n"
+        }
+      ],
+      "expected": {
+        "mode": 2,
+        "primary": "laravel-development",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "E_PROJECT_LOCAL_PRECEDENCE",
-      "description": "Project-local skill wins over global duplicate."
+      "id": "V4_005_REACT_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "description": "package.json proves React; task text never names it. UI state/update defect diagnosis.",
+      "task": "Diagnose the UI defect where the cart badge state does not refresh after adding an item, and fix the stale update.",
+      "project_files": {
+        "package.json": "{\n  \"name\": \"shop-dashboard\",\n  \"private\": true,\n  \"dependencies\": {\n    \"react\": \"^18.2.0\",\n    \"react-dom\": \"^18.2.0\"\n  }\n}\n"
+      },
+      "external_skills": [
+        {
+          "directory": "react-development",
+          "name": "react-development",
+          "description": "Frontend specialist for React applications: function components, hooks, context, rendering behavior, state updates, and performance-sensitive UI patterns.",
+          "body": "# react-development\n\nUse this specialist when project evidence identifies a React codebase.\n\n## Components and Hooks\n\n## State Updates\n\n## Rendering Behavior\n\n## Testing Components\n"
+        }
+      ],
+      "expected": {
+        "mode": 2,
+        "primary": "react-development",
+        "support": "debugging",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "F_MEMORY_INFRASTRUCTURE_ONLY",
-      "description": "Memory-management is discovered but never selected as primary/support."
+      "id": "V4_006_SPRING_PROJECT_EVIDENCE",
+      "family": "project-evidence",
+      "description": "pom.xml proves Spring Boot; task text never names it. Backend behavior plus regression tests.",
+      "task": "Implement the overdue invoice reminder endpoint with proper authorization checks and add regression tests for the new backend behavior.",
+      "project_files": {
+        "pom.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\">\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>com.example</groupId>\n  <artifactId>billing-service</artifactId>\n  <version>1.0.0</version>\n  <parent>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-parent</artifactId>\n    <version>3.2.0</version>\n  </parent>\n  <dependencies>\n    <dependency>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-starter-web</artifactId>\n    </dependency>\n    <dependency>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-starter-test</artifactId>\n      <scope>test</scope>\n    </dependency>\n  </dependencies>\n</project>\n"
+      },
+      "external_skills": [
+        {
+          "directory": "spring-boot-development",
+          "name": "spring-boot-development",
+          "description": "Backend specialist for Spring Boot services: dependency injection, REST controllers, configuration, transactions, scheduling, and testing setup.",
+          "body": "# spring-boot-development\n\nUse this specialist when project evidence identifies a Spring Boot service.\n\n## Controllers and Endpoints\n\n## Configuration\n\n## Transactions\n\n## Testing Setup\n"
+        }
+      ],
+      "expected": {
+        "mode": 2,
+        "primary": "spring-boot-development",
+        "support": "testing",
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "G_UNRELATED_KEYWORD_OVERLAP",
-      "description": "Unrelated keyword-overlap skill is not selected."
+      "id": "V4_007_EXPLICIT_FLUTTER_SPECIALIST",
+      "family": "explicit-technology",
+      "description": "Task explicitly names Flutter with a matching installed external specialist.",
+      "task": "Build a new Flutter screen with paginated lists, pull-to-refresh behavior, offline caching, and accessible navigation between detail widgets.",
+      "external_skills": [
+        {
+          "directory": "flutter-development",
+          "name": "flutter-development",
+          "description": "Build and review Flutter applications: widgets, screens, navigation, state management, platform channels, and release tooling.",
+          "body": "# flutter-development\n\nUse this specialist when work targets Flutter applications.\n\n## Widgets and Screens\n\n## Navigation\n\n## State Management\n\n## Platform Channels\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "flutter-development",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "H_NO_RELEVANT_SPECIALIST",
-      "description": "No relevant specialist yields mode 0."
+      "id": "V4_008_UNRELATED_EXTERNAL_OVERLAP",
+      "family": "external-overlap-guard",
+      "description": "Generic documentation task with an installed unrelated skill whose SKILL.md carries broad generic vocabulary; it must not be selected.",
+      "task": "Write clear end-user documentation for the new billing settings page, including setup instructions and troubleshooting notes.",
+      "external_skills": [
+        {
+          "directory": "workflow-helper-toolkit",
+          "name": "workflow-helper-toolkit",
+          "description": "General productivity companion offering broad guidance for everyday digital work.",
+          "body": "# workflow-helper-toolkit\n\nBroad guidance collection for everyday digital work.\n\n## Build Workflows\n\n## Application Configuration\n\n## Review Checklist\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["workflow-helper-toolkit"],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "I_CROSS_CUTTING_SUPPORT",
-      "description": "Genuine cross-cutting task yields primary plus one support."
+      "id": "V4_009_NO_ENGINEERING_SPECIALIST",
+      "family": "non-engineering",
+      "description": "Clearly non-software-engineering request must yield mode 0.",
+      "task": "Classify this customer feedback message as positive, neutral, or negative sentiment, then produce a two-sentence business summary for the account manager.",
+      "expected": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
     },
     {
-      "id": "J_HUNDREDS_BOUNDED",
-      "description": "Hundreds of installed skills remain bounded and sparse."
+      "id": "V4_010_SECURITY_DIRECT_TASK",
+      "family": "security",
+      "description": "Direct security assessment of authentication and authorization controls.",
+      "task": "Assess the authentication and authorization controls protecting the admin panel, identify exploitable access weaknesses, and recommend fixes.",
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V4_011_LARGE_SKILL_INVENTORY",
+      "family": "scale-invariance",
+      "description": "320 generated irrelevant external skills must not disturb sparse routing or the two-specialist bound.",
+      "task": "Debug the intermittent export failure, find the root cause, and add regression tests covering the repaired path.",
+      "generated_external_skills": 320,
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V4_012_MALFORMED_EXTERNAL_METADATA",
+      "family": "robustness",
+      "description": "Malformed and frontmatter-less SKILL.md files must not crash the resolver; generic debugging still routes.",
+      "task": "Diagnose why every retry writes duplicate log entries, then remove the faulty duplicate-write path.",
+      "external_skills": [
+        {
+          "directory": "orphan-notes",
+          "raw_content": "Loose notes without any frontmatter.\nRandom reminders about errands and appointments.\nNothing here describes engineering capabilities.\n"
+        },
+        {
+          "directory": "broken-metadata",
+          "raw_content": "---\nname: broken-metadata\ndescription: [unclosed bracket\nThis file has an unterminated frontmatter block.\nThe parser must tolerate it gracefully.\n"
+        },
+        {
+          "directory": "weather-lookup",
+          "name": "weather-lookup",
+          "description": "Current conditions, forecasts, and severe weather alerts for travel planning.",
+          "body": "# weather-lookup\n\n## Forecasts\n\n## Alerts\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["broken-metadata", "orphan-notes"],
+        "max_specialists": 2
+      }
     }
   ]
 }
