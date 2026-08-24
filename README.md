@@ -1637,6 +1637,14 @@ The security gate exists to reinforce one rule:
 
 ---
 
+## Releases
+
+- [RELEASE-NOTES.md](RELEASE-NOTES.md)
+- [v0.2.0 release notes](docs/releases/v0.2.0.md)
+- [CHANGELOG.md](CHANGELOG.md)
+
+---
+
 ## Contributing
 
 Contributions are welcome.
