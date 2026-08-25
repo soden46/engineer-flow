@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/soden46/engineer-flow/tests/routing-heldout-v6-result.schema.json",
+  "title": "Engineer Flow Heldout V6 Result",
+  "type": "object",
+  "required": [
+    "benchmark_version",
+    "dataset",
+    "candidate",
+    "mechanism",
+    "dataset_status",
+    "generated_at",
+    "git_branch",
+    "git_commit",
+    "rules",
+    "metrics",
+    "group_metrics",
+    "failure_classes",
+    "retrieval_misses",
+    "ranking_misses",
+    "support_misses",
+    "mode_misses",
+    "false_frontend_ui_activations",
+    "false_testing_activations",
+    "false_external_activations",
+    "crashes",
+    "cases"
+  ],
+  "properties": {
+    "benchmark_version": {
+      "const": 6
+    },
+    "dataset": {
+      "const": "heldout-v6"
+    },
+    "candidate": {
+      "const": "v0.3.0-browser-ui-enrichment"
+    },
+    "mechanism": {
+      "const": "BROWSER_DRIVEN_UI_ENRICHMENT"
+    },
+    "dataset_status": {
+      "const": "burned"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "git_branch": {
+      "type": ["string", "null"]
+    },
+    "git_commit": {
+      "type": ["string", "null"]
+    },
+    "rules": {
+      "type": "object"
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "scenarios",
+        "mode_accuracy",
+        "primary_accuracy",
+        "support_accuracy",
+        "exact_route_accuracy",
+        "browser_ui_positive",
+        "browser_testing",
+        "ui_testing_composition",
+        "explicit_external_browser",
+        "browser_confusion_negative",
+        "screenshot_confusion_negative",
+        "false_frontend_ui_activation_count",
+        "false_testing_activation_count",
+        "false_external_activation_count",
+        "max_specialists_observed",
+        "max_specialists_invariant",
+        "resolver_crash_count",
+        "robustness_pass_rate"
+      ],
+      "properties": {
+        "scenarios": {
+          "const": 24
+        },
+        "mode_accuracy": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "primary_accuracy": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "support_accuracy": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "exact_route_accuracy": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "browser_ui_positive": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "browser_testing": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "ui_testing_composition": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "explicit_external_browser": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "browser_confusion_negative": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "screenshot_confusion_negative": {
+          "$ref": "#/$defs/nullableRatio"
+        },
+        "false_frontend_ui_activation_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "false_testing_activation_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "false_external_activation_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_specialists_observed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_specialists_invariant": {
+          "enum": ["PASS", "FAIL"]
+        },
+        "resolver_crash_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "robustness_pass_rate": {
+          "$ref": "#/$defs/nullableRatio"
+        }
+      },
+      "additionalProperties": false
+    },
+    "group_metrics": {
+      "type": "object"
+    },
+    "failure_classes": {
+      "type": "array"
+    },
+    "retrieval_misses": {
+      "$ref": "#/$defs/idArray"
+    },
+    "ranking_misses": {
+      "$ref": "#/$defs/idArray"
+    },
+    "support_misses": {
+      "$ref": "#/$defs/idArray"
+    },
+    "mode_misses": {
+      "$ref": "#/$defs/idArray"
+    },
+    "false_frontend_ui_activations": {
+      "$ref": "#/$defs/idArray"
+    },
+    "false_testing_activations": {
+      "$ref": "#/$defs/idArray"
+    },
+    "false_external_activations": {
+      "$ref": "#/$defs/idArray"
+    },
+    "crashes": {
+      "$ref": "#/$defs/idArray"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 24,
+      "maxItems": 24,
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "nullableRatio": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "idArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,406 @@
+{
+  "version": 6,
+  "dataset": "heldout-v6",
+  "status": "fresh",
+  "candidate": "v0.3.0-browser-ui-enrichment",
+  "freeze_notes": [
+    "Expected routing was authored before execution.",
+    "This suite targets browser-driven UI enrichment and lexical false-positive risk.",
+    "Do not tune resolver, frontend-ui, testing, or expected labels after first execution."
+  ],
+  "rules": {
+    "heldout_v4_reuse": false,
+    "heldout_v5_reuse": false,
+    "calibration_v4_reuse": false,
+    "expected_routing_frozen_before_execution": true,
+    "candidate_behavior_changes_allowed": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "scenarios": [
+    {
+      "id": "V6_A1_REFERENCE_DASHBOARD_RECONSTRUCTION",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "description": "Reference dashboard design reconstruction without durable test requirement.",
+      "task": "Open the reference analytics dashboard in a browser, inspect its spacing, typography, navigation density, component hierarchy, and responsive behavior, then rebuild a similar dashboard screen in the existing project without copying its logo or marketing copy.",
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_A2_CURRENT_APP_BROWSER_AUDIT",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "description": "Current rendered app inspection for responsive overflow and accessibility structure.",
+      "task": "Run the local settings page in a browser, inspect screenshots plus the DOM and accessibility tree, then fix the modal overflow and focus order problems visible on mobile.",
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_A3_SCREENSHOT_REFERENCE_NAVIGATION",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "description": "Screenshot reference used for navigation layout adaptation.",
+      "task": "Use the provided mobile navigation screenshot as a reference, extract the reusable layout and interaction pattern, and adapt our existing navigation component to match the visual rhythm across small and desktop viewports.",
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_A4_VISUAL_COMPARISON_ITERATION",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "description": "Visual comparison and iteration on existing UI.",
+      "task": "Compare the local profile page against the approved visual reference in the browser, adjust layout, colors, spacing, and empty-state treatment, then re-check the rendered result visually.",
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_B1_REFERENCE_UI_WITH_PLAYWRIGHT",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "description": "Reference UI reconstruction plus durable browser regression.",
+      "task": "Inspect the reference website in a browser, capture the dashboard screenshot, reconstruct the UI in this app, then add Playwright tests for the accepted desktop and mobile behavior.",
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_B2_RESPONSIVE_FORM_WITH_REGRESSION",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "description": "Responsive UI fix with browser regression protection.",
+      "task": "Fix the checkout form that collapses badly on narrow screens, verify the rendered browser behavior, and add a browser regression test so the submit flow and field errors stay usable.",
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_B3_ACCESSIBILITY_TREE_WITH_E2E",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "description": "Accessibility inspection followed by durable interaction coverage.",
+      "task": "Inspect the rendered accessibility tree for the onboarding wizard, repair missing labels and focus traps, and add E2E coverage for keyboard navigation through the wizard.",
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_B4_INTERACTIVE_SIDEBAR_WITH_NAV_TEST",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "description": "Interactive UI pattern plus navigation regression.",
+      "task": "Rebuild the interactive sidebar from the reference design, preserve our route wiring, verify hover and active states in the browser, and add Playwright coverage for navigation state.",
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_C1_CHECKOUT_PLAYWRIGHT_REGRESSION",
+      "group": "C_BROWSER_TESTING",
+      "family": "browser-testing",
+      "description": "Pure browser regression coverage for existing behavior.",
+      "task": "Add Playwright browser regression tests for the existing checkout journey, covering navigation, form submission, and web-first assertions without changing the UI implementation.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_C2_FLAKY_BROWSER_E2E_STABILIZATION",
+      "group": "C_BROWSER_TESTING",
+      "family": "browser-testing",
+      "description": "Stabilizing existing browser tests rather than redesigning UI.",
+      "task": "Stabilize the flaky browser E2E login tests by replacing brittle selectors with user-facing locators, deterministic setup, and better trace artifacts.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_C3_VISUAL_REGRESSION_TEST_SETUP",
+      "group": "C_BROWSER_TESTING",
+      "family": "browser-testing",
+      "description": "Visual regression testing for accepted page behavior.",
+      "task": "Add focused visual regression checks for the already-approved settings page states, using the project's existing browser test tooling and avoiding broad snapshot churn.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_D1_AGENT_BROWSER_EXPLICIT",
+      "group": "D_EXPLICIT_EXTERNAL_BROWSER",
+      "family": "explicit-external-browser",
+      "description": "Explicit agent-browser specialist should outrank generic frontend-ui.",
+      "task": "Use agent-browser to inspect the reference dashboard UI, capture browser screenshots, and map the reusable visual layout into this project.",
+      "external_skills": [
+        {
+          "directory": "agent-browser",
+          "name": "agent-browser",
+          "description": "Browser UI inspection specialist for rendered pages, screenshots, DOM snapshots, accessibility trees, and visual review.",
+          "body": "# agent-browser\n\n## Browser UI Inspection\n\n## Screenshots\n\n## DOM Snapshots\n\n## Accessibility Trees\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "agent-browser",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_D2_UI_INSPECTOR_PRO_EXPLICIT",
+      "group": "D_EXPLICIT_EXTERNAL_BROWSER",
+      "family": "explicit-external-browser",
+      "description": "Explicit UI inspector skill with separated name tokens.",
+      "task": "Please run ui inspector pro before rebuilding the product card layout from the reference page.",
+      "external_skills": [
+        {
+          "directory": "ui-inspector-pro",
+          "name": "ui-inspector-pro",
+          "description": "Specialist for rendered UI inspection, screenshots, component structure, responsive layout, and visual review.",
+          "body": "# ui-inspector-pro\n\n## Rendered UI Inspection\n\n## Responsive Layout\n\n## Visual Review\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "ui-inspector-pro",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_D3_BROWSER_AUDIT_SPECIALIST_EXPLICIT",
+      "group": "D_EXPLICIT_EXTERNAL_BROWSER",
+      "family": "explicit-external-browser",
+      "description": "Explicit browser audit specialist with colon separator variant.",
+      "task": "Use browser:audit:specialist for the reference-site visual inspection before implementing the new marketing page layout.",
+      "external_skills": [
+        {
+          "directory": "browser-audit-specialist",
+          "name": "browser-audit-specialist",
+          "description": "Browser audit specialist for UI screenshots, rendered layout review, accessibility tree checks, and responsive validation.",
+          "body": "# browser-audit-specialist\n\n## Browser Audit\n\n## Layout Review\n\n## Responsive Validation\n"
+        }
+      ],
+      "expected": {
+        "mode": 1,
+        "primary": "browser-audit-specialist",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_E1_BROWSER_USER_AGENT_API",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "description": "Browser wording in HTTP client behavior should not activate frontend-ui.",
+      "task": "Fix the outbound HTTP client bug where our custom browser user-agent header is rejected by the partner API, and keep retry and timeout behavior bounded.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_E2_BROWSER_CACHE_HEADERS",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "description": "Browser cache symptom but API header contract root concern.",
+      "task": "Correct the API cache-control headers that cause stale browser responses after profile updates, and document the response contract for clients.",
+      "expected": {
+        "mode": 2,
+        "primary": "api-integration",
+        "support": "documentation",
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_E3_PLAYWRIGHT_DEPENDENCY_UPGRADE",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "description": "Playwright browser package upgrade is dependency tooling, not browser test authoring.",
+      "task": "Upgrade the Playwright browser package versions and lockfile entries to resolve the CI install warning, without changing any test assertions.",
+      "expected": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_E4_USER_AGENT_ANALYTICS_IMPORT",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "description": "Browser user-agent data processing should not become UI work.",
+      "task": "Normalize browser user-agent strings in the monthly analytics import, deduplicate malformed rows, and keep the batch job resumable.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_F1_PDF_SCREENSHOT_EXPORT",
+      "group": "F_SCREENSHOT_CONFUSION_NEGATIVE",
+      "family": "screenshot-visual-confusion-negative",
+      "description": "Screenshot export job is file/data processing, not UI reconstruction.",
+      "task": "Fix the nightly job that generates screenshots of PDF invoices for audit exports, including retry handling for malformed documents.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_F2_VISUALIZE_QUERY_PLAN",
+      "group": "F_SCREENSHOT_CONFUSION_NEGATIVE",
+      "family": "screenshot-visual-confusion-negative",
+      "description": "Visualize query plan should route to performance/database.",
+      "task": "Visualize the database query plan for the slow revenue report, identify the missing index, and measure the performance improvement.",
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_F3_REFERENCE_ARCHITECTURE_DOCS",
+      "group": "F_SCREENSHOT_CONFUSION_NEGATIVE",
+      "family": "screenshot-visual-confusion-negative",
+      "description": "Reference website docs with visual diagram should not trigger UI implementation.",
+      "task": "Use the vendor reference website to update our architecture docs with a visual sequence diagram and clearer service-boundary explanation.",
+      "expected": {
+        "mode": 2,
+        "primary": "documentation",
+        "support": "architecture",
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_G1_TRANSACTION_CONSISTENCY",
+      "group": "G_V2_CONCERN_REGRESSION",
+      "family": "v2-concern-regression",
+      "description": "Database consistency regression guard without browser vocabulary.",
+      "task": "Make the wallet debit and ledger insert atomic under concurrent requests, and prevent duplicate settlement records.",
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_G2_N_PLUS_ONE_QUERY_REGRESSION",
+      "group": "G_V2_CONCERN_REGRESSION",
+      "family": "v2-concern-regression",
+      "description": "Performance/database routing regression guard.",
+      "task": "Find and fix the N+1 query in the customer list, add the missing index if needed, and measure query count before and after.",
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V6_G3_AUTHORIZATION_SECURITY_REVIEW",
+      "group": "G_V2_CONCERN_REGRESSION",
+      "family": "v2-concern-regression",
+      "description": "Direct security routing regression guard.",
+      "task": "Review the admin impersonation flow for authorization bypass, session leakage, and unsafe audit logging.",
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    }
+  ]
+}

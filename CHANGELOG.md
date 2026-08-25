@@ -7,6 +7,7 @@
 - Reference-driven UI reconstruction workflow that separates reusable visual patterns from third-party branding, assets, and content.
 - Browser/E2E/Playwright regression guidance in `testing`.
 - Routing regression coverage for browser-driven and reference-driven UI tasks.
+- Fresh heldout-v6 fixtures, runner, and result schema for browser/UI routing generalization.
 
 ### Preserved
 - Framework/language agnostic core.
