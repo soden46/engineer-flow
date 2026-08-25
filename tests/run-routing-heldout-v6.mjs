@@ -6,8 +6,8 @@
  * UI enrichment. This runner executes the production resolver as a
  * subprocess in an isolated environment per scenario. It must not be
  * run during suite authoring; after the first authorized execution the
- * dataset is considered BURNED and the written result records
- * dataset_status = "burned".
+ * dataset is considered BURNED and a one-time sentinel report is written
+ * before normal output.
  */
 
 import { spawnSync } from "node:child_process";
@@ -23,6 +23,8 @@ const RESOLVER =
 
 const HELDOUT_FILE = path.join(RUNNER_DIR, "routing-heldout-v6.json");
 const RESULT_SCHEMA_FILE = path.join(RUNNER_DIR, "routing-heldout-v6-result.schema.json");
+const BURN_SENTINEL_FILE =
+  path.join(REPO_ROOT, "benchmark-results", "heldout-v6-burned.json");
 
 const HELDOUT_VERSION = 6;
 const DATASET = "heldout-v6";
@@ -521,11 +523,12 @@ function classifyCase(caseResult) {
     }
   }
 
-  if (
-    (actual.external_used && !expected.external_required) ||
-    caseResult.failures.some((failure) => failure.startsWith("MUST_NOT_SELECT_VIOLATION"))
-  ) {
+  if (actual.external_used && !expected.external_required) {
     classes.push("FALSE_EXTERNAL_ACTIVATION");
+  }
+
+  if (caseResult.failures.some((failure) => failure.startsWith("MUST_NOT_SELECT_VIOLATION"))) {
+    classes.push("MUST_NOT_SELECT_VIOLATION");
   }
 
   if (selected(caseResult, "frontend-ui") && !expectedSelected(caseResult, "frontend-ui")) {
@@ -698,6 +701,41 @@ function runGit(gitArgs) {
 }
 
 /* =========================================================
+   ONE-TIME BURN SENTINEL
+   ========================================================= */
+
+function assertNotBurned() {
+  if (fs.existsSync(BURN_SENTINEL_FILE)) {
+    throw new FatalError(
+      `heldout-v6 has already been burned: ${BURN_SENTINEL_FILE}`
+    );
+  }
+}
+
+function writeBurnSentinel(report) {
+  const sentinelReport = {
+    ...report,
+    burn_sentinel: {
+      path: BURN_SENTINEL_FILE,
+      purpose: "prevents accidental second execution of heldout-v6"
+    }
+  };
+
+  fs.mkdirSync(path.dirname(BURN_SENTINEL_FILE), { recursive: true });
+
+  fs.writeFileSync(
+    BURN_SENTINEL_FILE,
+    `${JSON.stringify(sentinelReport, null, 2)}\n`,
+    {
+      encoding: "utf8",
+      flag: "wx"
+    }
+  );
+
+  return sentinelReport;
+}
+
+/* =========================================================
    MAIN
    ========================================================= */
 
@@ -716,6 +754,8 @@ function main() {
     console.log(fs.readFileSync(RESULT_SCHEMA_FILE, "utf8"));
     return;
   }
+
+  assertNotBurned();
 
   const fixtures = loadFixtures();
   const cases = [];
@@ -760,20 +800,23 @@ function main() {
     false_frontend_ui_activations: collectClassIds(cases, "FALSE_FRONTEND_UI_ACTIVATION"),
     false_testing_activations: collectClassIds(cases, "FALSE_TESTING_ACTIVATION"),
     false_external_activations: collectClassIds(cases, "FALSE_EXTERNAL_ACTIVATION"),
+    must_not_select_violations: collectClassIds(cases, "MUST_NOT_SELECT_VIOLATION"),
     crashes: collectClassIds(cases, "RESOLVER_CRASH"),
     cases
   };
+
+  const finalReport = writeBurnSentinel(report);
 
   if (options.write) {
     const writePath = path.resolve(options.write);
 
     fs.mkdirSync(path.dirname(writePath), { recursive: true });
 
-    fs.writeFileSync(writePath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+    fs.writeFileSync(writePath, `${JSON.stringify(finalReport, null, 2)}\n`, "utf8");
   }
 
   if (options.json) {
-    console.log(JSON.stringify(report, null, 2));
+    console.log(JSON.stringify(finalReport, null, 2));
   }
   else {
     console.log(`HELDOUT_VERSION=${HELDOUT_VERSION}`);
@@ -797,8 +840,9 @@ function main() {
     console.log(`MAX_SPECIALISTS_INVARIANT=${metrics.max_specialists_invariant}`);
     console.log(`RESOLVER_CRASH_COUNT=${metrics.resolver_crash_count}`);
     console.log(`ROBUSTNESS_PASS_RATE=${metrics.robustness_pass_rate}`);
+    console.log(`BURN_SENTINEL=${BURN_SENTINEL_FILE}`);
 
-    for (const [group, stats] of Object.entries(report.group_metrics)) {
+    for (const [group, stats] of Object.entries(finalReport.group_metrics)) {
       console.log(
         `GROUP_${group}: scenarios=${stats.scenarios}` +
         ` mode=${stats.mode_accuracy}` +

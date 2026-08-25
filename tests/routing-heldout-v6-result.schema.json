@@ -23,7 +23,9 @@
     "false_frontend_ui_activations",
     "false_testing_activations",
     "false_external_activations",
+    "must_not_select_violations",
     "crashes",
+    "burn_sentinel",
     "cases"
   ],
   "properties": {
@@ -166,8 +168,24 @@
     "false_external_activations": {
       "$ref": "#/$defs/idArray"
     },
+    "must_not_select_violations": {
+      "$ref": "#/$defs/idArray"
+    },
     "crashes": {
       "$ref": "#/$defs/idArray"
+    },
+    "burn_sentinel": {
+      "type": "object",
+      "required": ["path", "purpose"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     },
     "cases": {
       "type": "array",

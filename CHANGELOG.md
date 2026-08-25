@@ -8,6 +8,7 @@
 - Browser/E2E/Playwright regression guidance in `testing`.
 - Routing regression coverage for browser-driven and reference-driven UI tasks.
 - Fresh heldout-v6 fixtures, runner, and result schema for browser/UI routing generalization.
+- One-time heldout-v6 burn sentinel and separated `MUST_NOT_SELECT_VIOLATION` failure classification.
 
 ### Preserved
 - Framework/language agnostic core.

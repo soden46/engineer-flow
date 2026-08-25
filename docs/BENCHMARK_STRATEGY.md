@@ -62,6 +62,12 @@ Do not tune routing against the final heldout benchmark after evaluation begins.
 
 It is frozen for one-time execution and should not be run during authoring.
 
+The runner writes a one-time burn sentinel to:
+
+`benchmark-results/heldout-v6-burned.json`
+
+If that sentinel exists, the runner refuses to execute again.
+
 It targets:
 
 - true browser-driven UI work
