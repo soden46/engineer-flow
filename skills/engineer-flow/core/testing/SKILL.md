@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Design and execute automated tests, regression tests, integration tests, end-to-end tests, and verification using framework-agnostic principles.
+description: Design and execute automated tests, regression tests, browser tests, Playwright tests, integration tests, end-to-end tests, visual checks, responsive checks, and verification using framework-agnostic principles.
 metadata:
   internal: true
 ---
@@ -25,6 +25,41 @@ Use:
 - end-to-end tests only where broader system behavior must be proven
 
 Do not require every behavior to be tested at every layer.
+
+## Browser E2E Playwright Regression
+
+Use browser or end-to-end regression tests when important behavior can only be proven through the rendered application, real navigation, browser state, client-side interactions, or frontend/backend wiring.
+
+Browser regression coverage may be appropriate for:
+
+- critical user journeys
+- form validation and submission behavior
+- authentication-dependent navigation
+- frontend/backend contract wiring
+- client-side state transitions
+- browser-only rendering failures
+- responsive behavior that has broken before
+- accessibility-critical interaction paths
+
+Use the project's existing browser test tool when available. Playwright is a good default when the project already uses it or when the user asks for it, but do not introduce it solely because a browser was useful for manual inspection.
+
+Prefer resilient user-facing locators, deterministic setup, web-first assertions, and scoped traces or screenshots that help diagnose failures.
+
+## Visual Responsive Checks
+
+Visual and responsive verification can be manual, scripted, or snapshot-based depending on project risk and existing tooling.
+
+Verify relevant viewports, states, and interactions without creating brittle snapshot tests for every cosmetic detail.
+
+Use visual snapshots only when the project already supports them or when the changed surface justifies the maintenance cost.
+
+When a UI is reconstructed from a reference, convert only stable accepted behavior into durable tests. Do not encode third-party branding, exact marketing text, or incidental reference-site content as regression requirements unless the user explicitly owns or requires it.
+
+## Mobile Desktop Browser Tests
+
+When a task explicitly asks to verify mobile and desktop browser behavior with tests, treat that as durable browser regression scope.
+
+Cover the smallest representative viewport set that proves the behavior without turning layout preference into broad snapshot churn.
 
 ## Regression Protection
 

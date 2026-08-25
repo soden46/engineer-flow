@@ -59,6 +59,12 @@ Canonical capability registry:
 
 Internal capabilities remain framework and language agnostic.
 
+Browser-driven UI inspection and reference-driven UI reconstruction are part of the existing `frontend-ui` capability.
+
+Durable browser, E2E, Playwright, responsive, and visual regression coverage are part of the existing `testing` capability.
+
+These workflows enrich the 16-capability model without adding a new internal core.
+
 ## External Agent Skills
 
 Default shared root:

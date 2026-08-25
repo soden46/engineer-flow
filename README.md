@@ -46,6 +46,7 @@
 - [How It Works](#how-it-works)
 - [Core Capabilities](#core-capabilities)
 - [Project-Aware Routing](#project-aware-routing)
+- [Browser-Driven UI](#browser-driven-ui)
 - [External Skills](#external-skills)
 - [Persistent Memory](#persistent-memory)
 - [Minimal-Change Engineering](#minimal-change-engineering)
@@ -331,7 +332,7 @@ skills/engineer-flow/core/<capability>/SKILL.md
 | Architecture | Boundaries, dependency direction, modularity, interfaces, adapters, orchestration, and failure isolation. |
 | API & Integration | API contracts, external clients, webhooks, pagination, retries, timeouts, idempotency, and provider boundaries. |
 | Database | Schema, queries, transactions, consistency, locking, concurrency, migrations, and data integrity. |
-| Testing | Unit, integration, contract, end-to-end, regression, and risk-aware verification strategy. |
+| Testing | Unit, integration, contract, browser, Playwright, end-to-end, responsive, visual, regression, and risk-aware verification strategy. |
 | Performance | Latency, throughput, query count, N+1 issues, caching, memory pressure, batching, and resource use. |
 | Debugging | Reproduction, logs, stack traces, state inspection, data-flow tracing, hypotheses, and root-cause analysis. |
 | Code Quality & Refactoring | Duplication, naming, responsibilities, side effects, nesting, maintainability, and behavior-preserving restructuring. |
@@ -341,7 +342,7 @@ skills/engineer-flow/core/<capability>/SKILL.md
 | Version Control & Review | Diffs, commits, branches, merges, review workflow, change isolation, and staged-work awareness. |
 | Planning & Execution | Ordered implementation plans, task decomposition, risk sequencing, and verifiable execution steps. |
 | Documentation | README files, setup guides, runbooks, architecture notes, release notes, and accurate developer documentation. |
-| Frontend UI | Usability, accessibility, state, rendering, layout, interaction behavior, and user-facing regression risk. |
+| Frontend UI | Usability, accessibility, browser-driven inspection, reference-driven UI reconstruction, screenshots, DOM/accessibility trees, responsive behavior, state, rendering, layout, and interaction behavior. |
 | AI & LLM Engineering | LLM integrations, agents, prompts, embeddings, retrieval, evaluation, model workflows, AI pipelines, structured outputs, and tool boundaries. |
 | Security | Security boundaries, authentication, authorization, validation, injection, sensitive data, configuration, dependencies, and review gates. |
 
@@ -377,6 +378,26 @@ The Laravel specialist may become relevant through project evidence.
 No hardcoded framework-routing table is required.
 
 Current code and configuration remain authoritative over stale memory, generic assumptions, or broad skill descriptions.
+
+---
+
+## Browser-Driven UI
+
+Browser-driven UI work belongs to the existing `frontend-ui` capability, not a new core.
+
+When a browser-capable tool is available, Engineer Flow can inspect the rendered app, screenshots, DOM structure, accessibility tree, responsive behavior, interaction states, and console/runtime UI errors before or after implementation.
+
+For reference-driven UI reconstruction, Engineer Flow should:
+
+1. inspect the reference website, screenshot, or design
+2. extract reusable layout, spacing, typography, color, component, navigation, and interaction patterns
+3. separate visual language from third-party branding, proprietary assets, and exact copy
+4. inspect the target project stack and existing component system
+5. map the reference direction into the project conventions
+6. implement the smallest coherent UI change
+7. verify the local result in desktop and mobile browser contexts
+
+Durable browser or E2E regression coverage belongs to `testing` or a compatible external browser testing skill after the UI behavior has stabilized.
 
 ---
 
@@ -490,6 +511,7 @@ POST_DEVELOPMENT_SECURITY=ENABLED
 Additional checks used by the project include:
 
 ```bash
+npm run test:browser-ui-routing
 npm run test:normalization
 npm run benchmark:routing
 ```

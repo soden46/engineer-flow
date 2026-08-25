@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Browser-driven UI inspection guidance in `frontend-ui`.
+- Reference-driven UI reconstruction workflow for copying visual language without copying third-party branding or content.
+- Browser/E2E/Playwright regression guidance in `testing`.
+- Routing regression coverage for browser-driven and reference-driven UI tasks.
+
+### Preserved
+- Framework/language agnostic core.
+- Exactly 16 internal capabilities.
+- Maximum 2 specialists.
+- Mandatory post-development security review.
+
 ## v0.2.0 - 2026-08-24
 
 ### Added

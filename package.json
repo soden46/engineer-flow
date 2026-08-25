@@ -11,6 +11,7 @@
     "benchmark:routing": "node tests/run-routing-benchmark.mjs",
     "benchmark:heldout-v4": "node tests/run-routing-heldout-v4.mjs",
     "benchmark:heldout-v5": "node tests/run-routing-heldout-v5.mjs",
+    "test:browser-ui-routing": "node tests/browser-ui-routing.mjs",
     "test:normalization": "node tests/explicit-name-normalization.mjs"
   },
   "keywords": [
