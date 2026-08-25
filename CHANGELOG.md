@@ -4,7 +4,7 @@
 
 ### Added
 - Browser-driven UI inspection guidance in `frontend-ui`.
-- Reference-driven UI reconstruction workflow for copying visual language without copying third-party branding or content.
+- Reference-driven UI reconstruction workflow that separates reusable visual patterns from third-party branding, assets, and content.
 - Browser/E2E/Playwright regression guidance in `testing`.
 - Routing regression coverage for browser-driven and reference-driven UI tasks.
 
