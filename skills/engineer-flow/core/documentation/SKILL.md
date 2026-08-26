@@ -3,6 +3,19 @@ name: documentation
 description: Create and maintain accurate engineering documentation using project-agnostic documentation principles.
 metadata:
   internal: true
+routing_terms:
+  - readme
+  - guide
+  - runbook
+  - architecture note
+  - migration guide
+  - api reference
+  - example
+  - comment
+  - docs
+  - markdown
+  - setup guide
+  - tutorial
 ---
 
 # documentation

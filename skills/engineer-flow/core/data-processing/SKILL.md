@@ -3,6 +3,19 @@ name: data-processing
 description: Process, transform, import, export, and handle large datasets using bounded and reliable technology-agnostic patterns.
 metadata:
   internal: true
+routing_terms:
+  - import
+  - export
+  - transform
+  - batch
+  - stream
+  - pipeline
+  - normalize
+  - deduplicate
+  - ingest
+  - format
+  - record
+  - load
 ---
 
 # data-processing

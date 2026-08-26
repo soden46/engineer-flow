@@ -3,6 +3,19 @@ name: testing
 description: Design and execute automated tests, regression tests, browser tests, Playwright tests, integration tests, end-to-end tests, visual checks, responsive checks, and verification using framework-agnostic principles.
 metadata:
   internal: true
+routing_terms:
+  - test
+  - tests
+  - regression
+  - assertion
+  - fixture
+  - coverage
+  - e2e
+  - browser
+  - unit
+  - mock
+  - assert
+  - verify
 ---
 
 # Testing

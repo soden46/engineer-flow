@@ -3,6 +3,19 @@ name: infrastructure-devops
 description: Design and maintain deployment, runtime, CI/CD, containers, workers, scheduling, and operational infrastructure using platform-agnostic principles.
 metadata:
   internal: true
+routing_terms:
+  - deploy
+  - ci/cd
+  - container
+  - worker
+  - health check
+  - rollback
+  - canary
+  - runbook
+  - provision
+  - configure
+  - artifact
+  - runtime
 ---
 
 # infrastructure-devops

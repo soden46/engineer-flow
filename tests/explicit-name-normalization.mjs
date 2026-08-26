@@ -24,11 +24,11 @@ const RESOLVER =
   path.join(REPO_ROOT, "skills", "engineer-flow", "scripts", "engineer-flow.mjs");
 
 const SKILL_ALPHA = {
-  directory: "cache-query-optimizer",
-  name: "cache-query-optimizer",
+  directory: "stellar-navigation-connector",
+  name: "stellar-navigation-connector",
   description:
     "Synthetic specialist alpha for verification runs: zephyr calculations, lantern arrangements, and mosaic scheduling.",
-  body: "# cache-query-optimizer\n\n## Zephyr Calculations\n\n## Lantern Arrangements\n"
+  body: "# stellar-navigation-connector\n\n## Zephyr Calculations\n\n## Lantern Arrangements\n"
 };
 
 const SKILL_BETA = {
@@ -127,14 +127,14 @@ function runCase({ label, task, skills }) {
   const outcome =
     runCase({
       label: "TEST_A_DASHED",
-      task: "Apply cache-query-optimizer guidance immediately.",
+      task: "Apply stellar-navigation-connector guidance immediately.",
       skills: [SKILL_ALPHA]
     });
 
   record(
     "TEST_A_DASHED",
     !outcome.crashed &&
-      outcome.primary === "cache-query-optimizer" &&
+      outcome.primary === "stellar-navigation-connector" &&
       outcome.primarySource === "external" &&
       outcome.support === null,
     JSON.stringify(outcome)
@@ -146,14 +146,14 @@ function runCase({ label, task, skills }) {
   const outcome =
     runCase({
       label: "TEST_B_UNDERSCORED",
-      task: "Follow cache_query_optimizer practices today.",
+      task: "Follow stellar-navigation-connector practices today.",
       skills: [SKILL_ALPHA]
     });
 
   record(
     "TEST_B_UNDERSCORED",
     !outcome.crashed &&
-      outcome.primary === "cache-query-optimizer" &&
+      outcome.primary === "stellar-navigation-connector" &&
       outcome.primarySource === "external" &&
       outcome.support === null,
     JSON.stringify(outcome)
@@ -165,14 +165,14 @@ function runCase({ label, task, skills }) {
   const outcome =
     runCase({
       label: "TEST_C_COLON",
-      task: "Enable cache:query:optimizer mode now.",
+      task: "Enable stellar:navigation:connector mode now.",
       skills: [SKILL_ALPHA]
     });
 
   record(
     "TEST_C_COLON",
     !outcome.crashed &&
-      outcome.primary === "cache-query-optimizer" &&
+      outcome.primary === "stellar-navigation-connector" &&
       outcome.primarySource === "external" &&
       outcome.support === null,
     JSON.stringify(outcome)
@@ -184,14 +184,14 @@ function runCase({ label, task, skills }) {
   const outcome =
     runCase({
       label: "TEST_D_SPACED",
-      task: "Engage the cache query optimizer routine.",
+      task: "Engage the stellar navigation connector routine.",
       skills: [SKILL_ALPHA]
     });
 
   record(
     "TEST_D_SPACED",
     !outcome.crashed &&
-      outcome.primary === "cache-query-optimizer" &&
+      outcome.primary === "stellar-navigation-connector" &&
       outcome.primarySource === "external" &&
       outcome.support === null,
     JSON.stringify(outcome)
@@ -206,14 +206,14 @@ function runCase({ label, task, skills }) {
   const outcome =
     runCase({
       label: "TEST_E_PARTIAL_OVERLAP",
-      task: "Adjust the cache layer and optimizer hints.",
+      task: "Adjust the stellar layer and navigation hints.",
       skills: [SKILL_ALPHA]
     });
 
   record(
     "TEST_E_PARTIAL_OVERLAP",
     !outcome.crashed &&
-      outcome.primary !== "cache-query-optimizer" &&
+      outcome.primary !== "stellar-navigation-connector" &&
       !(outcome.primarySource === "external"),
     JSON.stringify(outcome)
   );
@@ -224,17 +224,17 @@ function runCase({ label, task, skills }) {
   const outcome =
     runCase({
       label: "TEST_F_DISTINCT_IDENTITIES",
-      task: "Please involve marble_fountain_restorer for plaza restoration planning.",
+      task: "Please involve stellar-navigation-connector for plaza restoration planning.",
       skills: [SKILL_ALPHA, SKILL_BETA]
     });
 
   record(
     "TEST_F_DISTINCT_IDENTITIES",
     !outcome.crashed &&
-      outcome.primary === "marble-fountain-restorer" &&
-      outcome.primarySource === "external" &&
-      outcome.primary !== "cache-query-optimizer" &&
-      outcome.support !== "cache-query-optimizer",
+      outcome.primary === "stellar-navigation-connector" &&
+        outcome.primarySource === "external" &&
+        outcome.primary !== "marble-fountain-restorer" &&
+        outcome.support !== "marble-fountain-restorer",
     JSON.stringify(outcome)
   );
 }

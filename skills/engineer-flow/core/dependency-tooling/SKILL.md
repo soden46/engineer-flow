@@ -3,6 +3,19 @@ name: dependency-tooling
 description: Manage application dependencies, build tooling, upgrades, and package configuration using ecosystem-agnostic principles.
 metadata:
   internal: true
+routing_terms:
+  - dependency
+  - package
+  - upgrade
+  - build tool
+  - lockfile
+  - transitive
+  - cve
+  - pin
+  - version
+  - release
+  - artifact
+  - runtime
 ---
 
 # dependency-tooling

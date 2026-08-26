@@ -3,6 +3,17 @@ name: ai-llm-engineering
 description: Design, integrate, evaluate, and operate AI/LLM systems using model- and framework-agnostic engineering principles.
 metadata:
   internal: true
+routing_terms:
+  - llm
+  - prompt
+  - embedding
+  - retrieval
+  - evaluation
+  - model
+  - agent
+  - pipeline
+  - temperature
+  - context window
 ---
 
 # ai-llm-engineering

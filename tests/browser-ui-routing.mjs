@@ -43,7 +43,7 @@ const CASES = [
       "Add Playwright browser regression tests for the rendered checkout journey, covering navigation, form submission, and web-first assertions.",
     expected: {
       primary: "testing",
-      support: null,
+      support: "frontend-ui",
       external: false
     }
   },

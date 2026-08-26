@@ -3,6 +3,19 @@ name: debugging
 description: Diagnose defects systematically using evidence-driven, technology-agnostic debugging practices.
 metadata:
   internal: true
+routing_terms:
+  - debug
+  - exception
+  - failure
+  - intermittent
+  - root cause
+  - reproduce
+  - log
+  - crash
+  - deadlock
+  - race
+  - inspect
+  - diagnose
 ---
 
 # debugging

@@ -1,0 +1,1206 @@
+{
+  "benchmark_version": 7,
+  "dataset": "calibration-v7",
+  "generated_at": "2026-08-25T12:21:24.098Z",
+  "git_branch": "v0.3.0",
+  "git_commit": "81803a74283e44648c5c32c5384dbf1b7299c1f8",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "heldout_v5_reuse": false,
+    "heldout_v6_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "metrics": {
+    "scenarios": 36,
+    "mode_accuracy": 0.8056,
+    "primary_accuracy": 0.5833,
+    "support_accuracy": 0.75,
+    "exact_route_accuracy": 0.5278,
+    "internal_primary_accuracy": 0.625,
+    "false_frontend_ui_activation_count": 0,
+    "false_testing_activation_count": 0,
+    "false_security_activation_count": 0,
+    "false_external_activation_count": 0,
+    "max_specialists_observed": 2,
+    "max_specialists_invariant": "PASS",
+    "resolver_crash_count": 0,
+    "robustness_pass_rate": 1,
+    "EXTERNAL_ROUTING_TERMS_POSITIVE_ACCURACY": 1,
+    "EXTERNAL_ROUTING_TERMS_NEGATIVE_ACCURACY": 1,
+    "LEGACY_EXTERNAL_POSITIVE_ACCURACY": 0,
+    "LEGACY_EXTERNAL_NEGATIVE_ACCURACY": 0,
+    "EXPLICIT_EXTERNAL_NAME_ACCURACY": 0,
+    "PROJECT_EVIDENCE_EXTERNAL_ACCURACY": 0
+  },
+  "group_metrics": {
+    "A_INTERNAL_TRUE_POSITIVE": {
+      "scenarios": 16,
+      "mode_accuracy": 0.875,
+      "primary_accuracy": 0.8125,
+      "support_accuracy": 0.875,
+      "exact_route_accuracy": 0.8125
+    },
+    "B_SUPPORT_COMPOSITION": {
+      "scenarios": 6,
+      "mode_accuracy": 0.3333,
+      "primary_accuracy": 0.1667,
+      "support_accuracy": 0,
+      "exact_route_accuracy": 0
+    },
+    "C_LEXICAL_CONFUSION": {
+      "scenarios": 8,
+      "mode_accuracy": 1,
+      "primary_accuracy": 0.5,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 0.5
+    },
+    "D_EXTERNAL_ROUTING": {
+      "scenarios": 6,
+      "mode_accuracy": 0.8333,
+      "primary_accuracy": 0.5,
+      "support_accuracy": 0.8333,
+      "exact_route_accuracy": 0.3333
+    }
+  },
+  "external_metrics": {
+    "EXTERNAL_ROUTING_TERMS_POSITIVE_ACCURACY": 1,
+    "EXTERNAL_ROUTING_TERMS_NEGATIVE_ACCURACY": 1,
+    "LEGACY_EXTERNAL_POSITIVE_ACCURACY": 0,
+    "LEGACY_EXTERNAL_NEGATIVE_ACCURACY": 0,
+    "EXPLICIT_EXTERNAL_NAME_ACCURACY": 0,
+    "PROJECT_EVIDENCE_EXTERNAL_ACCURACY": 0
+  },
+  "failure_classes": [
+    {
+      "class": "PRIMARY_RETRIEVAL_MISS",
+      "count": 12
+    },
+    {
+      "class": "SUPPORT_SELECTION_MISS",
+      "count": 9
+    },
+    {
+      "class": "MODE_SELECTION_MISS",
+      "count": 7
+    },
+    {
+      "class": "OTHER",
+      "count": 3
+    }
+  ],
+  "must_not_select_violations": [],
+  "false_frontend_ui_activations": [],
+  "false_testing_activations": [],
+  "false_security_activations": [],
+  "false_external_activations": [],
+  "crashes": [],
+  "cases": [
+    {
+      "id": "V7_SECURITY_01_INJECTION_REVIEW",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "security-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_TESTING_02_UNIT_TEST_GAP",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "testing-true-positive",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"testing\", got \"architecture\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_DATABASE_03_MIGRATION_INDEX",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "database-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_PERFORMANCE_04_QUERY_SLOW",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "performance-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_CODE_QUALITY_05_LEGACY_REFACTOR",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "code-quality-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_API_INTEGRATION_06_WEBHOOK_RETRY",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "api-integration-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_ARCHITECTURE_07_SERVICE_BOUNDARY",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "architecture-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_DATA_PROCESSING_08_CSV_PIPELINE",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "data-processing-true-positive",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "database",
+        "support": "data-processing",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "PRIMARY_MISMATCH: expected \"data-processing\", got \"database\"",
+        "SUPPORT_MISMATCH: expected null, got \"data-processing\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_DEPENDENCY_TOOLING_09_UPGRADE_SCRIPT",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "dependency-tooling-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_INFRASTRUCTURE_10_DEPLOY_ROLLBACK",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "infrastructure-true-positive",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "infrastructure-devops",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "documentation",
+        "support": "infrastructure-devops",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "PRIMARY_MISMATCH: expected \"infrastructure-devops\", got \"documentation\"",
+        "SUPPORT_MISMATCH: expected null, got \"infrastructure-devops\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_DEBUGGING_11_INTERMITTENT_CRASH",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "debugging-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_VERSION_CONTROL_12_RELEASE_NOTES",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "version-control-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "version-control-review",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "version-control-review",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_PLANNING_EXECUTION_13_SPRINT_BREAKDOWN",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "planning-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "planning-execution",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "planning-execution",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_DOCUMENTATION_14_API_REFERENCE",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "documentation-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_FRONTEND_UI_15_DASHBOARD_WIDGET",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "frontend-ui-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_AI_LLM_16_PROMPT_EVALUATION",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "ai-llm-true-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_B1_DEBUGGING_TESTING_DEADLOCK",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "debugging-testing-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"debugging\", got \"database\"",
+        "SUPPORT_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_B2_ARCHITECTURE_DOCUMENTATION_SERVICE_SPLIT",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "architecture-documentation-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "architecture",
+        "support": "documentation",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "api-integration",
+        "support": "architecture",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"architecture\", got \"api-integration\"",
+        "SUPPORT_MISMATCH: expected \"documentation\", got \"architecture\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_B3_API_INTEGRATION_SECURITY_PAYMENT_WEBHOOK",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "api-integration-security-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "api-integration",
+        "support": "security",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"api-integration\", got \"security\"",
+        "SUPPORT_MISMATCH: expected \"security\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_B4_PERFORMANCE_DATABASE_AGGREGATE_SLOW",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "performance-database-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"performance\", got \"database\"",
+        "SUPPORT_MISMATCH: expected \"database\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_B5_INFRASTRUCTURE_DEPENDENCY_CANARY_DEPLOY",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "infrastructure-dependency-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "infrastructure-devops",
+        "support": "dependency-tooling",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "dependency-tooling",
+        "support": "infrastructure-devops",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"infrastructure-devops\", got \"dependency-tooling\"",
+        "SUPPORT_MISMATCH: expected \"dependency-tooling\", got \"infrastructure-devops\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_B6_AI_LLM_TESTING_EVALUATION_SUITE",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "ai-llm-testing-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "ai-llm-engineering",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C1_SECURITY_VOCABULARY_DATA_CLEANSING",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "security-lexical-confusion",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "security"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"data-processing\", got \"database\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C2_TESTING_VOCABULARY_EXPORT_VALIDATION",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "testing-lexical-confusion",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "testing"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C3_DATABASE_VOCABULARY_EVENT_REFACTOR",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "database-lexical-confusion",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "database"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"code-quality-refactoring\", got \"api-integration\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C4_PERFORMANCE_VOCABULARY_CSV_FORMATTER",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "performance-lexical-confusion",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "performance"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C5_FRONTEND_VOCABULARY_TERMINAL_REPORT",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "frontend-ui-lexical-confusion",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"data-processing\", got \"database\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C6_DOCUMENTATION_VOCABULARY_MODULE_REFACTOR",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "documentation-lexical-confusion",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "documentation"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C7_API_VOCABULARY_BULK_PROCESSOR",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "api-integration-lexical-confusion",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "api-integration"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"data-processing\", got \"database\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_C8_MEMORY_VOCABULARY_TRANSACTION_MEMO",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "performance-lexical-confusion",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "performance"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_D1_EXTERNAL_ROUTING_TERMS_POSITIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "external-routing-terms-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "payment-gateway-auditor",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "payment-gateway-auditor",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_D2_EXTERNAL_ROUTING_TERMS_NEGATIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "external-routing-terms-negative",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "social-media-analyzer"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_D3_LEGACY_EXTERNAL_POSITIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "legacy-external-positive",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "legacy-edi-translator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "Legacy EDI Translator",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"legacy-edi-translator\", got \"Legacy EDI Translator\""
+      ],
+      "classes": [
+        "OTHER"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_D4_LEGACY_EXTERNAL_NEGATIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "legacy-external-negative",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "generic-xml-parser"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "database",
+        "support": "performance",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "SUPPORT_MISMATCH: expected null, got \"performance\""
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_D5_EXPLICIT_EXTERNAL_NAME",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "explicit-external-name",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "invoice-template-generator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "Invoice Template Generator",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"invoice-template-generator\", got \"Invoice Template Generator\""
+      ],
+      "classes": [
+        "OTHER"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V7_D6_PROJECT_EVIDENCE_EXTERNAL",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "project-evidence-external",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "geocoding-service-client",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"geocoding-service-client\", got \"data-processing\"",
+        "EXTERNAL_REQUIRED_MISMATCH: expected true, got false"
+      ],
+      "classes": [
+        "OTHER"
+      ],
+      "response_max_specialists": 2
+    }
+  ],
+  "candidate": "EXPLICIT_ROUTING_METADATA_INITIAL",
+  "dataset_sha256": "003F36FDCFA17236E24B89049E35B8F8F09F1D0639778B0B2C3E876AA361942B",
+  "runner_sha256": "F7FE8C6CD0C12CAE328B037CB3B904BEF6BB4AED01DA95714FD6E9332F9AC05B",
+  "scenarios": 36,
+  "mode_accuracy": 0.8056,
+  "primary_accuracy": 0.5833,
+  "support_accuracy": 0.75,
+  "exact_route_accuracy": 0.5278,
+  "internal_primary_accuracy": 0.625,
+  "false_frontend_ui_activation_count": 0,
+  "false_testing_activation_count": 0,
+  "false_security_activation_count": 0,
+  "false_external_activation_count": 0,
+  "max_specialists_observed": 2,
+  "max_specialists_invariant": "PASS",
+  "resolver_crash_count": 0,
+  "robustness_pass_rate": 1
+}

@@ -1,0 +1,614 @@
+{
+  "version": 7,
+  "dataset": "calibration-v7",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "heldout_v5_reuse": false,
+    "heldout_v6_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "scenarios": [
+    {
+      "id": "V7_SECURITY_01_INJECTION_REVIEW",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "security-true-positive",
+      "description": "Review a data import endpoint for SQL injection and unsafe deserialization.",
+      "task": "Review the new customer import endpoint for SQL injection, unsafe deserialization, and authorization bypass risks, then produce a security review report with remediation steps.",
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_TESTING_02_UNIT_TEST_GAP",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "testing-true-positive",
+      "description": "Add missing unit tests for a payment calculation module.",
+      "task": "Add missing unit tests for the payment calculation module, covering edge cases for refunds, discounts, and tax rounding, and wire them into the existing test runner.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_DATABASE_03_MIGRATION_INDEX",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "database-true-positive",
+      "description": "Add a database migration with a partial index and backfill strategy.",
+      "task": "Add a database migration that creates a partial index on active subscriptions, writes a backfill script for existing rows, and verifies query plan improvement.",
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_PERFORMANCE_04_QUERY_SLOW",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "performance-true-positive",
+      "description": "Diagnose a slow report query and reduce p95 latency.",
+      "task": "Diagnose why the monthly revenue report query is slow, profile the execution plan, and reduce p95 latency without changing report semantics.",
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_CODE_QUALITY_05_LEGACY_REFACTOR",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "code-quality-true-positive",
+      "description": "Refactor a legacy order service into smaller focused modules.",
+      "task": "Refactor the legacy order service into smaller focused modules, extract shared validation rules, and remove duplicated status constants while preserving behavior.",
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_API_INTEGRATION_06_WEBHOOK_RETRY",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "api-integration-true-positive",
+      "description": "Add retry and timeout handling for an external shipping webhook.",
+      "task": "Add retry, timeout, and idempotency handling for the external shipping webhook, including schema validation for incoming payloads.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_ARCHITECTURE_07_SERVICE_BOUNDARY",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "architecture-true-positive",
+      "description": "Define service boundaries between billing and notification modules.",
+      "task": "Define service boundaries between billing and notification modules, document the contract, and propose a dependency direction that avoids circular imports.",
+      "expected": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_DATA_PROCESSING_08_CSV_PIPELINE",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "data-processing-true-positive",
+      "description": "Build a CSV ingestion pipeline with validation and error reporting.",
+      "task": "Build a CSV ingestion pipeline that validates headers, normalizes date formats, rejects bad rows with structured errors, and streams results into the database.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_DEPENDENCY_TOOLING_09_UPGRADE_SCRIPT",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "dependency-tooling-true-positive",
+      "description": "Upgrade a build toolchain and fix breaking changes.",
+      "task": "Upgrade the build toolchain, update deprecated plugin APIs, fix breaking changes in generated artifacts, and verify the CI pipeline still passes.",
+      "expected": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_INFRASTRUCTURE_10_DEPLOY_ROLLBACK",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "infrastructure-true-positive",
+      "description": "Automate deployment with health checks and rollback.",
+      "task": "Automate deployment with preflight health checks, a canary release step, automatic rollback on failure, and runbook documentation for on-call engineers.",
+      "expected": {
+        "mode": 1,
+        "primary": "infrastructure-devops",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_DEBUGGING_11_INTERMITTENT_CRASH",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "debugging-true-positive",
+      "description": "Diagnose an intermittent worker crash under load.",
+      "task": "Diagnose an intermittent background worker crash under load, add structured logging with correlation IDs, and implement a retry policy with backoff.",
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_VERSION_CONTROL_12_RELEASE_NOTES",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "version-control-true-positive",
+      "description": "Automate changelog generation from merge request metadata.",
+      "task": "Automate changelog generation from merge request metadata, enforce conventional commit formatting, and add a release-draft workflow for the next patch.",
+      "expected": {
+        "mode": 1,
+        "primary": "version-control-review",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_PLANNING_EXECUTION_13_SPRINT_BREAKDOWN",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "planning-true-positive",
+      "description": "Break a feature request into implementable tickets with acceptance criteria.",
+      "task": "Break the new subscription renewal feature request into implementable tickets with acceptance criteria, dependency order, and effort estimates for the next sprint.",
+      "expected": {
+        "mode": 1,
+        "primary": "planning-execution",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_DOCUMENTATION_14_API_REFERENCE",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "documentation-true-positive",
+      "description": "Write API reference documentation with request and response examples.",
+      "task": "Write API reference documentation for the new inventory endpoints, including request examples, response schemas, error codes, and authentication requirements.",
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_FRONTEND_UI_15_DASHBOARD_WIDGET",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "frontend-ui-true-positive",
+      "description": "Implement a reusable dashboard widget with responsive layout.",
+      "task": "Implement a reusable dashboard widget that displays fulfillment metrics, supports responsive layout changes, and follows the existing design system tokens.",
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_AI_LLM_16_PROMPT_EVALUATION",
+      "group": "A_INTERNAL_TRUE_POSITIVE",
+      "family": "ai-llm-true-positive",
+      "description": "Evaluate prompt variants for a customer support classifier.",
+      "task": "Evaluate prompt variants for the customer support classifier, compare accuracy and latency across temperature settings, and recommend a production prompt template.",
+      "expected": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_B1_DEBUGGING_TESTING_DEADLOCK",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "debugging-testing-composition",
+      "description": "Diagnose a database connection pool deadlock and add regression tests.",
+      "task": "Diagnose why the nightly reconciliation worker deadlocks on the database connection pool, reproduce it in a test, and add regression tests that run in CI under the same load profile.",
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_B2_ARCHITECTURE_DOCUMENTATION_SERVICE_SPLIT",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "architecture-documentation-composition",
+      "description": "Split a monolith module into services and update developer docs.",
+      "task": "Split the monolithic inventory module into separate stock and pricing services, define the new API contract, and update the developer onboarding docs to reflect the new module boundaries.",
+      "expected": {
+        "mode": 2,
+        "primary": "architecture",
+        "support": "documentation",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_B3_API_INTEGRATION_SECURITY_PAYMENT_WEBHOOK",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "api-integration-security-composition",
+      "description": "Harden an external payment webhook against replay and tampering.",
+      "task": "Harden the external payment webhook by adding signature verification, replay-attack prevention, and rate limiting, then update the integration tests to cover the new security controls.",
+      "expected": {
+        "mode": 2,
+        "primary": "api-integration",
+        "support": "security",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_B4_PERFORMANCE_DATABASE_AGGREGATE_SLOW",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "performance-database-composition",
+      "description": "Fix a slow materialized view refresh and add a migration.",
+      "task": "Fix the slow nightly materialized view refresh by rewriting the aggregation query, add a migration to backfill missing partitions, and validate query plans on staging.",
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_B5_INFRASTRUCTURE_DEPENDENCY_CANARY_DEPLOY",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "infrastructure-dependency-composition",
+      "description": "Add a canary deploy pipeline and pin production dependency versions.",
+      "task": "Add a canary deployment pipeline with automated rollback, then pin production dependency versions and audit transitive dependencies for known CVEs before the next release.",
+      "expected": {
+        "mode": 2,
+        "primary": "infrastructure-devops",
+        "support": "dependency-tooling",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_B6_AI_LLM_TESTING_EVALUATION_SUITE",
+      "group": "B_SUPPORT_COMPOSITION",
+      "family": "ai-llm-testing-composition",
+      "description": "Build an evaluation harness for a retrieval-augmented generation pipeline.",
+      "task": "Build an evaluation harness for the retrieval-augmented generation pipeline, add regression tests for prompt and chunking variants, and measure accuracy drift across model updates.",
+      "expected": {
+        "mode": 2,
+        "primary": "ai-llm-engineering",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C1_SECURITY_VOCABULARY_DATA_CLEANSING",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "security-lexical-confusion",
+      "description": "Sanitize uploaded address data before import.",
+      "task": "Sanitize a batch of user-uploaded address records by escaping special characters, removing control sequences, and normalizing whitespace before loading them into the shipping database.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["security"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C2_TESTING_VOCABULARY_EXPORT_VALIDATION",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "testing-lexical-confusion",
+      "description": "Implement an export endpoint with business validations.",
+      "task": "Implement a new export endpoint that verifies the requesting tenant is active, asserts the date range is valid, and checks that the output format is supported before generating the CSV.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["testing"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C3_DATABASE_VOCABULARY_EVENT_REFACTOR",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "database-lexical-confusion",
+      "description": "Restructure an audit event envelope and backfill legacy events.",
+      "task": "Restructure the pricing audit event envelope, write a historical replay script for legacy events, and add idempotency keys to prevent duplicate entries.",
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["database"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C4_PERFORMANCE_VOCABULARY_CSV_FORMATTER",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "performance-lexical-confusion",
+      "description": "Extend a CSV formatter with batch and streaming behavior.",
+      "task": "Add a batch mode to the CSV export formatter that groups rows into pages, streams each page to the client as it completes, and avoids recreating the template parser for every row.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["performance"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C5_FRONTEND_VOCABULARY_TERMINAL_REPORT",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "frontend-ui-lexical-confusion",
+      "description": "Format a reconciliation report for terminal output.",
+      "task": "Render the reconciliation report as a fixed-width text table with aligned columns, display totals at the bottom of each section, and show a summary block when the output is piped to the terminal.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["frontend-ui"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C6_DOCUMENTATION_VOCABULARY_MODULE_REFACTOR",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "documentation-lexical-confusion",
+      "description": "Refactor an order module and clean up stale comments.",
+      "task": "Refactor the order module to separate validation from persistence, introduce typed error codes for each failure path, and clean up obsolete inline comment blocks throughout the module.",
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["documentation"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C7_API_VOCABULARY_BULK_PROCESSOR",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "api-integration-lexical-confusion",
+      "description": "Build a bulk record processor with queue-based input.",
+      "task": "Build a bulk record processor that reads batches from the internal job queue, validates each record against the legacy schema, and writes a structured result file with per-record status codes.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["api-integration"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_C8_MEMORY_VOCABULARY_TRANSACTION_MEMO",
+      "group": "C_LEXICAL_CONFUSION",
+      "family": "performance-lexical-confusion",
+      "description": "Add a transaction memo table for join correctness.",
+      "task": "Add a transaction memo table that stores intermediate calculation results between joins, preserves ordering guarantees for dependent queries, and evicts stale entries when source data changes.",
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["performance"],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V7_D1_EXTERNAL_ROUTING_TERMS_POSITIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "external-routing-terms-positive",
+      "description": "Audit a payment gateway integration for PCI compliance gaps.",
+      "task": "Audit the payment gateway integration for PCI compliance gaps, review how card data is logged and reconciled, and recommend remediation steps.",
+      "expected": {
+        "mode": 1,
+        "primary": "payment-gateway-auditor",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "payment-gateway-auditor",
+          "name": "Payment Gateway Auditor",
+          "description": "Audit payment gateway integrations for PCI DSS compliance, verify card data handling, and review reconciliation logs.",
+          "routing_terms": ["payment gateway", "PCI compliance", "audit", "merchant", "card data", "reconciliation"],
+          "raw_content": "---\nname: payment-gateway-auditor\ndescription: Audit payment gateway integrations for PCI DSS compliance, verify card data handling, and review reconciliation logs.\nrouting_terms:\n  - payment gateway\n  - PCI compliance\n  - audit\n  - merchant\n  - card data\n  - reconciliation\n---\n\nUse this skill when working with payment gateway integrations, PCI compliance reviews, or card data handling audits.\n"
+        },
+        {
+          "directory": "social-media-analyzer",
+          "name": "Social Media Analyzer",
+          "description": "Analyze social media engagement, follower growth, viral content, and campaign sentiment.",
+          "routing_terms": ["social media", "engagement", "followers", "viral", "sentiment", "campaign"],
+          "raw_content": "---\nname: social-media-analyzer\ndescription: Analyze social media engagement, follower growth, viral content, and campaign sentiment.\nrouting_terms:\n  - social media\n  - engagement\n  - followers\n  - viral\n  - sentiment\n  - campaign\n---\n\nUse this skill when analyzing social media metrics or campaign performance.\n"
+        }
+      ]
+    },
+    {
+      "id": "V7_D2_EXTERNAL_ROUTING_TERMS_NEGATIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "external-routing-terms-negative",
+      "description": "Refactor a log aggregation pipeline without activating an irrelevant social media skill.",
+      "task": "Refactor the log aggregation pipeline to batch events by service, deduplicate repeated error stacks, and write a structured summary file for downstream indexing.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["social-media-analyzer"],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "social-media-analyzer",
+          "name": "Social Media Analyzer",
+          "description": "Analyze social media engagement, follower growth, viral content, and campaign sentiment.",
+          "routing_terms": ["social media", "engagement", "followers", "viral", "sentiment", "campaign"],
+          "raw_content": "---\nname: social-media-analyzer\ndescription: Analyze social media engagement, follower growth, viral content, and campaign sentiment.\nrouting_terms:\n  - social media\n  - engagement\n  - followers\n  - viral\n  - sentiment\n  - campaign\n---\n\nUse this skill when analyzing social media metrics or campaign performance.\n"
+        }
+      ]
+    },
+    {
+      "id": "V7_D3_LEGACY_EXTERNAL_POSITIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "legacy-external-positive",
+      "description": "Translate incoming EDI 850 purchase orders using a legacy external skill.",
+      "task": "Translate incoming EDI 850 purchase orders into the internal order format, validate control numbers, and log parse failures for the operations team.",
+      "expected": {
+        "mode": 1,
+        "primary": "legacy-edi-translator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "project_files": {
+        "edi/samples/order-850.edi": "ISA*00*          *00*          *ZZ*SUBMITTER     *ZZ*RECEIVER      *210101*1253*U*00401*000000001*0*P*>\nGS*PO*SUBMITTER*RECEIVER*20210101*1253*1*X*004010\nST*850*0001\nBEG*00*SA*PO12345**20210101\nREF*VR*VENDOR123\nITD*01*3*2**30**45\nDTM*011*20210101\nN1*BY*ACME CORP*92*CUST001\nN3*123 MAIN STREET\nN4*METROPOLIS*IL*12345*US\nPO1*1*10*EA*15.50*PE*BP*ITEM001\nPID*F****DESCRIPTION OF ITEM\nPO4*10*EA\nCTT*1\nSE*17*0001\nGE*1*1\nIEA*1*000000001\n"
+      },
+      "external_skills": [
+        {
+          "directory": "legacy-edi-translator",
+          "name": "Legacy EDI Translator",
+          "description": "Translate legacy EDI documents into internal data formats and validate control numbers.",
+          "body": "Use this skill when importing or exporting EDI documents."
+        }
+      ]
+    },
+    {
+      "id": "V7_D4_LEGACY_EXTERNAL_NEGATIVE",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "legacy-external-negative",
+      "description": "Fix a slow reporting query without activating an irrelevant legacy XML parser.",
+      "task": "Fix the slow reporting query by adding a covering index and rewriting the projection to avoid unnecessary XML serialization in the response path.",
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": ["generic-xml-parser"],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "generic-xml-parser",
+          "name": "Generic XML Parser",
+          "description": "Parse generic XML documents into JSON or dictionary structures.",
+          "body": "Use this skill when converting XML payloads into application data."
+        }
+      ]
+    },
+    {
+      "id": "V7_D5_EXPLICIT_EXTERNAL_NAME",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "explicit-external-name",
+      "description": "Use an explicitly named external invoice template generator.",
+      "task": "Use invoice_template_generator to generate invoice templates from order data and validate line-item totals against the pricing service.",
+      "expected": {
+        "mode": 1,
+        "primary": "invoice-template-generator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "invoice-template-generator",
+          "name": "Invoice Template Generator",
+          "description": "Generate invoice templates from order data and validate line-item totals."
+        }
+      ]
+    },
+    {
+      "id": "V7_D6_PROJECT_EVIDENCE_EXTERNAL",
+      "group": "D_EXTERNAL_ROUTING",
+      "family": "project-evidence-external",
+      "description": "Normalize addresses using project evidence that points to a geocoding external skill.",
+      "task": "Normalize a batch of customer addresses for shipping route optimization, using the existing address validation pipeline and preserving legacy postal codes.",
+      "expected": {
+        "mode": 1,
+        "primary": "geocoding-service-client",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "project_files": {
+        "config/address-validation.yaml": "service: geocoding-service-client\nendpoint: https://geo.internal.example.com/v1/validate\nbatch_size: 250\ntimeout_ms: 4000\nlegacy_postal_code_preservation: true\n"
+      },
+      "external_skills": [
+        {
+          "directory": "geocoding-service-client",
+          "name": "Geocoding Service Client",
+          "description": "Validate and normalize addresses using the internal geocoding service for shipping route optimization."
+        }
+      ]
+    }
+  ]
+}

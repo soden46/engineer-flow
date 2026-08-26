@@ -3,6 +3,18 @@ name: performance
 description: Diagnose and improve runtime performance including N+1 queries, slow queries, caching, latency, memory, throughput, and resource efficiency using framework-agnostic principles.
 metadata:
   internal: true
+routing_terms:
+  - latency
+  - throughput
+  - optimize
+  - slow
+  - profile
+  - cache
+  - memory
+  - bottleneck
+  - scale
+  - resource
+  - efficiency
 ---
 
 # Performance

@@ -93,6 +93,10 @@ const PROJECT_EVIDENCE_MANIFEST_NAMES = new Set([
    TEXT / METADATA
    ========================================================= */
 
+const ROUTING_TERM_WEIGHT = 1;
+
+const NAME_MATCH_WEIGHT = 1;
+
 const STOP = new Set([
   "the","a","an","and","or","to","of","for","in","on",
   "with","using","use","this","that","from","into","by",
@@ -123,35 +127,78 @@ function frontmatter(text) {
   }
 
   const result = {};
+  const lines =
+    match[1].split(/\r?\n/);
 
   for (
-    const line of
-    match[1].split(/\r?\n/)
+    let index = 0;
+    index < lines.length;
+    index++
   ) {
-    const index =
+    const line =
+      lines[index];
+
+    const colonIndex =
       line.indexOf(":");
 
-    if (index < 0) {
+    if (colonIndex < 0) {
       continue;
     }
 
     const key =
       line
-        .slice(0,index)
+        .slice(0, colonIndex)
         .trim();
 
     const value =
       line
-        .slice(index + 1)
+        .slice(colonIndex + 1)
         .trim()
         .replace(
           /^["']|["']$/g,
           ""
         );
 
-    if (key) {
-      result[key] = value;
+    if (!key) {
+      continue;
     }
+
+    if (key === "routing_terms" && value === "") {
+      const terms = [];
+
+      for (
+        let termIndex = index + 1;
+        termIndex < lines.length;
+        termIndex++
+      ) {
+        const termLine =
+          lines[termIndex];
+
+        const trimmed =
+          termLine.trim();
+
+        if (!trimmed.startsWith("- ")) {
+          break;
+        }
+
+        const termValue =
+          trimmed
+            .slice(2)
+            .trim()
+            .replace(/^["']|["']$/g, "");
+
+        if (termValue) {
+          terms.push(termValue);
+        }
+
+        index = termIndex;
+      }
+
+      result[key] = terms;
+      continue;
+    }
+
+    result[key] = value;
   }
 
   return result;
@@ -227,6 +274,8 @@ function discoverInternalSkills() {
           file,
 
         text,
+
+        meta,
 
         source:
           "engineer-flow",
@@ -446,6 +495,8 @@ let text = "";
 
         text,
 
+        meta,
+
         source:
           "external",
 
@@ -514,6 +565,26 @@ function buildCapabilityPool() {
    ========================================================= */
 
 function skillTerms(skill) {
+  const meta =
+    skill.meta ||
+    {};
+
+  const routingTerms =
+    Array.isArray(meta.routing_terms)
+      ? meta.routing_terms
+      : null;
+
+  if (routingTerms && routingTerms.length) {
+    return new Set(
+      words(
+        [
+          skill.name,
+          ...routingTerms
+        ].join(" ")
+      )
+    );
+  }
+
   const headings =
     skill.text.match(
       /^#{1,3}\s+.+$/gm
@@ -587,7 +658,7 @@ function scoreSkill(
       normalizedName
     )
   ) {
-    score += 3;
+    score += NAME_MATCH_WEIGHT;
   }
 
   return score;

@@ -1,0 +1,1072 @@
+{
+  "benchmark_version": 6,
+  "dataset": "heldout-v6",
+  "candidate": "v0.3.0-browser-ui-enrichment",
+  "mechanism": "BROWSER_DRIVEN_UI_ENRICHMENT",
+  "dataset_status": "burned",
+  "generated_at": "2026-08-25T08:52:14.250Z",
+  "git_branch": "v0.3.0",
+  "git_commit": "81803a74283e44648c5c32c5384dbf1b7299c1f8",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "heldout_v5_reuse": false,
+    "calibration_v4_reuse": false,
+    "expected_routing_frozen_before_execution": true,
+    "candidate_behavior_changes_allowed": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "metrics": {
+    "scenarios": 24,
+    "mode_accuracy": 0.5417,
+    "primary_accuracy": 0.6667,
+    "support_accuracy": 0.5,
+    "exact_route_accuracy": 0.375,
+    "browser_ui_positive": 0.5,
+    "browser_testing": 1,
+    "ui_testing_composition": 0.25,
+    "explicit_external_browser": 0.3333,
+    "browser_confusion_negative": 0.25,
+    "screenshot_confusion_negative": 0,
+    "false_frontend_ui_activation_count": 2,
+    "false_testing_activation_count": 5,
+    "false_external_activation_count": 0,
+    "max_specialists_observed": 2,
+    "max_specialists_invariant": "PASS",
+    "resolver_crash_count": 0,
+    "robustness_pass_rate": 1
+  },
+  "group_metrics": {
+    "A_BROWSER_UI_POSITIVE": {
+      "scenarios": 4,
+      "mode_accuracy": 0.5,
+      "primary_accuracy": 1,
+      "support_accuracy": 0.5,
+      "exact_route_accuracy": 0.5
+    },
+    "B_UI_TESTING_COMPOSITION": {
+      "scenarios": 4,
+      "mode_accuracy": 0.5,
+      "primary_accuracy": 0.5,
+      "support_accuracy": 0.25,
+      "exact_route_accuracy": 0.25
+    },
+    "C_BROWSER_TESTING": {
+      "scenarios": 3,
+      "mode_accuracy": 1,
+      "primary_accuracy": 1,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 1
+    },
+    "D_EXPLICIT_EXTERNAL_BROWSER": {
+      "scenarios": 3,
+      "mode_accuracy": 0.3333,
+      "primary_accuracy": 1,
+      "support_accuracy": 0.3333,
+      "exact_route_accuracy": 0.3333
+    },
+    "E_BROWSER_CONFUSION_NEGATIVE": {
+      "scenarios": 4,
+      "mode_accuracy": 0.5,
+      "primary_accuracy": 0.25,
+      "support_accuracy": 0.5,
+      "exact_route_accuracy": 0.25
+    },
+    "F_SCREENSHOT_CONFUSION_NEGATIVE": {
+      "scenarios": 3,
+      "mode_accuracy": 0.3333,
+      "primary_accuracy": 0.3333,
+      "support_accuracy": 0.3333,
+      "exact_route_accuracy": 0
+    },
+    "G_V2_CONCERN_REGRESSION": {
+      "scenarios": 3,
+      "mode_accuracy": 0.6667,
+      "primary_accuracy": 0.6667,
+      "support_accuracy": 0.6667,
+      "exact_route_accuracy": 0.3333
+    }
+  },
+  "failure_classes": [
+    {
+      "class": "SUPPORT_SELECTION_MISS",
+      "count": 12
+    },
+    {
+      "class": "MODE_SELECTION_MISS",
+      "count": 11
+    },
+    {
+      "class": "PRIMARY_RETRIEVAL_MISS",
+      "count": 8
+    },
+    {
+      "class": "FALSE_TESTING_ACTIVATION",
+      "count": 5
+    },
+    {
+      "class": "FALSE_FRONTEND_UI_ACTIVATION",
+      "count": 2
+    }
+  ],
+  "retrieval_misses": [],
+  "ranking_misses": [],
+  "support_misses": [
+    "V6_A3_SCREENSHOT_REFERENCE_NAVIGATION",
+    "V6_A4_VISUAL_COMPARISON_ITERATION",
+    "V6_B2_RESPONSIVE_FORM_WITH_REGRESSION",
+    "V6_B3_ACCESSIBILITY_TREE_WITH_E2E",
+    "V6_B4_INTERACTIVE_SIDEBAR_WITH_NAV_TEST",
+    "V6_D1_AGENT_BROWSER_EXPLICIT",
+    "V6_D3_BROWSER_AUDIT_SPECIALIST_EXPLICIT",
+    "V6_E1_BROWSER_USER_AGENT_API",
+    "V6_E2_BROWSER_CACHE_HEADERS",
+    "V6_F2_VISUALIZE_QUERY_PLAN",
+    "V6_F3_REFERENCE_ARCHITECTURE_DOCS",
+    "V6_G2_N_PLUS_ONE_QUERY_REGRESSION"
+  ],
+  "mode_misses": [
+    "V6_A3_SCREENSHOT_REFERENCE_NAVIGATION",
+    "V6_A4_VISUAL_COMPARISON_ITERATION",
+    "V6_B2_RESPONSIVE_FORM_WITH_REGRESSION",
+    "V6_B3_ACCESSIBILITY_TREE_WITH_E2E",
+    "V6_D1_AGENT_BROWSER_EXPLICIT",
+    "V6_D3_BROWSER_AUDIT_SPECIALIST_EXPLICIT",
+    "V6_E1_BROWSER_USER_AGENT_API",
+    "V6_E2_BROWSER_CACHE_HEADERS",
+    "V6_F2_VISUALIZE_QUERY_PLAN",
+    "V6_F3_REFERENCE_ARCHITECTURE_DOCS",
+    "V6_G2_N_PLUS_ONE_QUERY_REGRESSION"
+  ],
+  "false_frontend_ui_activations": [
+    "V6_D1_AGENT_BROWSER_EXPLICIT",
+    "V6_D3_BROWSER_AUDIT_SPECIALIST_EXPLICIT"
+  ],
+  "false_testing_activations": [
+    "V6_A3_SCREENSHOT_REFERENCE_NAVIGATION",
+    "V6_A4_VISUAL_COMPARISON_ITERATION",
+    "V6_E1_BROWSER_USER_AGENT_API",
+    "V6_E2_BROWSER_CACHE_HEADERS",
+    "V6_E3_PLAYWRIGHT_DEPENDENCY_UPGRADE"
+  ],
+  "false_external_activations": [],
+  "must_not_select_violations": [],
+  "crashes": [],
+  "cases": [
+    {
+      "id": "V6_A1_REFERENCE_DASHBOARD_RECONSTRUCTION",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_A2_CURRENT_APP_BROWSER_AUDIT",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_A3_SCREENSHOT_REFERENCE_NAVIGATION",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "SUPPORT_MISMATCH: expected null, got \"testing\""
+      ],
+      "classes": [
+        "FALSE_TESTING_ACTIVATION",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_A4_VISUAL_COMPARISON_ITERATION",
+      "group": "A_BROWSER_UI_POSITIVE",
+      "family": "browser-ui-positive",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "SUPPORT_MISMATCH: expected null, got \"testing\""
+      ],
+      "classes": [
+        "FALSE_TESTING_ACTIVATION",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_B1_REFERENCE_UI_WITH_PLAYWRIGHT",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_B2_RESPONSIVE_FORM_WITH_REGRESSION",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"frontend-ui\", got \"testing\"",
+        "SUPPORT_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_B3_ACCESSIBILITY_TREE_WITH_E2E",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_B4_INTERACTIVE_SIDEBAR_WITH_NAV_TEST",
+      "group": "B_UI_TESTING_COMPOSITION",
+      "family": "ui-testing-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "testing",
+        "support": "frontend-ui",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"frontend-ui\", got \"testing\"",
+        "SUPPORT_MISMATCH: expected \"testing\", got \"frontend-ui\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_C1_CHECKOUT_PLAYWRIGHT_REGRESSION",
+      "group": "C_BROWSER_TESTING",
+      "family": "browser-testing",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_C2_FLAKY_BROWSER_E2E_STABILIZATION",
+      "group": "C_BROWSER_TESTING",
+      "family": "browser-testing",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_C3_VISUAL_REGRESSION_TEST_SETUP",
+      "group": "C_BROWSER_TESTING",
+      "family": "browser-testing",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_D1_AGENT_BROWSER_EXPLICIT",
+      "group": "D_EXPLICIT_EXTERNAL_BROWSER",
+      "family": "explicit-external-browser",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "agent-browser",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "agent-browser",
+        "support": "frontend-ui",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "SUPPORT_MISMATCH: expected null, got \"frontend-ui\""
+      ],
+      "classes": [
+        "FALSE_FRONTEND_UI_ACTIVATION",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_D2_UI_INSPECTOR_PRO_EXPLICIT",
+      "group": "D_EXPLICIT_EXTERNAL_BROWSER",
+      "family": "explicit-external-browser",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "ui-inspector-pro",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "ui-inspector-pro",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_D3_BROWSER_AUDIT_SPECIALIST_EXPLICIT",
+      "group": "D_EXPLICIT_EXTERNAL_BROWSER",
+      "family": "explicit-external-browser",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "browser-audit-specialist",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "browser-audit-specialist",
+        "support": "frontend-ui",
+        "specialist_count": 2,
+        "primary_source": "external",
+        "support_source": "engineer-flow",
+        "external_used": true
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": true,
+        "ranked_primary": true
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "SUPPORT_MISMATCH: expected null, got \"frontend-ui\""
+      ],
+      "classes": [
+        "FALSE_FRONTEND_UI_ACTIVATION",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_E1_BROWSER_USER_AGENT_API",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "security",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 2",
+        "PRIMARY_MISMATCH: expected \"api-integration\", got \"security\"",
+        "SUPPORT_MISMATCH: expected null, got \"testing\""
+      ],
+      "classes": [
+        "FALSE_TESTING_ACTIVATION",
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_E2_BROWSER_CACHE_HEADERS",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "api-integration",
+        "support": "documentation",
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"api-integration\", got \"testing\"",
+        "SUPPORT_MISMATCH: expected \"documentation\", got null"
+      ],
+      "classes": [
+        "FALSE_TESTING_ACTIVATION",
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_E3_PLAYWRIGHT_DEPENDENCY_UPGRADE",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"dependency-tooling\", got \"testing\""
+      ],
+      "classes": [
+        "FALSE_TESTING_ACTIVATION",
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_E4_USER_AGENT_ANALYTICS_IMPORT",
+      "group": "E_BROWSER_CONFUSION_NEGATIVE",
+      "family": "browser-word-confusion-negative",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_F1_PDF_SCREENSHOT_EXPORT",
+      "group": "F_SCREENSHOT_CONFUSION_NEGATIVE",
+      "family": "screenshot-visual-confusion-negative",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"data-processing\", got \"performance\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_F2_VISUALIZE_QUERY_PLAN",
+      "group": "F_SCREENSHOT_CONFUSION_NEGATIVE",
+      "family": "screenshot-visual-confusion-negative",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"database\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_F3_REFERENCE_ARCHITECTURE_DOCS",
+      "group": "F_SCREENSHOT_CONFUSION_NEGATIVE",
+      "family": "screenshot-visual-confusion-negative",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "documentation",
+        "support": "architecture",
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"documentation\", got \"architecture\"",
+        "SUPPORT_MISMATCH: expected \"architecture\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_G1_TRANSACTION_CONSISTENCY",
+      "group": "G_V2_CONCERN_REGRESSION",
+      "family": "v2-concern-regression",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"database\", got \"security\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_G2_N_PLUS_ONE_QUERY_REGRESSION",
+      "group": "G_V2_CONCERN_REGRESSION",
+      "family": "v2-concern-regression",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"database\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V6_G3_AUTHORIZATION_SECURITY_REVIEW",
+      "group": "G_V2_CONCERN_REGRESSION",
+      "family": "v2-concern-regression",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "retrieval": {
+        "identity_evidence_found": false,
+        "matched_identity_terms": [],
+        "retrieved": false,
+        "ranked_primary": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    }
+  ],
+  "burn_sentinel": {
+    "path": "D:\\engineer-flow\\benchmark-results\\heldout-v6-burned.json",
+    "purpose": "prevents accidental second execution of heldout-v6"
+  }
+}

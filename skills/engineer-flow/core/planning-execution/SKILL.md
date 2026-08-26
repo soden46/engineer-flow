@@ -3,6 +3,15 @@ name: planning-execution
 description: Turn engineering goals into executable implementation plans with ordered, verifiable, technology-agnostic steps.
 metadata:
   internal: true
+routing_terms:
+  - plan
+  - ticket
+  - acceptance criteria
+  - dependency order
+  - effort estimate
+  - sprint
+  - milestone
+  - risk
 ---
 
 # planning-execution

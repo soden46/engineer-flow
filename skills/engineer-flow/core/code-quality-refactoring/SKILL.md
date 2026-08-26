@@ -3,6 +3,19 @@ name: code-quality-refactoring
 description: Improve maintainability and structure while preserving behavior using framework-agnostic refactoring principles.
 metadata:
   internal: true
+routing_terms:
+  - refactor
+  - cleanup
+  - simplification
+  - decomposition
+  - duplication
+  - duplicate
+  - complexity
+  - maintainability
+  - extract
+  - rename
+  - inline
+  - restructure
 ---
 
 # Code Quality and Refactoring

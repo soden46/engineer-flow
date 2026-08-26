@@ -9,11 +9,13 @@
     "inventory": "node skills/engineer-flow/scripts/engineer-flow.mjs inventory",
     "validate": "node skills/engineer-flow/scripts/validate.mjs",
     "benchmark:routing": "node tests/run-routing-benchmark.mjs",
+    "benchmark:calibration-v7": "node tests/run-routing-calibration-v7.mjs",
     "benchmark:heldout-v4": "node tests/run-routing-heldout-v4.mjs",
     "benchmark:heldout-v5": "node tests/run-routing-heldout-v5.mjs",
     "benchmark:heldout-v6": "node tests/run-routing-heldout-v6.mjs",
     "test:browser-ui-routing": "node tests/browser-ui-routing.mjs",
-    "test:normalization": "node tests/explicit-name-normalization.mjs"
+    "test:normalization": "node tests/explicit-name-normalization.mjs",
+    "test:routing-metadata": "node tests/routing-metadata-mechanism.mjs"
   },
   "keywords": [
     "agent-skills",

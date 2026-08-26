@@ -244,6 +244,62 @@ async function validateCoreCapabilities() {
         `${name}: metadata.internal must be true`
       );
     }
+
+    if (
+      !/^routing_terms:\s*$/m.test(fm)
+    ) {
+      fail(
+        `${name}: routing_terms is required`
+      );
+    }
+
+    const routingTermsMatch =
+      fm.match(/^routing_terms:\s*\n([\s\S]*)/m);
+
+    if (!routingTermsMatch) {
+      fail(
+        `${name}: routing_terms list is missing`
+      );
+    }
+    else {
+      const terms =
+        routingTermsMatch[1]
+          .split("\n")
+          .map((line) => line.trim().replace(/^-\s*/, ""))
+          .filter(Boolean);
+
+      if (terms.length < 3) {
+        fail(
+          `${name}: routing_terms must have at least 3 terms, found ${terms.length}`
+        );
+      }
+
+      if (terms.length > 12) {
+        fail(
+          `${name}: routing_terms must have at most 12 terms, found ${terms.length}`
+        );
+      }
+
+      const seen = new Set();
+      for (const term of terms) {
+        if (!term || term.length === 0) {
+          fail(
+            `${name}: routing_terms contains empty term`
+          );
+          break;
+        }
+
+        const normalized = term.toLowerCase();
+        if (seen.has(normalized)) {
+          fail(
+            `${name}: routing_terms contains duplicate term: ${term}`
+          );
+          break;
+        }
+
+        seen.add(normalized);
+      }
+    }
   }
 
   console.log(

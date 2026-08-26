@@ -3,6 +3,19 @@ name: architecture
 description: Design maintainable application boundaries and component relationships using framework-agnostic architecture principles.
 metadata:
   internal: true
+routing_terms:
+  - module
+  - dependency
+  - interface
+  - adapter
+  - orchestration
+  - contract
+  - layer
+  - boundary
+  - monolith
+  - decompose
+  - component
+  - separation
 ---
 
 # architecture

@@ -3,6 +3,19 @@ name: security
 description: Review or implement application security controls using framework-agnostic engineering principles, then adapt them to the detected project stack.
 metadata:
   internal: true
+routing_terms:
+  - authentication
+  - authorization
+  - vulnerability
+  - injection
+  - cryptography
+  - secret
+  - token
+  - password
+  - xss
+  - csrf
+  - audit
+  - compliance
 ---
 
 # Security

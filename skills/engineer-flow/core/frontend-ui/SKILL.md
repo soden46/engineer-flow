@@ -3,6 +3,19 @@ name: frontend-ui
 description: Build, inspect, reconstruct, and review user interfaces using framework-agnostic usability, accessibility, browser, reference, screenshot, responsive, visual, state, and rendering principles.
 metadata:
   internal: true
+routing_terms:
+  - ui
+  - component
+  - layout
+  - responsive
+  - accessibility
+  - browser
+  - dom
+  - render
+  - viewport
+  - modal
+  - form
+  - screen
 ---
 
 # frontend-ui

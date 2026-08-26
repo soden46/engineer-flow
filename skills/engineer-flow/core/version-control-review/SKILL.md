@@ -3,6 +3,16 @@ name: version-control-review
 description: Review changes and manage commits, branches, merges, and code-review workflows using VCS-agnostic engineering principles.
 metadata:
   internal: true
+routing_terms:
+  - review
+  - commit
+  - merge
+  - branch
+  - pr
+  - changelog
+  - conventional commit
+  - release draft
+  - diff
 ---
 
 # version-control-review

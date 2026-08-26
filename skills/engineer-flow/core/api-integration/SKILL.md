@@ -3,6 +3,19 @@ name: api-integration
 description: Design and implement APIs, external integrations, webhooks, clients, and service boundaries using technology-agnostic principles.
 metadata:
   internal: true
+routing_terms:
+  - api
+  - rest
+  - graphql
+  - endpoint
+  - webhook
+  - http
+  - client
+  - payload
+  - retry
+  - timeout
+  - idempotency
+  - contract
 ---
 
 # api-integration

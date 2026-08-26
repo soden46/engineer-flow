@@ -3,6 +3,19 @@ name: database
 description: Design and review persistence, queries, schemas, transactions, and data access using framework-agnostic database principles.
 metadata:
   internal: true
+routing_terms:
+  - transaction
+  - schema
+  - migration
+  - persistence
+  - index
+  - partition
+  - backfill
+  - integrity
+  - constraint
+  - foreign key
+  - normalize
+  - atomic
 ---
 
 # Database
