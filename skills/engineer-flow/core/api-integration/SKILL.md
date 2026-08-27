@@ -4,18 +4,17 @@ description: Design and implement APIs, external integrations, webhooks, clients
 metadata:
   internal: true
 routing_terms:
-  - api
-  - rest
-  - graphql
   - endpoint
   - webhook
-  - http
-  - client
   - payload
   - retry
   - timeout
   - idempotency
-  - contract
+  - integration
+  - service communication
+  - retry policy
+  - circuit breaker
+  - backoff
 ---
 
 # api-integration

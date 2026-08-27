@@ -11,11 +11,11 @@ routing_terms:
   - accessibility
   - browser
   - dom
-  - render
   - viewport
   - modal
   - form
   - screen
+  - user interface
 ---
 
 # frontend-ui

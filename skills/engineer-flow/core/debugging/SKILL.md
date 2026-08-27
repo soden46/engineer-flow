@@ -14,8 +14,8 @@ routing_terms:
   - crash
   - deadlock
   - race
-  - inspect
   - diagnose
+  - troubleshoot
 ---
 
 # debugging

@@ -13,9 +13,9 @@ routing_terms:
   - normalize
   - deduplicate
   - ingest
-  - format
-  - record
-  - load
+  - etl
+  - aggregate
+  - join
 ---
 
 # data-processing

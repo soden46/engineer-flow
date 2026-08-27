@@ -13,8 +13,9 @@ routing_terms:
   - memory
   - bottleneck
   - scale
-  - resource
   - efficiency
+  - profiling
+  - benchmark
 ---
 
 # Performance

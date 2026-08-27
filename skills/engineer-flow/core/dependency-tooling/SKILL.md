@@ -13,9 +13,9 @@ routing_terms:
   - cve
   - pin
   - version
-  - release
+  - resolver
   - artifact
-  - runtime
+  - environment
 ---
 
 # dependency-tooling
