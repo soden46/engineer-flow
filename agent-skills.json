@@ -1,6 +1,6 @@
 {
   "name": "engineer-flow",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Framework-agnostic engineering orchestration for AI coding agents.",
   "license": "MIT",
   "repository": "https://github.com/soden46/engineer-flow",

@@ -1,12 +1,21 @@
 # Changelog
 
-## Unreleased
+## v0.2.1 - 2026-08-27
 
 ### Added
 - Browser-driven UI inspection guidance for frontend-ui.
 - Reference-driven UI reconstruction guidance for frontend-ui.
 - Browser/E2E/Playwright testing guidance for testing.
 - Responsive/visual verification guidance for testing.
+
+### Preserved
+- Framework/language agnostic core.
+- Exactly 16 internal capabilities.
+- Maximum 2 specialists.
+- Persistent memory infrastructure.
+- Mandatory post-development security review.
+
+## Unreleased
 
 ## v0.2.0 - 2026-08-24
 

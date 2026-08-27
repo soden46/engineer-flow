@@ -17,7 +17,7 @@
     <img alt="Agent Skills" src="https://img.shields.io/badge/Agent_Skills-compatible-2563EB?style=for-the-badge">
   </a>
   <a href="https://github.com/soden46/engineer-flow/releases">
-    <img alt="Version" src="https://img.shields.io/badge/version-0.2.0-7C3AED?style=for-the-badge">
+    <img alt="Version" src="https://img.shields.io/badge/version-0.2.1-7C3AED?style=for-the-badge">
   </a>
   <img alt="Framework Agnostic" src="https://img.shields.io/badge/framework-agnostic-0891B2?style=for-the-badge">
   <img alt="Internal Capabilities" src="https://img.shields.io/badge/capabilities-16-0284C7?style=for-the-badge">
@@ -713,12 +713,13 @@ Other compatible assistants can use the canonical `skills/engineer-flow/` packag
 Current version:
 
 ```text
-v0.2.0
+v0.2.1
 ```
 
 Release documentation:
 
 - [Release Notes](RELEASE-NOTES.md)
+- [v0.2.1 Release](docs/releases/v0.2.1.md)
 - [v0.2.0 Release](docs/releases/v0.2.0.md)
 - [Changelog](CHANGELOG.md)
 
