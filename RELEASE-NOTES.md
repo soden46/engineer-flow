@@ -39,91 +39,6 @@ npm run benchmark:routing
 
 No heldout datasets were rerun as fresh evidence during this release preparation.
 
-</details>
-
-<a id="bahasa-indonesia"></a>
-
-<details>
-<summary><strong>Bahasa Indonesia</strong></summary>
-
-## v0.2.1 (2026-08-27)
-
-Ini adalah patch enrichment pengetahuan/alur kerja. Patch ini tidak mengubah perilaku routing, skoring resolver, atau metadata routing.
-
-Body release GitHub: [docs/releases/v0.2.1.md](docs/releases/v0.2.1.md).
-
-### Ditambahkan
-
-- Panduan inspeksi UI berbasis browser untuk frontend-ui.
-- Panduan rekonstruksi UI berbasis referensi untuk frontend-ui.
-- Panduan testing browser/E2E/Playwright untuk testing.
-- Panduan verifikasi responsif/visual untuk testing.
-
-### Dijaga
-
-- Perilaku routing eksisting tidak berubah.
-- Framework/language agnostic core.
-- Exactly 16 internal capabilities.
-- Maksimum 2 specialists.
-- Mandatory post-development security review.
-
-### Validasi
-
-```bash
-npm run validate
-npm run self-test
-npm run test:normalization
-npm run benchmark:routing
-```
-
-Tidak ada heldout dataset yang dijalankan ulang sebagai fresh evidence selama persiapan release ini.
-
-</details>
-
-<a id="english"></a>
-
-<details open>
-<summary><strong>English</strong></summary>
-
-## v0.2.0 (2026-08-24)
-
-Ini adalah patch enrichment pengetahuan/alur kerja. Patch ini tidak mengubah perilaku routing, skoring resolver, atau metadata routing.
-
-Body release GitHub: [docs/releases/v0.2.1.md](docs/releases/v0.2.1.md).
-
-### Ditambahkan
-
-- Panduan inspeksi UI berbasis browser untuk frontend-ui.
-- Panduan rekonstruksi UI berbasis referensi untuk frontend-ui.
-- Panduan testing browser/E2E/Playwright untuk testing.
-- Panduan verifikasi responsif/visual untuk testing.
-
-### Dijaga
-
-- Perilaku routing eksisting tidak berubah.
-- Framework/language agnostic core.
-- Exactly 16 internal capabilities.
-- Maksimum 2 specialists.
-- Mandatory post-development security review.
-
-### Validasi
-
-```bash
-npm run validate
-npm run self-test
-npm run test:normalization
-npm run benchmark:routing
-```
-
-Tidak ada heldout dataset yang dijalankan ulang sebagai fresh evidence selama persiapan release ini.
-
-</details>
-
-<a id="english"></a>
-
-<details open>
-<summary><strong>English</strong></summary>
-
 ## v0.2.0 (2026-08-24)
 
 Engineer Flow v0.2.0 improves sparse specialist routing with project-aware external skill discovery and reliable explicit skill-name matching while preserving the maximum 0-2 specialist architecture.
@@ -208,6 +123,38 @@ Burned heldout datasets were not rerun as fresh evidence during release preparat
 
 <details>
 <summary><strong>Bahasa Indonesia</strong></summary>
+
+## v0.2.1 (2026-08-27)
+
+Ini adalah patch enrichment pengetahuan/alur kerja. Patch ini tidak mengubah perilaku routing, skoring resolver, atau metadata routing.
+
+Body release GitHub: [docs/releases/v0.2.1.md](docs/releases/v0.2.1.md).
+
+### Ditambahkan
+
+- Panduan inspeksi UI berbasis browser untuk frontend-ui.
+- Panduan rekonstruksi UI berbasis referensi untuk frontend-ui.
+- Panduan testing browser/E2E/Playwright untuk testing.
+- Panduan verifikasi responsif/visual untuk testing.
+
+### Dijaga
+
+- Perilaku routing eksisting tidak berubah.
+- Framework/language agnostic core.
+- Exactly 16 internal capabilities.
+- Maksimum 2 specialists.
+- Mandatory post-development security review.
+
+### Validasi
+
+```bash
+npm run validate
+npm run self-test
+npm run test:normalization
+npm run benchmark:routing
+```
+
+Tidak ada heldout dataset yang dijalankan ulang sebagai fresh evidence selama persiapan release ini.
 
 ## v0.2.0 (2026-08-24)
 

@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## v0.2.1 - 2026-08-27
 
 ### Added
@@ -14,8 +16,6 @@
 - Maximum 2 specialists.
 - Persistent memory infrastructure.
 - Mandatory post-development security review.
-
-## Unreleased
 
 ## v0.2.0 - 2026-08-24
 
