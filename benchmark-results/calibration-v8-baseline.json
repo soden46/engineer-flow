@@ -1,0 +1,1071 @@
+{
+  "benchmark_version": 8,
+  "dataset": "calibration-v8",
+  "generated_at": "2026-08-27T09:49:55.580Z",
+  "git_branch": "v0.3.0",
+  "git_commit": "eaf24ce92f54df6a90ec4c40bb492befa731f242",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "heldout_v5_reuse": false,
+    "heldout_v6_reuse": false,
+    "heldout_v7_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "metrics": {
+    "scenarios": 32,
+    "mode_accuracy": 0.7188,
+    "primary_accuracy": 0.4688,
+    "support_accuracy": 0.8125,
+    "exact_route_accuracy": 0.4375,
+    "internal_primary_accuracy": 0.4483,
+    "false_frontend_ui_activation_count": 0,
+    "false_testing_activation_count": 0,
+    "false_security_activation_count": 0,
+    "false_external_activation_count": 0,
+    "must_not_select_violations": 0,
+    "max_specialists_observed": 2,
+    "max_specialists_invariant": "PASS",
+    "resolver_crash_count": 0,
+    "robustness_pass_rate": 1,
+    "EXPLICIT_EXTERNAL_NAME_ACCURACY": null,
+    "LEGACY_EXTERNAL_POSITIVE_ACCURACY": null,
+    "PROJECT_EVIDENCE_EXTERNAL_ACCURACY": 0,
+    "recall_group_accuracy": 0.3333,
+    "disambiguation_group_accuracy": 0.25
+  },
+  "group_metrics": {
+    "A_INTERNAL_PRIMARY": {
+      "scenarios": 16,
+      "mode_accuracy": 1,
+      "primary_accuracy": 0.5625,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 0.5625
+    },
+    "B_RECALL": {
+      "scenarios": 6,
+      "mode_accuracy": 0.6667,
+      "primary_accuracy": 0.3333,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 0.3333
+    },
+    "C_DISAMBIGUATION": {
+      "scenarios": 4,
+      "mode_accuracy": 0.25,
+      "primary_accuracy": 0.5,
+      "support_accuracy": 0.25,
+      "exact_route_accuracy": 0.25
+    },
+    "D_MULTI_CAPABILITY": {
+      "scenarios": 3,
+      "mode_accuracy": 0,
+      "primary_accuracy": 0,
+      "support_accuracy": 0,
+      "exact_route_accuracy": 0
+    },
+    "E_PROJECT_EXTERNAL": {
+      "scenarios": 3,
+      "mode_accuracy": 0.6667,
+      "primary_accuracy": 0.6667,
+      "support_accuracy": 1,
+      "exact_route_accuracy": 0.6667
+    }
+  },
+  "external_metrics": {
+    "EXPLICIT_EXTERNAL_NAME_ACCURACY": null,
+    "LEGACY_EXTERNAL_POSITIVE_ACCURACY": null,
+    "PROJECT_EVIDENCE_EXTERNAL_ACCURACY": 0
+  },
+  "recall_metrics": {
+    "recall_group_accuracy": 0.3333
+  },
+  "disambiguation_metrics": {
+    "disambiguation_group_accuracy": 0.25
+  },
+  "failure_classes": [
+    {
+      "class": "PRIMARY_RETRIEVAL_MISS",
+      "count": 16
+    },
+    {
+      "class": "MODE_SELECTION_MISS",
+      "count": 9
+    },
+    {
+      "class": "SUPPORT_SELECTION_MISS",
+      "count": 6
+    }
+  ],
+  "must_not_select_violations": [],
+  "false_frontend_ui_activations": [],
+  "false_testing_activations": [],
+  "false_security_activations": [],
+  "false_external_activations": [],
+  "crashes": [],
+  "cases": [
+    {
+      "id": "V8_A1_DEBUGGING_RACE_CONDITION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "debugging-concurrency",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A2_TESTING_PRECEDENCE_RULES",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "testing-precedence-rules",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A3_SECURITY_SESSION_LIFECYCLE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "security-session-lifecycle",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A4_DATABASE_READ_PATTERNS",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "database-read-patterns",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "version-control-review",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"database\", got \"version-control-review\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A5_PERFORMANCE_SEARCH_DEGRADATION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "performance-search-latency",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"performance\", got \"api-integration\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A6_API_INTEGRATION_CARRIER_WEBHOOK",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "api-webhook-consumption",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A7_ARCHITECTURE_NOTIFICATION_DECOUPLING",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "architecture-decoupling",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "planning-execution",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"architecture\", got \"planning-execution\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A8_DATA_PROCESSING_PARTNER_FEED",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "data-transformation-pipeline",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"data-processing\", got \"dependency-tooling\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A9_DEPENDENCY_VULNERABILITY_PIN",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "dependency-vulnerability-management",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A10_INFRASTRUCTURE_DEPLOYMENT_ROLLBACK",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "deployment-rollback-gates",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "infrastructure-devops",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "infrastructure-devops",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A11_FRONTEND_RESPONSIVE_CHECKOUT",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "responsive-layout-adaptation",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A12_AI_PROMPT_EXTRACTION_ACCURACY",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "prompt-accuracy-iteration",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A13_CODE_QUALITY_VALIDATION_CONSOLIDATION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "duplication-consolidation",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"code-quality-refactoring\", got \"architecture\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A14_DOCUMENTATION_ONBOARDING_GUIDE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "onboarding-guide-authoring",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A15_PLANNING_MIGRATION_MILESTONES",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "migration-milestone-sequencing",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "planning-execution",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"planning-execution\", got \"database\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_A16_VERSION_CONTROL_PR_TRIAGE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "pull-request-triage",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "version-control-review",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"version-control-review\", got \"architecture\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_B1_RECALL_INTERMITTENT_FAILURE",
+      "group": "B_RECALL",
+      "family": "intermittent-failure-investigation",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 0",
+        "PRIMARY_MISMATCH: expected \"debugging\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_B2_RECALL_REGRESSION_GAP",
+      "group": "B_RECALL",
+      "family": "regression-coverage-gap",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 0",
+        "PRIMARY_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_B3_RECALL_OFFBOARDING_AUDIT",
+      "group": "B_RECALL",
+      "family": "offboarding-flow-audit",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_B4_RECALL_STORAGE_RESTRUCTURE",
+      "group": "B_RECALL",
+      "family": "storage-restructuring",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"database\", got \"code-quality-refactoring\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_B5_RECALL_THROUGHPUT_CONSTRAINT",
+      "group": "B_RECALL",
+      "family": "throughput-constraint",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "PRIMARY_MISMATCH: expected \"performance\", got \"database\""
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_B6_RECALL_SCHEMA_MIGRATION",
+      "group": "B_RECALL",
+      "family": "schema-migration",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_C1_DISAMBIGUATION_MODULE_RESTRUCTURE",
+      "group": "C_DISAMBIGUATION",
+      "family": "module-boundary-restructure",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "architecture",
+        "support": "code-quality-refactoring",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"architecture\", got \"code-quality-refactoring\"",
+        "SUPPORT_MISMATCH: expected \"code-quality-refactoring\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_C2_DISAMBIGUATION_READ_PATH",
+      "group": "C_DISAMBIGUATION",
+      "family": "read-path-acceleration",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"performance\", got \"code-quality-refactoring\"",
+        "SUPPORT_MISMATCH: expected \"database\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_C3_DISAMBIGUATION_TOKEN_HANDLING",
+      "group": "C_DISAMBIGUATION",
+      "family": "token-handling-hardening",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "security",
+        "support": "api-integration",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "SUPPORT_MISMATCH: expected \"api-integration\", got null"
+      ],
+      "classes": [
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_C4_DISAMBIGUATION_ROOT_CAUSE",
+      "group": "C_DISAMBIGUATION",
+      "family": "root-cause-reproduction",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "specialist_count": 2,
+        "primary_source": "engineer-flow",
+        "support_source": "engineer-flow",
+        "external_used": false
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_D1_MULTI_CAPABILITY_FRONTEND_TESTING",
+      "group": "D_MULTI_CAPABILITY",
+      "family": "frontend-testing-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"frontend-ui\", got \"testing\"",
+        "SUPPORT_MISMATCH: expected \"testing\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_D2_MULTI_CAPABILITY_INFRA_DEPENDENCY",
+      "group": "D_MULTI_CAPABILITY",
+      "family": "infrastructure-dependency-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "infrastructure-devops",
+        "support": "dependency-tooling",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"infrastructure-devops\", got \"ai-llm-engineering\"",
+        "SUPPORT_MISMATCH: expected \"dependency-tooling\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_D3_MULTI_CAPABILITY_DATA_ARCHITECTURE",
+      "group": "D_MULTI_CAPABILITY",
+      "family": "data-architecture-composition",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 2,
+        "primary": "data-processing",
+        "support": "architecture",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "engineer-flow",
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 2, got 1",
+        "PRIMARY_MISMATCH: expected \"data-processing\", got \"ai-llm-engineering\"",
+        "SUPPORT_MISMATCH: expected \"architecture\", got null"
+      ],
+      "classes": [
+        "PRIMARY_RETRIEVAL_MISS",
+        "SUPPORT_SELECTION_MISS",
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_E1_PROJECT_EVIDENCE_EXTERNAL",
+      "group": "E_PROJECT_EXTERNAL",
+      "family": "project-evidence-external",
+      "crashed": false,
+      "pass": false,
+      "expected": {
+        "mode": 1,
+        "primary": "settlement-reconciliation-skill",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 0,
+        "primary": null,
+        "support": null,
+        "specialist_count": 0,
+        "primary_source": null,
+        "support_source": null,
+        "external_used": false
+      },
+      "failures": [
+        "MODE_MISMATCH: expected 1, got 0",
+        "PRIMARY_MISMATCH: expected \"settlement-reconciliation-skill\", got null",
+        "EXTERNAL_REQUIRED_MISMATCH: expected true, got false"
+      ],
+      "classes": [
+        "MODE_SELECTION_MISS"
+      ],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_E2_EXPLICIT_EXTERNAL",
+      "group": "E_PROJECT_EXTERNAL",
+      "family": "explicit-external-skill",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "payment-gateway-auditor",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "payment-gateway-auditor",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    },
+    {
+      "id": "V8_E3_LEGACY_EXTERNAL_FALLBACK",
+      "group": "E_PROJECT_EXTERNAL",
+      "family": "legacy-external-fallback",
+      "crashed": false,
+      "pass": true,
+      "expected": {
+        "mode": 1,
+        "primary": "legacy-edi-translator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "actual": {
+        "mode": 1,
+        "primary": "legacy-edi-translator",
+        "support": null,
+        "specialist_count": 1,
+        "primary_source": "external",
+        "support_source": null,
+        "external_used": true
+      },
+      "failures": [],
+      "classes": [],
+      "response_max_specialists": 2
+    }
+  ]
+}
