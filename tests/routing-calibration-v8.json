@@ -1,0 +1,484 @@
+{
+  "version": 8,
+  "dataset": "calibration-v8",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "heldout_v5_reuse": false,
+    "heldout_v6_reuse": false,
+    "heldout_v7_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "scenarios": [
+    {
+      "id": "V8_A1_DEBUGGING_RACE_CONDITION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "debugging-concurrency",
+      "task": "The order fulfillment service occasionally drops items from a cart when two users check out simultaneously. Identify the root cause and propose a fix.",
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A2_TESTING_PRECEDENCE_RULES",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "testing-precedence-rules",
+      "task": "The discount engine produces incorrect totals when multiple promotions stack. Add coverage that locks in the correct precedence rules.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A3_SECURITY_SESSION_LIFECYCLE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "security-session-lifecycle",
+      "task": "The session token remains valid after a user changes their password. Review the authentication flow and close the gap.",
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A4_DATABASE_READ_PATTERNS",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "database-read-patterns",
+      "task": "The reporting queries on the events table are timing out. Review the table structure and propose changes to support the read patterns.",
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A5_PERFORMANCE_SEARCH_DEGRADATION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "performance-search-latency",
+      "task": "The product search endpoint response time degrades significantly during peak traffic. Investigate and reduce the latency.",
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A6_API_INTEGRATION_CARRIER_WEBHOOK",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "api-webhook-consumption",
+      "task": "The shipping carrier's tracking webhook needs to be consumed and stored. Build the ingestion handler.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A7_ARCHITECTURE_NOTIFICATION_DECOUPLING",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "architecture-decoupling",
+      "task": "The notification system is tightly coupled to the order service. Redesign so notifications can be triggered by multiple sources.",
+      "expected": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A8_DATA_PROCESSING_PARTNER_FEED",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "data-transformation-pipeline",
+      "task": "The daily sales feed from the partner arrives as nested JSON and needs to be flattened into the reporting warehouse. Build the transformation pipeline.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A9_DEPENDENCY_VULNERABILITY_PIN",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "dependency-vulnerability-management",
+      "task": "A transitive library pulled into the build has a known vulnerability flagged by the audit. Pin a safe version and verify the lockfile resolves cleanly.",
+      "expected": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A10_INFRASTRUCTURE_DEPLOYMENT_ROLLBACK",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "deployment-rollback-gates",
+      "task": "The deployment pipeline has no automated rollback when a new release fails health checks. Design the promotion and rollback gates.",
+      "expected": {
+        "mode": 1,
+        "primary": "infrastructure-devops",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A11_FRONTEND_RESPONSIVE_CHECKOUT",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "responsive-layout-adaptation",
+      "task": "The checkout confirmation screen does not adapt to smaller viewports and clips the order summary. Rebuild it to respond gracefully across device widths.",
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A12_AI_PROMPT_EXTRACTION_ACCURACY",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "prompt-accuracy-iteration",
+      "task": "The extraction prompt for invoice fields returns inconsistent structured output. Iterate on the prompt and measure field-level accuracy against the gold set.",
+      "expected": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A13_CODE_QUALITY_VALIDATION_CONSOLIDATION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "duplication-consolidation",
+      "task": "The validation rules for customer onboarding are duplicated across four modules. Consolidate them behind a single interface and remove the repetition.",
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A14_DOCUMENTATION_ONBOARDING_GUIDE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "onboarding-guide-authoring",
+      "task": "New engineers struggle to set up the local development environment. Write a step-by-step onboarding guide covering prerequisites, configuration, and verification.",
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A15_PLANNING_MIGRATION_MILESTONES",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "migration-milestone-sequencing",
+      "task": "The platform migration effort spans multiple teams and quarters. Break it into sequenced milestones with clear ownership and entry criteria.",
+      "expected": {
+        "mode": 1,
+        "primary": "planning-execution",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_A16_VERSION_CONTROL_PR_TRIAGE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "pull-request-triage",
+      "task": "A pull request introduces a new caching layer but the feedback threads are scattered and unresolved. Triage the comments, verify the changes, and prepare the branch for merge.",
+      "expected": {
+        "mode": 1,
+        "primary": "version-control-review",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_B1_RECALL_INTERMITTENT_FAILURE",
+      "group": "B_RECALL",
+      "family": "intermittent-failure-investigation",
+      "task": "A payment processor occasionally returns success for transactions that were actually declined. Trace through the logs to find where the state diverges.",
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_B2_RECALL_REGRESSION_GAP",
+      "group": "B_RECALL",
+      "family": "regression-coverage-gap",
+      "task": "The shipping cost calculator produces wrong results when combining multiple discount tiers. Add automated checks that lock the expected outputs.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_B3_RECALL_OFFBOARDING_AUDIT",
+      "group": "B_RECALL",
+      "family": "offboarding-flow-audit",
+      "task": "Former employees still appear in the active directory and can authenticate. Audit the offboarding flow and close the gap.",
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_B4_RECALL_STORAGE_RESTRUCTURE",
+      "group": "B_RECALL",
+      "family": "storage-restructuring",
+      "task": "The customer export job times out after the table grew past ten million rows. Restructure the storage to support the access patterns.",
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_B5_RECALL_THROUGHPUT_CONSTRAINT",
+      "group": "B_RECALL",
+      "family": "throughput-constraint",
+      "task": "The image processing queue falls behind during morning traffic and jobs pile up. Find the constraint and raise the processing rate.",
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_B6_RECALL_SCHEMA_MIGRATION",
+      "group": "B_RECALL",
+      "family": "schema-migration",
+      "task": "The tax calculation service changed its response format and now returns errors. Update the client to consume the new schema.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_C1_DISAMBIGUATION_MODULE_RESTRUCTURE",
+      "group": "C_DISAMBIGUATION",
+      "family": "module-boundary-restructure",
+      "task": "The order processing module has grown to 5000 lines and contains duplicated validation logic. Extract the validation into a shared library and restructure the module boundaries so each service owns its own rules.",
+      "expected": {
+        "mode": 2,
+        "primary": "architecture",
+        "support": "code-quality-refactoring",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_C2_DISAMBIGUATION_READ_PATH",
+      "group": "C_DISAMBIGUATION",
+      "family": "read-path-acceleration",
+      "task": "The dashboard loads in 8 seconds because it scans the entire orders table. Add appropriate indexes and restructure the read path so the dashboard loads under 500ms.",
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_C3_DISAMBIGUATION_TOKEN_HANDLING",
+      "group": "C_DISAMBIGUATION",
+      "family": "token-handling-hardening",
+      "task": "The mobile app sends authentication tokens in the URL query string. Move the tokens to secure headers and ensure the server validates them on every request.",
+      "expected": {
+        "mode": 2,
+        "primary": "security",
+        "support": "api-integration",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_C4_DISAMBIGUATION_ROOT_CAUSE",
+      "group": "C_DISAMBIGUATION",
+      "family": "root-cause-reproduction",
+      "task": "Users report that the checkout flow randomly fails on the third step. Reproduce the issue, identify the root cause, and add a regression test to prevent recurrence.",
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_D1_MULTI_CAPABILITY_FRONTEND_TESTING",
+      "group": "D_MULTI_CAPABILITY",
+      "family": "frontend-testing-composition",
+      "task": "Build the new customer portal dashboard with real-time order status, then write end-to-end tests that verify the data renders correctly across browsers and viewport sizes.",
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_D2_MULTI_CAPABILITY_INFRA_DEPENDENCY",
+      "group": "D_MULTI_CAPABILITY",
+      "family": "infrastructure-dependency-composition",
+      "task": "Set up a containerized deployment pipeline with automated canary analysis, then ensure all base images are pinned and scanned for known vulnerabilities before release.",
+      "expected": {
+        "mode": 2,
+        "primary": "infrastructure-devops",
+        "support": "dependency-tooling",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_D3_MULTI_CAPABILITY_DATA_ARCHITECTURE",
+      "group": "D_MULTI_CAPABILITY",
+      "family": "data-architecture-composition",
+      "task": "Design the event streaming pipeline for the new real-time analytics system and define the topic partitioning strategy so consumer groups scale independently.",
+      "expected": {
+        "mode": 2,
+        "primary": "data-processing",
+        "support": "architecture",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "V8_E1_PROJECT_EVIDENCE_EXTERNAL",
+      "group": "E_PROJECT_EXTERNAL",
+      "family": "project-evidence-external",
+      "task": "The settlement reconciliation report does not match the processor's statement. Use the reconciliation skill to identify the discrepancy.",
+      "expected": {
+        "mode": 1,
+        "primary": "settlement-reconciliation-skill",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "project_files": {
+        ".agents/skills/settlement-reconciliation-skill/SKILL.md": "---\nname: settlement-reconciliation-skill\ndescription: Reconciles settlement reports against processor statements.\n---\n\n# settlement-reconciliation-skill\n\n## Reconciliation\n\n## Discrepancy Detection\n"
+      }
+    },
+    {
+      "id": "V8_E2_EXPLICIT_EXTERNAL",
+      "group": "E_PROJECT_EXTERNAL",
+      "family": "explicit-external-skill",
+      "task": "Use the payment-gateway-auditor guidance to verify the latest settlement batch before releasing funds.",
+      "expected": {
+        "mode": 1,
+        "primary": "payment-gateway-auditor",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "payment-gateway-auditor",
+          "name": "payment-gateway-auditor",
+          "description": "Audit payment gateway integrations, settlement reports, and reconciliation workflows.",
+          "body": "# payment-gateway-auditor\n\n## Settlement Audit\n\n## Fund Release Verification\n"
+        }
+      ]
+    },
+    {
+      "id": "V8_E3_LEGACY_EXTERNAL_FALLBACK",
+      "group": "E_PROJECT_EXTERNAL",
+      "family": "legacy-external-fallback",
+      "task": "Convert the incoming EDI 850 purchase order into our internal order format using the legacy translator.",
+      "expected": {
+        "mode": 1,
+        "primary": "legacy-edi-translator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "legacy-edi-translator",
+          "name": "legacy-edi-translator",
+          "description": "Legacy EDI translation specialist for purchase orders and invoices.",
+          "body": "# legacy-edi-translator\n\n## EDI 850 Translation\n\n## Order Format Conversion\n"
+        }
+      ],
+      "project_files": {
+        ".agents/skills/legacy-edi-translator/SKILL.md": "---\nname: legacy-edi-translator\ndescription: Legacy EDI translation specialist for purchase orders and invoices.\n---\n\n# legacy-edi-translator\n\n## EDI 850 Translation\n\n## Order Format Conversion\n"
+      }
+    }
+  ]
+}
