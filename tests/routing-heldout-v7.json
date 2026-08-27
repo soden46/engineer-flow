@@ -1,0 +1,445 @@
+{
+  "version": 7,
+  "dataset": "heldout-v7",
+  "rules": {
+    "heldout_v4_reuse": false,
+    "heldout_v5_reuse": false,
+    "heldout_v6_reuse": false,
+    "technology_hardcoding": false,
+    "max_specialists": 2
+  },
+  "scenarios": [
+    {
+      "id": "H7_A1_DEBUGGING_INTERMITTENT_CRASH",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "debugging-true-positive",
+      "task": "Diagnose why the background worker crashes only during peak load after the last deploy.",
+      "expected": {
+        "mode": 1,
+        "primary": "debugging",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A2_TESTING_UNIT_COVERAGE_GAP",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "testing-true-positive",
+      "task": "Design unit tests for the quote calculator edge cases that are currently uncovered.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A3_SECURITY_AUTH_TOKEN_REVIEW",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "security-true-positive",
+      "task": "Review the new OAuth token refresh flow for token leakage and replay risks.",
+      "expected": {
+        "mode": 1,
+        "primary": "security",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A4_DATABASE_SCHEMA_MIGRATION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "database-true-positive",
+      "task": "Plan the schema migration to add tenant-scoped indexes to the orders table.",
+      "expected": {
+        "mode": 1,
+        "primary": "database",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A5_PERFORMANCE_BATCH_SLA_MISS",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "performance-true-positive",
+      "task": "Profile the batch reconciliation job that runs after nightly close and identify why it misses the SLA during month-end spikes.",
+      "expected": {
+        "mode": 1,
+        "primary": "performance",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A6_API_INTEGRATION_TAX_CLIENT_CIRCUIT_BREAKER",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "api-integration-true-positive",
+      "task": "Add timeout, retry, and circuit-breaker behavior to the new tax service client behind the checkout API.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A7_ARCHITECTURE_SERVICE_BOUNDARY",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "architecture-true-positive",
+      "task": "Redraw the service boundary between checkout and inventory so inventory cannot be bypassed.",
+      "expected": {
+        "mode": 1,
+        "primary": "architecture",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A8_DATA_PROCESSING_CSV_IMPORT",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "data-processing-true-positive",
+      "task": "Build a streaming import for the nightly CSV exports that can skip malformed rows safely.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A9_DEPENDENCY_TOOLING_UPGRADE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "dependency-tooling-true-positive",
+      "task": "Upgrade the build resolver to the latest patch level and update the lockfile audit.",
+      "expected": {
+        "mode": 1,
+        "primary": "dependency-tooling",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A10_INFRASTRUCTURE_CANARY_DEPLOY",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "infrastructure-devops-true-positive",
+      "task": "Design the canary rollout and rollback sequence for the new worker queue.",
+      "expected": {
+        "mode": 1,
+        "primary": "infrastructure-devops",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A11_FRONTEND_UI_DASHBOARD_WIDGET",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "frontend-ui-true-positive",
+      "task": "Reconstruct the settings widget from the approved reference layout and verify responsive breakpoints.",
+      "expected": {
+        "mode": 1,
+        "primary": "frontend-ui",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A12_AI_LLM_PROMPT_EVALUATION",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "ai-llm-engineering-true-positive",
+      "task": "Evaluate whether the new prompt template improves extraction accuracy on the validation set.",
+      "expected": {
+        "mode": 1,
+        "primary": "ai-llm-engineering",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A13_CODE_QUALITY_LEGACY_REFACTOR",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "code-quality-refactoring-true-positive",
+      "task": "Refactor the legacy pricing module to remove duplicated validation logic.",
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A14_DOCUMENTATION_SCHEDULED_REPORT_SERVICE",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "documentation-true-positive",
+      "task": "Document the configuration schema, environment variables, deployment checklist, and rollback steps for the new scheduled report service.",
+      "expected": {
+        "mode": 1,
+        "primary": "documentation",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A15_PLANNING_SPRINT_BREAKDOWN",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "planning-execution-true-positive",
+      "task": "Break the migration epic into ordered sprint tasks with acceptance criteria and dependencies.",
+      "expected": {
+        "mode": 1,
+        "primary": "planning-execution",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_A16_VERSION_CONTROL_RELEASE_NOTES",
+      "group": "A_INTERNAL_PRIMARY",
+      "family": "version-control-review-true-positive",
+      "task": "Prepare the release notes and changelog entries for the upcoming patch.",
+      "expected": {
+        "mode": 1,
+        "primary": "version-control-review",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_B1_DEBUGGING_TESTING_DEADLOCK",
+      "group": "B_MULTI_CAPABILITY",
+      "family": "debugging-testing-composition",
+      "task": "The Playwright login test deadlocks intermittently on staging. Reproduce the failure, add a deterministic regression test, and fix the synchronization bug.",
+      "expected": {
+        "mode": 2,
+        "primary": "debugging",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_B2_FRONTEND_UI_TESTING_COMPOSITION",
+      "group": "B_MULTI_CAPABILITY",
+      "family": "frontend-ui-testing-composition",
+      "task": "Build the responsive checkout form and add Playwright regression tests that verify layout, validation, and submission behavior across breakpoints.",
+      "expected": {
+        "mode": 2,
+        "primary": "frontend-ui",
+        "support": "testing",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_B3_API_INTEGRATION_SECURITY_PAYMENT_WEBHOOK",
+      "group": "B_MULTI_CAPABILITY",
+      "family": "api-integration-security-composition",
+      "task": "Implement the payment webhook with signature verification, idempotent retries, and bounded payload size.",
+      "expected": {
+        "mode": 2,
+        "primary": "api-integration",
+        "support": "security",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_B4_PERFORMANCE_DATABASE_AGGREGATE_SLOW",
+      "group": "B_MULTI_CAPABILITY",
+      "family": "performance-database-composition",
+      "task": "Optimize the slow aggregate query by rewriting the execution plan and adding the missing covering index.",
+      "expected": {
+        "mode": 2,
+        "primary": "performance",
+        "support": "database",
+        "external_required": false,
+        "must_not_select": [],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_C1_SECURITY_VOCABULARY_DATA_CLEANSING",
+      "group": "C_CONFUSION_NEGATIVE",
+      "family": "data-processing-lexical-confusion",
+      "task": "Cleanse the exported customer dataset so it can be safely loaded into the analytics warehouse.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "security"
+        ],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_C2_TESTING_VOCABULARY_EXPORT_VALIDATION",
+      "group": "C_CONFUSION_NEGATIVE",
+      "family": "api-integration-lexical-confusion",
+      "task": "Validate the export file format against the schema before the nightly batch runs.",
+      "expected": {
+        "mode": 1,
+        "primary": "api-integration",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "testing"
+        ],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_C3_DATABASE_VOCABULARY_EVENT_REFACTOR",
+      "group": "C_CONFUSION_NEGATIVE",
+      "family": "code-quality-refactoring-lexical-confusion",
+      "task": "Refactor the event dispatcher to reduce coupling between the handler registry and the scheduler.",
+      "expected": {
+        "mode": 1,
+        "primary": "code-quality-refactoring",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "database"
+        ],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_C4_SCREENSHOT_REFERENCE_NOT_FRONTEND",
+      "group": "C_CONFUSION_NEGATIVE",
+      "family": "browser-ui-negative",
+      "task": "Review the screenshot reference against the rebuilt checkout page and note visual regressions.",
+      "expected": {
+        "mode": 1,
+        "primary": "testing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "frontend-ui"
+        ],
+        "max_specialists": 2
+      }
+    },
+    {
+      "id": "H7_D1_EXPLICIT_EXTERNAL_NAME",
+      "group": "D_EXTERNAL_PROJECT",
+      "family": "explicit-external-name",
+      "task": "Use payment-gateway-auditor guidance to reconcile the latest settlement report.",
+      "expected": {
+        "mode": 1,
+        "primary": "payment-gateway-auditor",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "payment-gateway-auditor",
+          "name": "payment-gateway-auditor",
+          "description": "Audit payment gateway integrations, settlement reports, and reconciliation workflows.",
+          "body": "# payment-gateway-auditor\n\n## Reconciliation\n\n## Settlement Review\n"
+        }
+      ]
+    },
+    {
+      "id": "H7_D2_LEGACY_EXTERNAL_POSITIVE",
+      "group": "D_EXTERNAL_PROJECT",
+      "family": "legacy-external-positive",
+      "task": "Convert the incoming flat-file supplier order acknowledgments into the internal purchase order format using the legacy connector.",
+      "expected": {
+        "mode": 1,
+        "primary": "legacy-edi-translator",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "legacy-edi-translator",
+          "name": "legacy-edi-translator",
+          "description": "Legacy EDI translation specialist for invoices and purchase orders.",
+          "body": "# legacy-edi-translator\n\n## Invoice Translation\n\n## Purchase Order Mapping\n"
+        }
+      ],
+      "project_files": {
+        ".agents/skills/legacy-edi-translator/SKILL.md": "---\nname: legacy-edi-translator\ndescription: Legacy EDI translation specialist for invoices and purchase orders.\n---\n\n# legacy-edi-translator\n\n## Invoice Translation\n\n## Purchase Order Mapping\n"
+      }
+    },
+    {
+      "id": "H7_D3_PROJECT_EVIDENCE_EXTERNAL",
+      "group": "D_EXTERNAL_PROJECT",
+      "family": "project-evidence-external",
+      "task": "Reverse-geocode the shipment coordinates using the project's standard client.",
+      "expected": {
+        "mode": 1,
+        "primary": "geocoding-service-client",
+        "support": null,
+        "external_required": true,
+        "must_not_select": [],
+        "max_specialists": 2
+      },
+      "project_files": {
+        ".agents/skills/geocoding-service-client/SKILL.md": "---\nname: geocoding-service-client\ndescription: Reverse geocoding and address lookup client.\n---\n\n# geocoding-service-client\n\n## Reverse Geocoding\n\n## Address Lookup\n"
+      }
+    },
+    {
+      "id": "H7_D4_EXTERNAL_NEGATIVE",
+      "group": "D_EXTERNAL_PROJECT",
+      "family": "external-negative",
+      "task": "Analyze the dataset schema and infer the correct column types for the staging table.",
+      "expected": {
+        "mode": 1,
+        "primary": "data-processing",
+        "support": null,
+        "external_required": false,
+        "must_not_select": [
+          "generic-csv-analyzer"
+        ],
+        "max_specialists": 2
+      },
+      "external_skills": [
+        {
+          "directory": "generic-csv-analyzer",
+          "name": "generic-csv-analyzer",
+          "description": "Generic CSV analysis and summary statistics.",
+          "body": "# generic-csv-analyzer\n\n## Summary Statistics\n\n## Column Profiling\n"
+        }
+      ]
+    }
+  ]
+}
