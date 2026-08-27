@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Browser-driven UI inspection guidance for frontend-ui.
+- Reference-driven UI reconstruction guidance for frontend-ui.
+- Browser/E2E/Playwright testing guidance for testing.
+- Responsive/visual verification guidance for testing.
+
 ## v0.2.0 - 2026-08-24
 
 ### Added
