@@ -669,10 +669,43 @@ function runGit(gitArgs) {
 }
 
 /* =========================================================
-   MAIN
-   ========================================================= */
+    PERMANENT BURN GUARD
+    ========================================================= */
+
+/*
+ * HELDOUT-V4 is permanently burned historical evidence.
+ *
+ * This runner intentionally refuses to execute evaluation.
+ * The committed result artifact is authoritative historical output:
+ *   benchmark-results/heldout-v4-candidate-i.json
+ *
+ * Future routing research requires a freshly authored heldout dataset.
+ * Do not add --force, --rerun, --allow-burned, or any bypass.
+ */
+
+function refuseBurnedHeldout() {
+  console.log("HELDOUT_VERSION=4");
+  console.log("HELDOUT_STATUS=BURNED");
+  console.log("HELDOUT_EXECUTION=REFUSED");
+  console.log("HELDOUT_RESULT_ARTIFACT=benchmark-results/heldout-v4-candidate-i.json");
+  process.exit(1);
+}
+
+/* =========================================================
+    MAIN
+    ========================================================= */
 
 function main() {
+  refuseBurnedHeldout();
+
+  /*
+   * HISTORICAL CODE PRESERVED BELOW - UNREACHABLE
+   *
+   * The following evaluation logic is preserved for reproducibility
+   * reference only. It is unreachable because the burn guard above
+   * always exits before this point.
+   */
+
   let options;
 
   try {

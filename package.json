@@ -14,7 +14,8 @@
     "test:normalization": "node tests/explicit-name-normalization.mjs",
     "test:routing-surface": "node tests/routing-surface-invariant.mjs",
     "test:install-surface": "node tests/install-surface-invariant.mjs",
-    "test:security-gate": "node tests/security-gate.mjs"
+    "test:security-gate": "node tests/security-gate.mjs",
+    "test:heldout-burn-guard": "node tests/heldout-burn-guard.mjs"
   },
   "keywords": [
     "agent-skills",

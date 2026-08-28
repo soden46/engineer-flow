@@ -34,6 +34,7 @@ jobs:
       - run: npm run test:normalization
       - run: npm run test:routing-surface
       - run: npm run test:security-gate
+      - run: npm run test:heldout-burn-guard
       - run: npm run benchmark:routing
       - run: git diff --check
 

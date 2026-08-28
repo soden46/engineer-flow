@@ -4,6 +4,22 @@ Engineer Flow should be evaluated as a framework-agnostic engineering orchestrat
 
 Historical Laravel routing experiments may inform development, but previously consumed heldout cases must not be reused as final benchmark evidence.
 
+## Burned Heldouts
+
+The following heldout datasets are permanently burned and must never be
+executed again as fresh benchmark evidence:
+
+- `tests/routing-heldout-v4.json` with runner `tests/run-routing-heldout-v4.mjs`
+- `tests/routing-heldout-v5.json` with runner `tests/run-routing-heldout-v5.mjs`
+
+Their committed result artifacts are historical evidence:
+
+- `benchmark-results/heldout-v4-candidate-i.json`
+- `benchmark-results/heldout-v5-candidate-j.json`
+
+The heldout runners permanently refuse execution. Any future routing
+mechanism research must use freshly authored heldout datasets.
+
 ## Development Validation
 
 Validation should cover:
