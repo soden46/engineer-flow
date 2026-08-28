@@ -33,6 +33,7 @@ jobs:
       - run: npm run inventory
       - run: npm run test:normalization
       - run: npm run test:routing-surface
+      - run: npm run test:security-gate
       - run: npm run benchmark:routing
       - run: git diff --check
 

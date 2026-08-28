@@ -13,7 +13,8 @@
     "benchmark:heldout-v5": "node tests/run-routing-heldout-v5.mjs",
     "test:normalization": "node tests/explicit-name-normalization.mjs",
     "test:routing-surface": "node tests/routing-surface-invariant.mjs",
-    "test:install-surface": "node tests/install-surface-invariant.mjs"
+    "test:install-surface": "node tests/install-surface-invariant.mjs",
+    "test:security-gate": "node tests/security-gate.mjs"
   },
   "keywords": [
     "agent-skills",
