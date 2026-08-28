@@ -32,6 +32,10 @@
 </p>
 
 <p align="center">
+  <strong>Available on <a href="https://cursor.directory/plugins/engineer-flow">Cursor Directory</a> &middot; <a href="https://www.codex-marketplace.com/plugins/engineer-flow">Codex Marketplace</a> &middot; <a href="https://skills.sh/soden46/engineer-flow">skills.sh</a></strong>
+</p>
+
+<p align="center">
   <strong>Concern-first routing | Project-aware discovery | Sparse specialists | Persistent memory | Minimal-change engineering | Mandatory security</strong>
 </p>
 
