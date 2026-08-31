@@ -159,6 +159,19 @@ function testCustomMetadata(assert) {
   const root = createTempRoot();
   try {
     runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Old item one"],
+      root
+    );
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Old item two"],
+      root
+    );
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const prior = readJsonl(jsonlPath);
+    const oldId1 = prior[0].id;
+    const oldId2 = prior[1].id;
+
+    const result = runMemory(
       [
         "checkpoint",
         "--project", "demo",
@@ -168,14 +181,14 @@ function testCustomMetadata(assert) {
         "--status", "current",
         "--source", "manual-review",
         "--confidence", "inferred",
-        "--supersedes", "abc123,def456",
+        "--supersedes", `${oldId1},${oldId2}`,
       ],
       root
     );
+    assert(result.status === 0, "checkpoint with custom metadata exits 0");
 
-    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
     const entries = readJsonl(jsonlPath);
-    const entry = entries[0];
+    const entry = entries[entries.length - 1];
 
     assert(entry.type === "decision", "type=decision");
     assert(entry.scope === "database", "scope=database");
@@ -183,8 +196,8 @@ function testCustomMetadata(assert) {
     assert(entry.source === "manual-review", "source=manual-review");
     assert(entry.confidence === "inferred", "confidence=inferred");
     assert(entry.supersedes.length === 2, "supersedes has 2 items");
-    assert(entry.supersedes[0] === "abc123", "supersedes[0]=abc123");
-    assert(entry.supersedes[1] === "def456", "supersedes[1]=def456");
+    assert(entry.supersedes[0] === oldId1, "supersedes[0]=oldId1");
+    assert(entry.supersedes[1] === oldId2, "supersedes[1]=oldId2");
   } finally {
     cleanup(root);
   }
@@ -493,6 +506,368 @@ function testStructuredRecallMetadata(assert) {
   }
 }
 
+function sha256File(filePath) {
+  const content = fs.readFileSync(filePath, "utf8");
+  return sha256(content);
+}
+
+function testDedupeIdentical(assert) {
+  const root = createTempRoot();
+  try {
+    const result = runMemory(
+      [
+        "checkpoint",
+        "--project", "demo",
+        "--summary", "Use PostgreSQL for production.",
+        "--type", "decision",
+        "--scope", "database",
+      ],
+      root
+    );
+    assert(result.status === 0, "first checkpoint exits 0");
+
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const entries = readJsonl(jsonlPath);
+    const originalId = entries[0].id;
+    assert(entries.length === 1, "one entry after first checkpoint");
+
+    const result2 = runMemory(
+      [
+        "checkpoint",
+        "--project", "demo",
+        "--summary", "Use PostgreSQL for production.",
+        "--type", "decision",
+        "--scope", "database",
+      ],
+      root
+    );
+    assert(result2.status === 0, "second identical checkpoint exits 0");
+    assert(
+      result2.stdout.includes("CHECKPOINT_DEDUPLICATED=YES"),
+      "dedupe marker in output"
+    );
+    assert(
+      result2.stdout.includes(`CHECKPOINT_ID=${originalId}`),
+      "dedupe returns original ID"
+    );
+
+    const after = readJsonl(jsonlPath);
+    assert(after.length === 1, "no new line appended on dedupe");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testDedupeScopeIsolated(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Same content", "--type", "decision", "--scope", "production"],
+      root
+    );
+    const result = runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Same content", "--type", "decision", "--scope", "development"],
+      root
+    );
+
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const entries = readJsonl(jsonlPath);
+    assert(entries.length === 2, "different scope creates new checkpoint");
+    assert(!result.stdout.includes("CHECKPOINT_DEDUPLICATED=YES"), "no dedupe for different scope");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testDedupeTypeIsolated(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Same content", "--type", "decision"],
+      root
+    );
+    const result = runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Same content", "--type", "general"],
+      root
+    );
+
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const entries = readJsonl(jsonlPath);
+    assert(entries.length === 2, "different type creates new checkpoint");
+    assert(!result.stdout.includes("CHECKPOINT_DEDUPLICATED=YES"), "no dedupe for different type");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testStaleAllowsNew(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Config set to Redis"],
+      root
+    );
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const a = readJsonl(jsonlPath)[0];
+    assert(a.status === "current", "A is current initially");
+
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Updated config", "--supersedes", a.id],
+      root
+    );
+    const afterSupersede = readJsonl(jsonlPath);
+    const aStale = afterSupersede.find((e) => e.id === a.id);
+    assert(aStale.status === "stale", "A is stale after supersession");
+
+    const result = runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Config set to Redis"],
+      root
+    );
+    const final = readJsonl(jsonlPath);
+    assert(final.length === 3, "new checkpoint created for stale content (3 total)");
+    assert(!result.stdout.includes("CHECKPOINT_DEDUPLICATED=YES"), "no dedupe for stale content");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testSupersedenceSuccess(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Old architecture A"],
+      root
+    );
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Old architecture B"],
+      root
+    );
+
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const before = readJsonl(jsonlPath);
+    const a = before[0];
+    const b = before[1];
+    const aCreated = a.created_at;
+    const bCreated = b.created_at;
+    const aUpdated = a.updated_at;
+    const bUpdated = b.updated_at;
+
+    const result = runMemory(
+      [
+        "checkpoint",
+        "--project", "demo",
+        "--summary", "New architecture C",
+        "--supersedes", `${a.id},${b.id}`,
+      ],
+      root
+    );
+    assert(result.status === 0, "supersession checkpoint exits 0");
+    assert(result.stdout.includes("CHECKPOINT_WRITTEN=YES"), "CHECKPOINT_WRITTEN marker");
+    assert(result.stdout.includes(`SUPERSEDED=${a.id},${b.id}`), "SUPERSEDED lists both IDs");
+
+    const after = readJsonl(jsonlPath);
+    assert(after.length === 3, "three entries after supersession");
+
+    const aAfter = after.find((e) => e.id === a.id);
+    const bAfter = after.find((e) => e.id === b.id);
+    const cAfter = after.find((e) => e.id === result.stdout.match(/CHECKPOINT_ID=(.+)/)?.[1]?.trim());
+
+    assert(aAfter.status === "stale", "A is stale");
+    assert(bAfter.status === "stale", "B is stale");
+    assert(cAfter.status === "current", "C is current");
+    assert(aAfter.created_at === aCreated, "A.created_at unchanged");
+    assert(bAfter.created_at === bCreated, "B.created_at unchanged");
+    assert(aAfter.updated_at !== aUpdated, "A.updated_at changed");
+    assert(bAfter.updated_at !== bUpdated, "B.updated_at changed");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testUnknownIdRejected(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Valid entry"],
+      root
+    );
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const before = getLineCount(jsonlPath);
+
+    const result = runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "New entry", "--supersedes", "nonexistent999"],
+      root
+    );
+    assert(result.status !== 0, "non-zero exit on unknown supersedes ID");
+    assert(getLineCount(jsonlPath) === before, "no new line on unknown ID");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testStaleIdRejected(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "First entry"],
+      root
+    );
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const a = readJsonl(jsonlPath)[0];
+
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Replacement", "--supersedes", a.id],
+      root
+    );
+
+    const before = getLineCount(jsonlPath);
+    const result = runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Another", "--supersedes", a.id],
+      root
+    );
+    assert(result.status !== 0, "non-zero exit on stale supersedes ID");
+    assert(getLineCount(jsonlPath) === before, "no new line on stale ID");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testDuplicateSupersedesRejected(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Entry A"],
+      root
+    );
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const a = readJsonl(jsonlPath)[0];
+
+    const before = getLineCount(jsonlPath);
+    const result = runMemory(
+      [
+        "checkpoint",
+        "--project", "demo",
+        "--summary", "Entry B",
+        "--supersedes", `${a.id},${a.id}`,
+      ],
+      root
+    );
+    assert(result.status !== 0, "non-zero exit on duplicate supersedes ID");
+    assert(getLineCount(jsonlPath) === before, "no new line on duplicate supersedes");
+
+    const after = readJsonl(jsonlPath);
+    assert(after[0].status === "current", "original entry remains current");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testAtomicSupersedenceFailure(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Valid current entry"],
+      root
+    );
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const hashBefore = sha256File(jsonlPath);
+    const before = readJsonl(jsonlPath);
+    const a = before[0];
+    assert(a.status === "current", "A is current before failure");
+
+    const result = runMemory(
+      [
+        "checkpoint",
+        "--project", "demo",
+        "--summary", "Attempt with one valid one invalid",
+        "--supersedes", `${a.id},nonexistent999`,
+      ],
+      root
+    );
+    assert(result.status !== 0, "non-zero exit on partial-invalid supersedes");
+    assert(getLineCount(jsonlPath) === before.length, "no new line on partial-invalid");
+
+    const after = readJsonl(jsonlPath);
+    const aAfter = after.find((e) => e.id === a.id);
+    assert(aAfter.status === "current", "A remains current after failed supersession");
+
+    const hashAfter = sha256File(jsonlPath);
+    assert(hashBefore === hashAfter, "JSONL SHA-256 unchanged after failed supersession");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testDedupeBeforeSupersedence(assert) {
+  const root = createTempRoot();
+  try {
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Duplicate checkpoint D"],
+      root
+    );
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Other entry E"],
+      root
+    );
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const before = readJsonl(jsonlPath);
+    const d = before[0];
+    const e = before[1];
+
+    const result = runMemory(
+      [
+        "checkpoint",
+        "--project", "demo",
+        "--summary", "Duplicate checkpoint D",
+        "--supersedes", e.id,
+      ],
+      root
+    );
+    assert(
+      result.stdout.includes("CHECKPOINT_DEDUPLICATED=YES"),
+      "dedupe applied before supersession"
+    );
+
+    const after = readJsonl(jsonlPath);
+    assert(after.length === 2, "no new checkpoint written");
+
+    const eAfter = after.find((e2) => e2.id === e.id);
+    assert(eAfter.status === "current", "E remains current (supersession not applied)");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testLegacyUntouched(assert) {
+  const root = createTempRoot();
+  try {
+    const legacyContent = "## 2024-01-01 000000000000\n\nLegacy memory about databases.\n";
+    const legacyPath = createLegacyFile(root, "demo", legacyContent);
+    const hashBefore = sha256File(legacyPath);
+
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Structured checkpoint"],
+      root
+    );
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Structured checkpoint"],
+      root
+    );
+
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const a = readJsonl(jsonlPath)[0];
+    runMemory(
+      ["checkpoint", "--project", "demo", "--summary", "Replacement", "--supersedes", a.id],
+      root
+    );
+
+    const hashAfter = sha256File(legacyPath);
+    assert(hashBefore === hashAfter, "legacy current-state.md unchanged after dedupe+supersession");
+  } finally {
+    cleanup(root);
+  }
+}
+
 function main() {
   console.log("Running structured memory checkpoint regression tests...\n");
 
@@ -508,6 +883,18 @@ function main() {
   runTest("JSONL_INTEGRITY", testJsonlIntegrity);
   runTest("STRUCTURED_RECALL_METADATA", testStructuredRecallMetadata);
 
+  runTest("DEDUPE_IDENTICAL", testDedupeIdentical);
+  runTest("DEDUPE_SCOPE_ISOLATED", testDedupeScopeIsolated);
+  runTest("DEDUPE_TYPE_ISOLATED", testDedupeTypeIsolated);
+  runTest("STALE_ALLOWS_NEW", testStaleAllowsNew);
+  runTest("SUPERSESSION_SUCCESS", testSupersedenceSuccess);
+  runTest("UNKNOWN_ID_REJECTED", testUnknownIdRejected);
+  runTest("STALE_ID_REJECTED", testStaleIdRejected);
+  runTest("DUPLICATE_SUPERSEDES_REJECTED", testDuplicateSupersedesRejected);
+  runTest("ATOMIC_SUPERSESSION_FAILURE", testAtomicSupersedenceFailure);
+  runTest("DEDUPE_BEFORE_SUPERSESSION", testDedupeBeforeSupersedence);
+  runTest("LEGACY_UNTOUCHED", testLegacyUntouched);
+
   const allPassed = Object.values(results).every(Boolean);
 
   console.log(
@@ -519,11 +906,33 @@ function main() {
     console.log(`${name}=${passed ? "PASS" : "FAIL"}`);
   }
 
+  const lifecycleTests = [
+    "DEDUPE_IDENTICAL",
+    "DEDUPE_SCOPE_ISOLATED",
+    "DEDUPE_TYPE_ISOLATED",
+    "STALE_ALLOWS_NEW",
+    "SUPERSESSION_SUCCESS",
+    "UNKNOWN_ID_REJECTED",
+    "STALE_ID_REJECTED",
+    "DUPLICATE_SUPERSEDES_REJECTED",
+    "ATOMIC_SUPERSESSION_FAILURE",
+    "DEDUPE_BEFORE_SUPERSESSION",
+    "LEGACY_UNTOUCHED",
+  ];
+
+  const lifecycleAllPassed = lifecycleTests.every((name) => results[name]);
+
   if (allPassed) {
     console.log("MEMORY_REGRESSION=PASS");
-    process.exit(0);
   } else {
     console.log("MEMORY_REGRESSION=FAIL");
+  }
+
+  if (lifecycleAllPassed) {
+    console.log("MEMORY_LIFECYCLE_REGRESSION=PASS");
+    process.exit(0);
+  } else {
+    console.log("MEMORY_LIFECYCLE_REGRESSION=FAIL");
     process.exit(1);
   }
 }

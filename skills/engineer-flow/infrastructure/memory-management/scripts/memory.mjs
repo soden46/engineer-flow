@@ -228,6 +228,59 @@ function parseSupersedes(value) {
   return value.split(",").map((s) => s.trim()).filter(Boolean);
 }
 
+function normalizeText(text) {
+  return String(text || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+async function readCheckpoints(file) {
+  if (!await exists(file)) return [];
+  const text = await fs.readFile(file, "utf8");
+  const lines = text.split(/\n/).filter((line) => line.trim());
+  const entries = [];
+  for (const line of lines) {
+    try {
+      entries.push(JSON.parse(line));
+    } catch {
+      continue;
+    }
+  }
+  return entries;
+}
+
+async function writeAllCheckpoints(file, entries) {
+  const tmpFile = `${file}.tmp-${process.pid}-${Date.now()}`;
+  const content = entries.map((e) => JSON.stringify(e)).join("\n") + (entries.length ? "\n" : "");
+  await fs.writeFile(tmpFile, content, "utf8");
+  try {
+    await fs.rename(tmpFile, file);
+  } catch {
+    await fs.rm(file, { force: true });
+    await fs.rename(tmpFile, file);
+  }
+}
+
+function validateSupersedes(ids, existing, newId) {
+  const seen = new Set();
+  for (const id of ids) {
+    if (seen.has(id)) {
+      throw new Error(`duplicate supersedes ID: ${id}`);
+    }
+    seen.add(id);
+  }
+  for (const id of ids) {
+    const entry = existing.find((e) => e.id === id);
+    if (!entry) {
+      throw new Error(`supersedes ID not found: ${id}`);
+    }
+    if (entry.status !== "current") {
+      throw new Error(`supersedes ID is not current: ${id} (status=${entry.status})`);
+    }
+    if (id === newId) {
+      throw new Error("checkpoint cannot supersede itself");
+    }
+  }
+}
+
 async function checkpoint(args) {
   const summary = String(args.summary || "").trim();
   if (!summary) throw new Error("--summary is required");
@@ -237,7 +290,7 @@ async function checkpoint(args) {
   const status = String(args.status || DEFAULT_STATUS);
   const source = String(args.source || DEFAULT_SOURCE);
   const confidence = String(args.confidence || DEFAULT_CONFIDENCE);
-  const supersedes = parseSupersedes(args.supersedes);
+  const supersedesRaw = parseSupersedes(args.supersedes);
 
   validateEnum(type, VALID_TYPES, "--type");
   validateEnum(status, VALID_STATUS, "--status");
@@ -248,6 +301,9 @@ async function checkpoint(args) {
   assertSafe(source);
   if (args.pending !== undefined && args.pending !== true) {
     assertSafe(String(args.pending));
+  }
+  for (const id of supersedesRaw) {
+    assertSafe(id);
   }
 
   if (isTemporary(summary) && !args.force) {
@@ -261,8 +317,29 @@ async function checkpoint(args) {
 
   await fs.mkdir(path.dirname(file), { recursive: true });
 
+  const existing = await readCheckpoints(file);
+
+  const normalizedContent = normalizeText(summary);
+  const normalizedScope = normalizeText(scope);
+  const duplicate = existing.find(
+    (e) =>
+      e.status === "current" &&
+      e.type === type &&
+      normalizeText(e.scope) === normalizedScope &&
+      normalizeText(e.content) === normalizedContent
+  );
+  if (duplicate) {
+    console.log("CHECKPOINT_DEDUPLICATED=YES");
+    console.log(`CHECKPOINT_ID=${duplicate.id}`);
+    return;
+  }
+
   const now = new Date().toISOString();
   const id = crypto.createHash("sha256").update(`${now}:${summary}`).digest("hex").slice(0, 12);
+
+  if (supersedesRaw.length > 0) {
+    validateSupersedes(supersedesRaw, existing, id);
+  }
 
   const entry = {
     version: SCHEMA_VERSION,
@@ -272,7 +349,7 @@ async function checkpoint(args) {
     status,
     created_at: now,
     updated_at: now,
-    supersedes,
+    supersedes: supersedesRaw,
     source,
     confidence,
     content: summary
@@ -283,8 +360,21 @@ async function checkpoint(args) {
     if (pending) entry.pending = pending;
   }
 
-  await fs.appendFile(file, JSON.stringify(entry) + "\n", "utf8");
-  console.log(`Checkpoint written: ${file}`);
+  if (supersedesRaw.length > 0) {
+    for (const e of existing) {
+      if (supersedesRaw.includes(e.id)) {
+        e.status = "stale";
+        e.updated_at = now;
+      }
+    }
+    await writeAllCheckpoints(file, [...existing, entry]);
+    console.log("CHECKPOINT_WRITTEN=YES");
+    console.log(`CHECKPOINT_ID=${id}`);
+    console.log(`SUPERSEDED=${supersedesRaw.join(",")}`);
+  } else {
+    await fs.appendFile(file, JSON.stringify(entry) + "\n", "utf8");
+    console.log(`Checkpoint written: ${file}`);
+  }
 }
 
 async function status(args) {

@@ -86,6 +86,46 @@ Optional metadata flags (all default when omitted):
 
 Invalid enum values fail with a non-zero exit and a deterministic error.
 
+### Checkpoint Lifecycle
+
+Identical `current` checkpoints are deduplicated. Dedupe identity is:
+
+- `type`
+- normalized `scope` (trim, lowercase, whitespace-collapsed)
+- normalized `content` (trim, lowercase, whitespace-collapsed)
+
+When a duplicate is detected, no new checkpoint is appended and the existing
+checkpoint ID is returned.
+
+`stale` / `resolved` entries do not block creating new `current` entries. Only
+`current` entries participate in dedupe comparison.
+
+**Order of operations:** dedupe is evaluated **before** supersession. If a
+new checkpoint deduplicates against an existing `current` entry, supersession
+is not applied.
+
+#### Supersession
+
+`--supersedes` accepts a comma-separated list of existing `current` checkpoint IDs.
+
+On success:
+
+- the new checkpoint is written with `status=current`
+- each referenced checkpoint is updated to `status=stale` with a new
+  `updated_at` timestamp; its `id`, `created_at`, `content`, and other
+  metadata are preserved
+- output prints `CHECKPOINT_WRITTEN=YES`, `CHECKPOINT_ID`, and `SUPERSEDED`
+
+Validation (all must pass before any file mutation; failures are atomic):
+
+- every referenced ID must exist
+- every referenced ID must currently be `current`
+- no self-reference
+- no duplicate IDs within the `--supersedes` list
+
+Invalid/unknown/stale supersession IDs reject with a non-zero exit and leave
+no partial changes to `checkpoints.jsonl`.
+
 ### Legacy Compatibility
 
 The legacy `projects/<alias>/current-state.md` file remains **read-only** and is
