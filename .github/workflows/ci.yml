@@ -47,3 +47,13 @@ jobs:
         with:
           node-version: 22
       - run: npm run test:install-surface
+
+  security-gate-posix:
+    runs-on: ubuntu-latest
+    needs: core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run test:security-gate-installer-posix

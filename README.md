@@ -566,6 +566,26 @@ The security skill itself is:
 skills/engineer-flow/core/security/SKILL.md
 ```
 
+### Install Security Gate
+
+Install the Git pre-commit hook to enforce mandatory security review:
+
+**Windows (PowerShell):**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File `
+  skills/engineer-flow/scripts/install-security-gate.ps1 `
+  -Project <project-path>
+```
+
+**Linux / macOS:**
+
+```bash
+sh skills/engineer-flow/scripts/install-security-gate.sh <project-path>
+```
+
+The installer preserves any existing `pre-commit` hook as `pre-commit.pre-engineer-flow` and chains it before the Engineer Flow security gate.
+
 ---
 
 ## Repository Structure
@@ -597,7 +617,9 @@ engineer-flow/
 |       `-- scripts/
 |           |-- engineer-flow.mjs
 |           |-- validate.mjs
-|           `-- security-gate.mjs
+|           |-- security-gate.mjs
+|           |-- install-security-gate.ps1
+|           `-- install-security-gate.sh
 |-- tests/
 |-- benchmark-results/
 |-- docs/
@@ -616,7 +638,8 @@ Runtime components:
 | Resolver | `skills/engineer-flow/scripts/engineer-flow.mjs` |
 | Validator | `skills/engineer-flow/scripts/validate.mjs` |
 | Security gate | `skills/engineer-flow/scripts/security-gate.mjs` |
-| Security gate installer | `skills/engineer-flow/scripts/install-security-gate.ps1` |
+| Security gate installer (PowerShell) | `skills/engineer-flow/scripts/install-security-gate.ps1` |
+| Security gate installer (POSIX) | `skills/engineer-flow/scripts/install-security-gate.sh` |
 | Core manifest | `skills/engineer-flow/core/core-manifest.json` |
 
 ---
