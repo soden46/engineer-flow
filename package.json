@@ -16,7 +16,8 @@
     "test:install-surface": "node tests/install-surface-invariant.mjs",
     "test:security-gate": "node tests/security-gate.mjs",
     "test:heldout-burn-guard": "node tests/heldout-burn-guard.mjs",
-    "test:security-gate-installer-posix": "node tests/security-gate-installer-posix.mjs"
+    "test:security-gate-installer-posix": "node tests/security-gate-installer-posix.mjs",
+    "test:memory": "node tests/memory-structured-checkpoint.mjs"
   },
   "keywords": [
     "agent-skills",

@@ -4,8 +4,23 @@ import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
+const SCHEMA_VERSION = 2;
 const DEFAULT_LIMIT = 5;
+
+const VALID_TYPES = [
+  "general", "decision", "architecture", "convention",
+  "deployment", "migration", "known-issue", "benchmark", "pending-work"
+];
+const VALID_STATUS = ["current", "resolved", "stale"];
+const VALID_CONFIDENCE = ["confirmed", "inferred"];
+
+const DEFAULT_TYPE = "general";
+const DEFAULT_SCOPE = "project";
+const DEFAULT_STATUS = "current";
+const DEFAULT_SOURCE = "engineer-flow checkpoint";
+const DEFAULT_CONFIDENCE = "confirmed";
+
 const SENSITIVE = [
   [/-----BEGIN [A-Z ]*PRIVATE KEY-----/i, "private key"],
   [/\b(api[_-]?key|access[_-]?token|auth[_-]?token|secret|password|passwd|private[_-]?key)\b\s*[:=]\s*\S+/i, "secret assignment"],
@@ -36,9 +51,22 @@ Usage:
   node memory.mjs auto --cwd <project> --query <task> [--limit 5] [--force]
   node memory.mjs recall --project <alias> --query <task> [--limit 5]
   node memory.mjs checkpoint --project <alias> --summary <text> [--pending <text>]
+  node memory.mjs checkpoint --project <alias> --summary <text> [options]
   node memory.mjs status
 
-Root defaults to ENGINEER_FLOW_MEMORY_ROOT, AI_MEMORY_ROOT, or ~/.engineer-flow-memory.`);
+Checkpoint options:
+  --type <type>        Checkpoint type (default: general)
+  --scope <scope>      Scope of the checkpoint (default: project)
+  --status <status>    Status (default: current)
+  --source <source>    Source of the checkpoint (default: engineer-flow checkpoint)
+  --confidence <conf>  Confidence level (default: confirmed)
+  --supersedes <ids>   Comma-separated list of checkpoint IDs to supersede
+  --force              Override temporary content guard
+
+Root defaults to ENGINEER_FLOW_MEMORY_ROOT, AI_MEMORY_ROOT, or ~/.engineer-flow-memory.
+
+New checkpoints are written to checkpoints.jsonl (schema v2).
+Legacy current-state.md remains readable for backward compatibility.`);
 }
 
 function parseArgs(argv) {
@@ -103,22 +131,81 @@ async function recall(args) {
   const memoryRoot = root(args);
   const project = projectAlias(args.project || "default");
   const query = String(args.query || "").toLowerCase();
-  const file = path.join(memoryRoot, "projects", project, "current-state.md");
-  if (!await exists(file)) {
-    console.log("No relevant memory found.");
-    return;
+  const limit = Number(args.limit || DEFAULT_LIMIT);
+  const projectDir = path.join(memoryRoot, "projects", project);
+
+  const structuredFile = path.join(projectDir, "checkpoints.jsonl");
+  const legacyFile = path.join(projectDir, "current-state.md");
+
+  const entries = [];
+
+  if (await exists(structuredFile)) {
+    const text = await fs.readFile(structuredFile, "utf8");
+    const lines = text.split(/\n/).filter((line) => line.trim());
+    for (const line of lines) {
+      try {
+        const entry = JSON.parse(line);
+        const block = structuredSearchText(entry);
+        entries.push({
+          format: "structured",
+          entry,
+          block,
+          score: score(block, query)
+        });
+      } catch {
+        continue;
+      }
+    }
   }
-  const text = await fs.readFile(file, "utf8");
-  const blocks = text.split(/\n(?=## )/).filter(Boolean);
-  const scored = blocks.map((block) => ({ block, score: score(block, query) }))
+
+  if (await exists(legacyFile)) {
+    const text = await fs.readFile(legacyFile, "utf8");
+    const blocks = text.split(/\n(?=## )/).filter(Boolean);
+    for (const block of blocks) {
+      entries.push({
+        format: "legacy",
+        block,
+        score: score(block, query)
+      });
+    }
+  }
+
+  const scored = entries
     .filter((item) => item.score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, Number(args.limit || DEFAULT_LIMIT));
+    .slice(0, limit);
+
   if (!scored.length) {
     console.log("No relevant memory found.");
     return;
   }
-  for (const item of scored) console.log(item.block.trim(), "\n");
+
+  for (const item of scored) {
+    if (item.format === "structured") {
+      const e = item.entry;
+      console.log(`ID: ${e.id}`);
+      console.log(`TYPE: ${e.type}`);
+      console.log(`SCOPE: ${e.scope}`);
+      console.log(`STATUS: ${e.status}`);
+      console.log(`CONTENT: ${e.content}`);
+      if (e.pending) console.log(`PENDING: ${e.pending}`);
+      console.log("");
+    } else {
+      console.log(item.block.trim(), "\n");
+    }
+  }
+}
+
+function structuredSearchText(entry) {
+  return [
+    entry.content,
+    entry.scope,
+    entry.type,
+    entry.status,
+    entry.source,
+    entry.pending,
+    entry.confidence
+  ].filter(Boolean).join(" ");
 }
 
 function score(block, query) {
@@ -130,31 +217,73 @@ function score(block, query) {
   return total;
 }
 
+function validateEnum(value, valid, flagName) {
+  if (valid.indexOf(value) === -1) {
+    throw new Error(`invalid ${flagName}: "${value}"; allowed: ${valid.join(", ")}`);
+  }
+}
+
+function parseSupersedes(value) {
+  if (!value || typeof value !== "string") return [];
+  return value.split(",").map((s) => s.trim()).filter(Boolean);
+}
+
 async function checkpoint(args) {
   const summary = String(args.summary || "").trim();
   if (!summary) throw new Error("--summary is required");
+
+  const type = String(args.type || DEFAULT_TYPE);
+  const scope = String(args.scope || DEFAULT_SCOPE);
+  const status = String(args.status || DEFAULT_STATUS);
+  const source = String(args.source || DEFAULT_SOURCE);
+  const confidence = String(args.confidence || DEFAULT_CONFIDENCE);
+  const supersedes = parseSupersedes(args.supersedes);
+
+  validateEnum(type, VALID_TYPES, "--type");
+  validateEnum(status, VALID_STATUS, "--status");
+  validateEnum(confidence, VALID_CONFIDENCE, "--confidence");
+
   assertSafe(summary);
+  assertSafe(scope);
+  assertSafe(source);
+  if (args.pending !== undefined && args.pending !== true) {
+    assertSafe(String(args.pending));
+  }
+
   if (isTemporary(summary) && !args.force) {
     console.log("No checkpoint written: summary looks temporary or non-durable.");
     return;
   }
+
   const project = projectAlias(args.project || "default");
   const memoryRoot = root(args);
-  const file = path.join(memoryRoot, "projects", project, "current-state.md");
+  const file = path.join(memoryRoot, "projects", project, "checkpoints.jsonl");
+
   await fs.mkdir(path.dirname(file), { recursive: true });
-  const id = crypto.createHash("sha256").update(`${Date.now()}:${summary}`).digest("hex").slice(0, 12);
-  const entry = [
-    `## ${new Date().toISOString()} ${id}`,
-    "",
-    "- Scope: project",
-    "- Status: CURRENT",
-    "- Source: engineer-flow checkpoint",
-    "",
-    summary,
-    args.pending ? `\nPending: ${args.pending}` : "",
-    ""
-  ].join("\n");
-  await fs.appendFile(file, `${entry}\n`, "utf8");
+
+  const now = new Date().toISOString();
+  const id = crypto.createHash("sha256").update(`${now}:${summary}`).digest("hex").slice(0, 12);
+
+  const entry = {
+    version: SCHEMA_VERSION,
+    id,
+    type,
+    scope,
+    status,
+    created_at: now,
+    updated_at: now,
+    supersedes,
+    source,
+    confidence,
+    content: summary
+  };
+
+  if (args.pending !== undefined && args.pending !== true) {
+    const pending = String(args.pending).trim();
+    if (pending) entry.pending = pending;
+  }
+
+  await fs.appendFile(file, JSON.stringify(entry) + "\n", "utf8");
   console.log(`Checkpoint written: ${file}`);
 }
 
@@ -162,7 +291,48 @@ async function status(args) {
   const memoryRoot = root(args);
   const projectsDir = path.join(memoryRoot, "projects");
   const projects = await fs.readdir(projectsDir).catch(() => []);
-  console.log(JSON.stringify({ root: memoryRoot, version: VERSION, projects: projects.length, project_aliases: projects }, null, 2));
+
+  let structuredCheckpoints = 0;
+  let legacyProjects = 0;
+  let current = 0;
+  let resolved = 0;
+  let stale = 0;
+
+  for (const project of projects) {
+    const projectDir = path.join(projectsDir, project);
+    const jsonlFile = path.join(projectDir, "checkpoints.jsonl");
+    const mdFile = path.join(projectDir, "current-state.md");
+
+    if (await exists(mdFile)) legacyProjects++;
+
+    if (await exists(jsonlFile)) {
+      const text = await fs.readFile(jsonlFile, "utf8");
+      const lines = text.split(/\n/).filter((line) => line.trim());
+      structuredCheckpoints += lines.length;
+      for (const line of lines) {
+        try {
+          const entry = JSON.parse(line);
+          if (entry.status === "current") current++;
+          else if (entry.status === "resolved") resolved++;
+          else if (entry.status === "stale") stale++;
+        } catch {
+          continue;
+        }
+      }
+    }
+  }
+
+  console.log(JSON.stringify({
+    root: memoryRoot,
+    version: VERSION,
+    projects: projects.length,
+    project_aliases: projects,
+    structured_checkpoints: structuredCheckpoints,
+    legacy_projects: legacyProjects,
+    current,
+    resolved,
+    stale
+  }, null, 2));
 }
 
 function assertSafe(text) {

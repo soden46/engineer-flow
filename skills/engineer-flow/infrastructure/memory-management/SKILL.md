@@ -29,10 +29,68 @@ The command prints `decision: RUN` or `decision: SKIP`. On `RUN`, use only spars
 - Preserve provenance and status.
 - Checkpoint only durable reusable knowledge.
 
-## Checkpoint
+## Structured Checkpoints (v0.2)
 
-After meaningful work, checkpoint only when durable knowledge changed:
+Runtime version 0.2 writes structured checkpoint entries (schema version 2) to:
+
+```
+projects/<alias>/checkpoints.jsonl
+```
+
+Each line is an independent JSON object with required fields:
+
+```json
+{
+  "version": 2,
+  "id": "...",
+  "type": "general",
+  "scope": "project",
+  "status": "current",
+  "created_at": "...",
+  "updated_at": "...",
+  "supersedes": [],
+  "source": "engineer-flow checkpoint",
+  "confidence": "confirmed",
+  "content": "<summary>"
+}
+```
+
+Optional fields:
+
+- `pending` — free-form pending-work text
+
+Allowed `type` values: `general`, `decision`, `architecture`, `convention`, `deployment`, `migration`, `known-issue`, `benchmark`, `pending-work`.
+
+Allowed `status` values: `current`, `resolved`, `stale`.
+
+Allowed `confidence` values: `confirmed`, `inferred`.
+
+### Checkpoint CLI
 
 ```bash
-node skills/engineer-flow/infrastructure/memory-management/scripts/memory.mjs checkpoint --project <alias> --summary "<durable summary>"
+node skills/engineer-flow/infrastructure/memory-management/scripts/memory.mjs checkpoint \
+  --project <alias> \
+  --summary "<durable summary>"
 ```
+
+Optional metadata flags (all default when omitted):
+
+| Flag           | Default                    | Validation                  |
+|----------------|----------------------------|-----------------------------|
+| `--type`       | `general`                  | Must be an allowed type     |
+| `--scope`      | `project`                  | Secret-guarded              |
+| `--status`     | `current`                  | Must be an allowed status   |
+| `--source`     | `engineer-flow checkpoint` | Secret-guarded              |
+| `--confidence` | `confirmed`                | Must be an allowed confidence |
+| `--supersedes` | none                       | Comma-separated checkpoint IDs |
+
+Invalid enum values fail with a non-zero exit and a deterministic error.
+
+### Legacy Compatibility
+
+The legacy `projects/<alias>/current-state.md` file remains **read-only** and is
+never rewritten or migrated by the v0.2 runtime. New checkpoints are written
+**only** to `checkpoints.jsonl`. The `recall` command searches both storage
+formats when both are present.
+
+Current code/config always wins over any memory, structured or legacy.
