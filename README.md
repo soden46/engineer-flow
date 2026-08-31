@@ -495,8 +495,15 @@ Additional checks used by the project include:
 
 ```bash
 npm run test:normalization
+npm run test:security-gate
+npm run test:heldout-burn-guard
+npm run test:security-gate-installer-posix
 npm run benchmark:routing
 ```
+
+The `test:heldout-burn-guard` test verifies refusal only; it does not rerun burned heldout scenarios.
+
+The `test:security-gate-installer-posix` test executes authoritatively on Ubuntu CI.
 
 Previously used heldout suites should not be presented as fresh final evaluation evidence for new routing candidates.
 
@@ -560,11 +567,11 @@ Commit-aware security review can be tied to the exact staged Git diff through:
 skills/engineer-flow/scripts/security-gate.mjs
 ```
 
-The security skill itself is:
+The security gate evaluates the exact staged diff SHA-256. A later staged change invalidates an earlier PASS record. A `NEEDS_FIX` result blocks commit until a new review records PASS for the current diff.
 
-```text
-skills/engineer-flow/core/security/SKILL.md
-```
+The installer preserves any existing `pre-commit` hook as `pre-commit.pre-engineer-flow` and chains it before the Engineer Flow security gate.
+
+For the full security policy, see [SECURITY.md](SECURITY.md).
 
 ---
 
@@ -597,10 +604,13 @@ engineer-flow/
 |       `-- scripts/
 |           |-- engineer-flow.mjs
 |           |-- validate.mjs
-|           `-- security-gate.mjs
+|           |-- security-gate.mjs
+|           |-- install-security-gate.ps1
+|           `-- install-security-gate.sh
 |-- tests/
 |-- benchmark-results/
 |-- docs/
+|-- SECURITY.md
 |-- agent-skills.json
 |-- package.json
 |-- RELEASE-NOTES.md
@@ -616,7 +626,8 @@ Runtime components:
 | Resolver | `skills/engineer-flow/scripts/engineer-flow.mjs` |
 | Validator | `skills/engineer-flow/scripts/validate.mjs` |
 | Security gate | `skills/engineer-flow/scripts/security-gate.mjs` |
-| Security gate installer | `skills/engineer-flow/scripts/install-security-gate.ps1` |
+| Security gate installer (PowerShell) | `skills/engineer-flow/scripts/install-security-gate.ps1` |
+| Security gate installer (POSIX) | `skills/engineer-flow/scripts/install-security-gate.sh` |
 | Core manifest | `skills/engineer-flow/core/core-manifest.json` |
 
 ---
