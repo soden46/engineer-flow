@@ -495,8 +495,15 @@ Additional checks used by the project include:
 
 ```bash
 npm run test:normalization
+npm run test:security-gate
+npm run test:heldout-burn-guard
+npm run test:security-gate-installer-posix
 npm run benchmark:routing
 ```
+
+The `test:heldout-burn-guard` test verifies refusal only; it does not rerun burned heldout scenarios.
+
+The `test:security-gate-installer-posix` test executes authoritatively on Ubuntu CI.
 
 Previously used heldout suites should not be presented as fresh final evaluation evidence for new routing candidates.
 
@@ -560,31 +567,11 @@ Commit-aware security review can be tied to the exact staged Git diff through:
 skills/engineer-flow/scripts/security-gate.mjs
 ```
 
-The security skill itself is:
-
-```text
-skills/engineer-flow/core/security/SKILL.md
-```
-
-### Install Security Gate
-
-Install the Git pre-commit hook to enforce mandatory security review:
-
-**Windows (PowerShell):**
-
-```powershell
-powershell -ExecutionPolicy Bypass -File `
-  skills/engineer-flow/scripts/install-security-gate.ps1 `
-  -Project <project-path>
-```
-
-**Linux / macOS:**
-
-```bash
-sh skills/engineer-flow/scripts/install-security-gate.sh <project-path>
-```
+The security gate evaluates the exact staged diff SHA-256. A later staged change invalidates an earlier PASS record. A `NEEDS_FIX` result blocks commit until a new review records PASS for the current diff.
 
 The installer preserves any existing `pre-commit` hook as `pre-commit.pre-engineer-flow` and chains it before the Engineer Flow security gate.
+
+For the full security policy, see [SECURITY.md](SECURITY.md).
 
 ---
 
@@ -623,6 +610,7 @@ engineer-flow/
 |-- tests/
 |-- benchmark-results/
 |-- docs/
+|-- SECURITY.md
 |-- agent-skills.json
 |-- package.json
 |-- RELEASE-NOTES.md
