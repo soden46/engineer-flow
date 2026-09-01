@@ -54,6 +54,7 @@
 - [Persistent Memory](#persistent-memory)
 - [Minimal-Change Engineering](#minimal-change-engineering)
 - [Verification](#verification)
+- [Engineer Flow Doctor](#engineer-flow-doctor)
 - [Mandatory Security](#mandatory-security)
 - [Repository Structure](#repository-structure)
 - [Development](#development)
@@ -506,6 +507,42 @@ The `test:heldout-burn-guard` test verifies refusal only; it does not rerun burn
 The `test:security-gate-installer-posix` test executes authoritatively on Ubuntu CI.
 
 Previously used heldout suites should not be presented as fresh final evaluation evidence for new routing candidates.
+
+---
+
+## Engineer Flow Doctor
+
+`doctor` is an optional, on-demand health check. It is read-only and is not automatically run for every engineering task, so it does not add normal task context or token overhead.
+
+It checks:
+
+- 16 internal core capabilities
+- memory infrastructure/runtime
+- external skill roots and malformed skills
+- repository version consistency
+- Git/project context
+- Engineer Flow security hook
+- memory root
+
+Status meanings:
+
+- `PASS` — all checks passed
+- `WARN` — non-fatal issue detected
+- `FAIL` — actionable problem found
+
+`PASS` and `WARN` exit 0. `FAIL` exits 1.
+
+Usage:
+
+```bash
+node skills/engineer-flow/scripts/engineer-flow.mjs doctor
+```
+
+Target a specific project:
+
+```bash
+node skills/engineer-flow/scripts/engineer-flow.mjs doctor --cwd <project>
+```
 
 ---
 

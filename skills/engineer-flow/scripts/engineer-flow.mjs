@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,6 +10,13 @@ const SCRIPT_DIR = path.dirname(__filename);
 const ROOT =
   path.resolve(
     SCRIPT_DIR,
+    ".."
+  );
+
+const REPO_ROOT =
+  path.resolve(
+    ROOT,
+    "..",
     ".."
   );
 
@@ -1331,6 +1339,603 @@ function resolve({
    CLI
    ========================================================= */
 
+/* =========================================================
+   DOCTOR (read-only diagnostics)
+    ========================================================= */
+
+function readPackageVersion() {
+  const pkgPath =
+    path.join(
+      REPO_ROOT,
+      "package.json"
+    );
+
+  if (
+    !fs.existsSync(pkgPath)
+  ) {
+    return null;
+  }
+
+  try {
+    const pkg =
+      JSON.parse(
+        fs.readFileSync(
+          pkgPath,
+          "utf8"
+        )
+      );
+
+    return pkg.version || null;
+  }
+  catch {
+    return null;
+  }
+}
+
+function readRootPackageJson() {
+  const pkgPath =
+    path.join(
+      REPO_ROOT,
+      "package.json"
+    );
+
+  if (
+    !fs.existsSync(pkgPath)
+  ) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(
+      fs.readFileSync(
+        pkgPath,
+        "utf8"
+      )
+    );
+  }
+  catch {
+    return null;
+  }
+}
+
+function readJsonSafe(file) {
+  try {
+    return JSON.parse(
+      fs.readFileSync(
+        file,
+        "utf8"
+      )
+    );
+  }
+  catch {
+    return null;
+  }
+}
+
+function isGitRepository(cwd) {
+       const result =
+    spawnSync(
+      "git",
+      [
+        "rev-parse",
+        "--is-inside-work-tree"
+      ],
+      {
+        cwd,
+        encoding:
+          "utf8"
+      }
+    );
+
+  return (
+    result.status === 0 &&
+    result.stdout.trim() === "true"
+  );
+}
+
+function gitPath(cwd, gitSubpath) {
+  const result =
+    spawnSync(
+      "git",
+      [
+        "rev-parse",
+        "--git-path",
+        gitSubpath
+      ],
+      {
+        cwd,
+        encoding:
+          "utf8"
+      }
+    );
+
+  if (
+    result.status !== 0
+  ) {
+    return null;
+  }
+
+  const value =
+    result.stdout.trim();
+
+  if (!value) {
+    return null;
+  }
+
+  return path.isAbsolute(value)
+    ? value
+    : path.resolve(
+        cwd,
+        value
+      );
+}
+
+function resolveMemoryRoot() {
+  const envRoot =
+    process.env
+      .ENGINEER_FLOW_MEMORY_ROOT ||
+    process.env
+      .AI_MEMORY_ROOT;
+
+  if (envRoot) {
+    return path.resolve(
+      String(envRoot)
+    );
+  }
+
+  return path.join(
+    os.homedir(),
+    ".engineer-flow-memory"
+  );
+}
+
+function readMemoryRuntimeVersion() {
+  if (
+    !fs.existsSync(MEMORY_RUNNER)
+  ) {
+    return null;
+  }
+
+  try {
+    const text =
+      fs.readFileSync(
+        MEMORY_RUNNER,
+        "utf8"
+      );
+
+    const match =
+      text.match(
+        /const VERSION = "([^"]+)"/
+      );
+
+    return match
+      ? match[1]
+      : null;
+  }
+  catch {
+    return null;
+  }
+}
+
+function runDoctor(args) {
+  const cwd =
+    path.resolve(
+      value("--cwd") ||
+      process.cwd()
+    );
+
+  const checks = [];
+  let hasFail = false;
+  let hasWarn = false;
+
+  /*
+   * A. CORE_MANIFEST
+   */
+  let manifestPass = true;
+  let coreCount = 0;
+
+  if (
+    !fs.existsSync(CORE_MANIFEST)
+  ) {
+    manifestPass = false;
+    hasFail = true;
+  }
+  else {
+    const manifest =
+      readJsonSafe(CORE_MANIFEST);
+
+    if (!manifest) {
+      manifestPass = false;
+      hasFail = true;
+    }
+    else {
+      const cores =
+        Array.isArray(manifest.cores)
+          ? manifest.cores
+          : [];
+
+      coreCount = cores.length;
+
+      if (
+        coreCount !== 16
+      ) {
+        manifestPass = false;
+        hasFail = true;
+      }
+      else {
+        for (
+          const name of cores
+        ) {
+          const skillFile =
+            path.join(
+              SKILLS_DIR,
+              name,
+              "SKILL.md"
+            );
+
+          if (
+            !fs.existsSync(skillFile)
+          ) {
+            manifestPass = false;
+            hasFail = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  console.log(
+    "CORE_MANIFEST=" +
+    (manifestPass ? "PASS" : "FAIL")
+  );
+
+  console.log(
+    `CORE_COUNT=${coreCount}`
+  );
+
+  /*
+   * B. MEMORY_INFRASTRUCTURE
+   */
+  const memSkillExists =
+    fs.existsSync(MEMORY_SKILL);
+
+  const memRunnerExists =
+    fs.existsSync(MEMORY_RUNNER);
+
+  const memPass =
+    memSkillExists &&
+    memRunnerExists;
+
+  if (
+    !memPass
+  ) {
+    hasFail = true;
+  }
+
+  console.log(
+    "MEMORY_INFRASTRUCTURE=" +
+    (memPass ? "PASS" : "FAIL")
+  );
+
+  const memVersion =
+    readMemoryRuntimeVersion();
+
+  console.log(
+    `MEMORY_RUNTIME_VERSION=${memVersion ?? "UNKNOWN"}`
+  );
+
+  /*
+   * C. EXTERNAL_ROOTS
+   */
+  const roots =
+    externalRoots();
+
+  let externalRootsWarn = false;
+
+  for (
+    const root_ of roots
+  ) {
+    const exists =
+      fs.existsSync(root_);
+
+    console.log(
+      `EXTERNAL_ROOT=${root_}=${exists ? "YES" : "NO"}`
+    );
+
+    if (!exists) {
+      externalRootsWarn = true;
+    }
+  }
+
+  console.log(
+    `EXTERNAL_ROOTS=${roots.length}`
+  );
+
+  /*
+   * D. EXTERNAL_SKILLS
+   */
+  let externalCount = 0;
+  let malformedCount = 0;
+
+  for (
+    const root_ of roots
+  ) {
+    const files =
+      walkSkillFiles(root_);
+
+    for (
+      const file of files
+      ) {
+      let text = "";
+      let unreadable = false;
+
+      try {
+        text =
+          fs.readFileSync(
+            file,
+            "utf8"
+          );
+      }
+      catch {
+        unreadable =
+          true;
+      }
+
+      if (unreadable) {
+        malformedCount += 1;
+        continue;
+      }
+
+      const meta =
+        frontmatter(text);
+
+      const fallbackName =
+        path.basename(
+          path.dirname(file)
+        );
+
+      const name =
+        meta.name ||
+        fallbackName;
+
+      if (
+        !name
+      ) {
+        malformedCount += 1;
+        continue;
+      }
+
+      externalCount += 1;
+    }
+  }
+
+  console.log(
+    `EXTERNAL_SKILLS=${externalCount}`
+  );
+
+  console.log(
+    `MALFORMED_EXTERNAL_SKILLS=${malformedCount}`
+  );
+
+  if (externalRootsWarn || malformedCount > 0) {
+    hasWarn = true;
+  }
+
+  /*
+   * E. VERSION_CONSISTENCY
+   */
+  let versionPass = true;
+  const pkgVersion =
+    readPackageVersion();
+
+  if (
+    pkgVersion === null
+  ) {
+    versionPass = false;
+    hasFail = true;
+  }
+
+  if (
+    versionPass
+  ) {
+    const metadataFiles = [
+      "agent-skills.json",
+      ".codex-plugin/plugin.json",
+      ".claude-plugin/plugin.json",
+      ".claude-plugin/marketplace.json"
+    ];
+
+    for (
+      const file of metadataFiles
+    ) {
+          const full =
+        path.join(
+          REPO_ROOT,
+          file
+        );
+
+      if (
+        !fs.existsSync(full)
+      ) {
+        versionPass = false;
+        hasFail = true;
+        continue;
+      }
+
+      const json =
+        readJsonSafe(full);
+
+      if (
+        !json ||
+        !JSON.stringify(json).includes(
+          pkgVersion
+        )
+      ) {
+        versionPass = false;
+        hasFail = true;
+      }
+    }
+  }
+
+  console.log(
+    "VERSION_CONSISTENCY=" +
+    (versionPass ? "PASS" : "FAIL")
+  );
+
+  /*
+   * F. PROJECT_CONTEXT
+   */
+  const gitRepo =
+    isGitRepository(cwd);
+
+  console.log(
+    `PROJECT_ROOT=${cwd}`
+  );
+
+  console.log(
+    `GIT_REPOSITORY=${gitRepo ? "YES" : "NO"}`
+  );
+
+  /*
+   * G. SECURITY_HOOK
+   */
+  let hookStatus =
+    "NOT_GIT_REPOSITORY";
+
+  let preserved =
+    "NO";
+
+  if (
+    gitRepo
+  ) {
+    const hooksPath =
+      gitPath(
+        cwd,
+        "hooks"
+      );
+
+    if (
+      hooksPath !== null
+    ) {
+      const preCommit =
+        path.join(
+          hooksPath,
+          "pre-commit"
+        );
+
+      const preCommitEf =
+        path.join(
+          hooksPath,
+          "pre-commit.pre-engineer-flow"
+        );
+
+      if (
+        fs.existsSync(preCommitEf)
+      ) {
+        preserved =
+          "YES";
+      }
+
+      if (
+        fs.existsSync(preCommit)
+      ) {
+        try {
+          const content =
+            fs.readFileSync(
+              preCommit,
+              "utf8"
+            );
+
+          if (
+            content.includes(
+              "ENGINEER_FLOW_SECURITY_GATE"
+            )
+          ) {
+            hookStatus =
+              "INSTALLED";
+          }
+          else {
+            hookStatus =
+              "NOT_INSTALLED";
+          }
+        }
+        catch {
+          hookStatus =
+            "NOT_INSTALLED";
+        }
+      }
+      else {
+        hookStatus =
+          "NOT_INSTALLED";
+        hasWarn = true;
+      }
+    }
+    else {
+      hookStatus =
+        "NOT_INSTALLED";
+      hasWarn = true;
+    }
+  }
+
+  console.log(
+    `SECURITY_HOOK=${hookStatus}`
+  );
+
+  console.log(
+    `PRESERVED_PREVIOUS_HOOK=${preserved}`
+  );
+
+  /*
+   * H. MEMORY_ROOT
+   */
+  const memoryRoot =
+    resolveMemoryRoot();
+
+  const memoryRootExists =
+    fs.existsSync(memoryRoot);
+
+  console.log(
+    `MEMORY_ROOT=${memoryRoot}`
+  );
+
+  console.log(
+    `MEMORY_ROOT_EXISTS=${memoryRootExists ? "YES" : "NO"}`
+  );
+
+  if (
+    !memoryRootExists
+  ) {
+    hasWarn = true;
+  }
+
+  /*
+   * Summary
+   */
+  if (hasFail) {
+    console.log(
+      "DOCTOR_STATUS=FAIL"
+    );
+    process.exit(1);
+  }
+  else if (hasWarn) {
+    console.log(
+      "DOCTOR_STATUS=WARN"
+    );
+    process.exit(0);
+  }
+  else {
+    console.log(
+      "DOCTOR_STATUS=PASS"
+    );
+    process.exit(0);
+  }
+}
+
+/* =========================================================
+   CLI
+   ========================================================= */
+
 const args =
   process.argv.slice(2);
 
@@ -1487,6 +2092,12 @@ console.log(
   );
 }
 
+else if (
+  command === "doctor"
+) {
+  runDoctor(args);
+}
+
 else {
   console.log(
     [
@@ -1496,7 +2107,10 @@ else {
       "",
       "node engineer-flow.mjs inventory",
       "",
-      "node engineer-flow.mjs self-test"
+      "node engineer-flow.mjs self-test",
+      "",
+      "node engineer-flow.mjs doctor [--cwd <project>]",
+      ""
     ].join("\n")
   );
 }
