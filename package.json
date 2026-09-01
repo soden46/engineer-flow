@@ -18,7 +18,8 @@
     "test:heldout-burn-guard": "node tests/heldout-burn-guard.mjs",
     "test:security-gate-installer-posix": "node tests/security-gate-installer-posix.mjs",
     "test:memory": "node tests/memory-structured-checkpoint.mjs",
-    "test:doctor": "node tests/doctor.mjs"
+    "test:doctor": "node tests/doctor.mjs",
+    "test:explain": "node tests/explain.mjs"
   },
   "keywords": [
     "agent-skills",

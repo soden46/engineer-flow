@@ -55,6 +55,7 @@
 - [Minimal-Change Engineering](#minimal-change-engineering)
 - [Verification](#verification)
 - [Engineer Flow Doctor](#engineer-flow-doctor)
+- [Engineer Flow Explain](#engineer-flow-explain)
 - [Mandatory Security](#mandatory-security)
 - [Repository Structure](#repository-structure)
 - [Development](#development)
@@ -543,6 +544,34 @@ Target a specific project:
 ```bash
 node skills/engineer-flow/scripts/engineer-flow.mjs doctor --cwd <project>
 ```
+
+---
+
+## Engineer Flow Explain
+
+`explain` is an optional, on-demand routing diagnostic. It is read-only, does not run automatically for normal tasks, does not call an LLM, and does not change routing behavior. It does not add normal resolve, context, or token overhead.
+
+`explain` exposes routing diagnostics from the existing deterministic resolver. It reports why the current resolver selected a route. It is not a natural-language chain-of-thought or LLM reasoning trace.
+
+Output can include:
+
+- intent anchors
+- project evidence files
+- selected primary specialist
+- selected support specialist
+- source and score
+- matched lexical terms
+- external skill evidence terms
+- specialist count
+- memory/security infrastructure metadata
+
+Usage:
+
+```bash
+node skills/engineer-flow/scripts/engineer-flow.mjs explain --task "..." --cwd <project>
+```
+
+`--task` is required. `--cwd` defaults to the current working directory.
 
 ---
 

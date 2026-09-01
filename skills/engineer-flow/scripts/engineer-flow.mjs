@@ -601,6 +601,26 @@ function scoreSkill(
   return score;
 }
 
+/*
+ * Diagnostic-only helper.
+ * Returns the set of task words that appear in the skill's routing-visible
+ * terms. Uses the SAME words() and skillTerms() used by scoreSkill.
+ * Never participates in specialist selection.
+ */
+function explainMatchedTerms(task, skill) {
+  const taskWords =
+    new Set(
+      words(task)
+    );
+
+  const terms =
+    skillTerms(skill);
+
+  return [...taskWords].filter(
+    (word) => terms.has(word)
+  );
+}
+
 const EXTERNAL_GENERIC_ANCHORS = new Set([
   "api",
   "app",
@@ -1933,6 +1953,158 @@ function runDoctor(args) {
 }
 
 /* =========================================================
+   EXPLAIN (read-only routing diagnostics)
+   ========================================================= */
+
+function runExplain(args) {
+  const task =
+    value("--task") ||
+    "";
+
+  const cwd =
+    path.resolve(
+      value("--cwd") ||
+      process.cwd()
+    );
+
+  if (!task) {
+    throw new Error(
+      "--task is required"
+    );
+  }
+
+  const pool =
+    buildCapabilityPool();
+
+  const retrieval =
+    buildRetrievalContext({
+      task,
+      cwd,
+      internalSkills:
+        pool.internal,
+      externalSkills:
+        pool.external
+    });
+
+  const selected =
+    chooseSpecialists(
+      task,
+      pool.capabilities,
+      retrieval
+    );
+
+  const primary = selected[0] || null;
+  const support = selected[1] || null;
+
+  const rankedAll =
+    pool.capabilities
+      .map((skill) => ({
+        skill,
+        score:
+          scoreSkill(task, skill) +
+          (skill.internal
+            ? 0
+            : retrieval.affinityByPath.get(skill.path) || 0)
+      }))
+      .filter((item) =>
+        item.score > 0 &&
+        (item.skill.internal ||
+          externalSkillAnchored(task, item.skill) ||
+          retrieval.affinityByPath.has(item.skill.path))
+      )
+      .sort((a, b) =>
+        b.score - a.score ||
+        Number(b.skill.internal) - Number(a.skill.internal) ||
+        a.skill.name.localeCompare(b.skill.name)
+      );
+
+  function explainItem(item) {
+    if (!item) {
+      return {
+        name: "NONE",
+        source: "NONE",
+        score: 0,
+        matched_terms: "NONE",
+        external_evidence: "NONE"
+      };
+    }
+
+    const skill = item.skill;
+    const matched =
+      explainMatchedTerms(task, skill);
+
+    let externalEvidence = "NONE";
+    if (!skill.internal) {
+      const match =
+        retrieval.diagnostics.external_matches.find(
+          (m) => m.name === skill.name
+        );
+      if (match && match.matched_identity_terms.length) {
+        externalEvidence =
+          match.matched_identity_terms.join(",");
+      }
+    }
+
+    return {
+      name: skill.name,
+      source:
+        skill.internal
+          ? "engineer-flow"
+          : "external",
+      score: item.score,
+      matched_terms: matched.length
+        ? matched.join(",")
+        : "NONE",
+      external_evidence: externalEvidence
+    };
+  }
+
+  const primaryInfo = explainItem(primary);
+  const supportInfo = explainItem(support);
+
+  console.log("ENGINEER_FLOW_EXPLAIN");
+  console.log("");
+  console.log(`TASK=${task}`);
+  console.log(`PROJECT_ROOT=${cwd}`);
+  console.log("");
+  console.log(`CAPABILITY_POOL_INTERNAL=${pool.internal.length}`);
+  console.log(`CAPABILITY_POOL_EXTERNAL=${pool.external.length}`);
+  console.log("");
+  console.log(`INTENT_ANCHORS=${retrieval.diagnostics.intent.join(",") || "NONE"}`);
+  console.log(`PROJECT_EVIDENCE_FILES=${retrieval.diagnostics.project_evidence.files_considered.join(",") || "NONE"}`);
+  console.log("");
+  console.log(`PRIMARY=${primaryInfo.name}`);
+  console.log(`PRIMARY_SOURCE=${primaryInfo.source}`);
+  console.log(`PRIMARY_SCORE=${primaryInfo.score}`);
+  console.log(`PRIMARY_MATCHED_TERMS=${primaryInfo.matched_terms}`);
+  console.log("");
+  console.log(`SUPPORT=${supportInfo.name}`);
+  console.log(`SUPPORT_SOURCE=${supportInfo.source}`);
+  console.log(`SUPPORT_SCORE=${supportInfo.score}`);
+  console.log(`SUPPORT_MATCHED_TERMS=${supportInfo.matched_terms}`);
+  console.log("");
+
+  if (primaryInfo.source === "external") {
+    console.log(`PRIMARY_EXTERNAL_EVIDENCE=${primaryInfo.external_evidence}`);
+  }
+  if (supportInfo.source === "external") {
+    console.log(`SUPPORT_EXTERNAL_EVIDENCE=${supportInfo.external_evidence}`);
+  }
+
+  console.log("");
+  console.log(`SPECIALIST_COUNT=${selected.length}`);
+  console.log(`MAX_SPECIALISTS=${MAX_SPECIALISTS}`);
+  console.log("");
+  console.log("MEMORY_MODE=conditional");
+  console.log("MEMORY_COUNTED_AS_SPECIALIST=NO");
+  console.log("");
+  console.log("SECURITY_REVIEW_REQUIRED=YES");
+  console.log("SECURITY_COUNTED_AS_SPECIALIST=NO");
+  console.log("");
+  console.log("ROUTING_BEHAVIOR_CHANGED=NO");
+}
+
+/* =========================================================
    CLI
    ========================================================= */
 
@@ -2098,6 +2270,12 @@ else if (
   runDoctor(args);
 }
 
+else if (
+  command === "explain"
+) {
+  runExplain(args);
+}
+
 else {
   console.log(
     [
@@ -2110,6 +2288,8 @@ else {
       "node engineer-flow.mjs self-test",
       "",
       "node engineer-flow.mjs doctor [--cwd <project>]",
+      "",
+      "node engineer-flow.mjs explain --task \"...\" [--cwd <project>]",
       ""
     ].join("\n")
   );
