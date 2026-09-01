@@ -134,3 +134,35 @@ never rewritten or migrated by the v0.2 runtime. New checkpoints are written
 formats when both are present.
 
 Current code/config always wins over any memory, structured or legacy.
+
+### Memory Compaction
+
+Structured memory is split across two JSONL files per project alias:
+
+- Active structured memory: `projects/<alias>/checkpoints.jsonl`
+- Archived historical memory: `projects/<alias>/archive.jsonl`
+
+The `compact` command prunes stale/resolved entries from the active file into the
+archive. Compaction controls:
+
+- `compact` defaults to DRY RUN; output reports `MEMORY_COMPACTION=DRY_RUN`
+  with `WOULD_ARCHIVE` count and leaves both files unmodified.
+- Use `compact --apply` to perform actual archival.
+- `--keep-history <n>` controls how many stale/resolved entries (by newest
+  `updated_at`/`created_at`/`id`) are retained in the active file. Default: 50.
+- `current` checkpoints are never archived, regardless of retention.
+- stale/resolved entries beyond the retention limit move to `archive.jsonl`.
+- Archived entries are excluded from normal `recall` results (archive is
+  read-only history, not active memory).
+- Compaction is idempotent: running again with the same retention is a NOOP
+  (`MEMORY_COMPACTION=NOOP`, `ARCHIVED=0`) because archived IDs are skipped.
+- The legacy `current-state.md` is never modified by compaction.
+
+```bash
+node skills/engineer-flow/infrastructure/memory-management/scripts/memory.mjs compact \
+  --project <alias> --keep-history 50        # dry run
+node skills/engineer-flow/infrastructure/memory-management/scripts/memory.mjs compact \
+  --project <alias> --keep-history 50 --apply  # apply
+```
+
+Current code/config always wins over any memory, structured or legacy.

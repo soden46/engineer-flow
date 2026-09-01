@@ -41,6 +41,7 @@ async function main() {
   if (command === "checkpoint") return checkpoint(args);
   if (command === "recall") return recall(args);
   if (command === "status") return status(args);
+  if (command === "compact") return compact(args);
   throw new Error(`unknown command "${command}"`);
 }
 
@@ -52,6 +53,7 @@ Usage:
   node memory.mjs recall --project <alias> --query <task> [--limit 5]
   node memory.mjs checkpoint --project <alias> --summary <text> [--pending <text>]
   node memory.mjs checkpoint --project <alias> --summary <text> [options]
+  node memory.mjs compact --project <alias> [--keep-history <n>] [--apply]
   node memory.mjs status
 
 Checkpoint options:
@@ -63,10 +65,15 @@ Checkpoint options:
   --supersedes <ids>   Comma-separated list of checkpoint IDs to supersede
   --force              Override temporary content guard
 
+Compact options:
+  --keep-history <n>   Number of historical (stale+resolved) entries to keep active (default: 50)
+  --apply              Apply compaction; default is dry-run
+
 Root defaults to ENGINEER_FLOW_MEMORY_ROOT, AI_MEMORY_ROOT, or ~/.engineer-flow-memory.
 
 New checkpoints are written to checkpoints.jsonl (schema v2).
-Legacy current-state.md remains readable for backward compatibility.`);
+Legacy current-state.md remains readable for backward compatibility.
+Compaction archives stale/resolved entries to archive.jsonl.`);
 }
 
 function parseArgs(argv) {
@@ -146,11 +153,16 @@ async function recall(args) {
       try {
         const entry = JSON.parse(line);
         const block = structuredSearchText(entry);
+        const lexicalScore = score(block, query);
+        if (lexicalScore <= 0) continue;
         entries.push({
           format: "structured",
           entry,
           block,
-          score: score(block, query)
+          score: lexicalScore,
+          lifecycleRank: lifecycleRankForStructured(entry),
+          lifecycleKey: lifecycleKeyForStructured(entry),
+          originalIndex: entries.length
         });
       } catch {
         continue;
@@ -162,18 +174,22 @@ async function recall(args) {
     const text = await fs.readFile(legacyFile, "utf8");
     const blocks = text.split(/\n(?=## )/).filter(Boolean);
     for (const block of blocks) {
+      const lexicalScore = score(block, query);
+      if (lexicalScore <= 0) continue;
       entries.push({
         format: "legacy",
         block,
-        score: score(block, query)
+        score: lexicalScore,
+        lifecycleRank: 1,
+        lifecycleKey: "",
+        originalIndex: entries.length
       });
     }
   }
 
-  const scored = entries
-    .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit);
+  entries.sort(lifecycleCompare);
+
+  const scored = entries.slice(0, limit);
 
   if (!scored.length) {
     console.log("No relevant memory found.");
@@ -196,6 +212,27 @@ async function recall(args) {
   }
 }
 
+function lifecycleRankForStructured(entry) {
+  if (entry.status === "current") return 0;
+  if (entry.status === "stale") return 2;
+  if (entry.status === "resolved") return 3;
+  return 4;
+}
+
+function lifecycleKeyForStructured(entry) {
+  return String(entry.updated_at || entry.created_at || entry.id || "");
+}
+
+function lifecycleCompare(a, b) {
+  if (a.lifecycleRank !== b.lifecycleRank) return a.lifecycleRank - b.lifecycleRank;
+  if (a.score !== b.score) return b.score - a.score;
+  if (a.lifecycleKey !== b.lifecycleKey) {
+    if (a.lifecycleKey < b.lifecycleKey) return -1;
+    if (a.lifecycleKey > b.lifecycleKey) return 1;
+  }
+  return a.originalIndex - b.originalIndex;
+}
+
 function structuredSearchText(entry) {
   return [
     entry.content,
@@ -213,7 +250,14 @@ function score(block, query) {
   const words = new Set(query.split(/[^a-z0-9._-]+/).filter((word) => word.length > 2));
   let total = 0;
   const haystack = block.toLowerCase();
-  for (const word of words) if (haystack.includes(word)) total += 1;
+  for (const word of words) {
+    if (!word) continue;
+    let idx = 0;
+    while ((idx = haystack.indexOf(word, idx)) !== -1) {
+      total += 1;
+      idx += word.length;
+    }
+  }
   return total;
 }
 
@@ -423,6 +467,127 @@ async function status(args) {
     resolved,
     stale
   }, null, 2));
+}
+
+function parseKeepHistory(value) {
+  if (value === undefined || value === true) return 50;
+  if (typeof value !== "string") {
+    throw new Error("invalid --keep-history: must be integer >= 0");
+  }
+  if (!/^\d+$/.test(value)) {
+    throw new Error("invalid --keep-history: must be integer >= 0");
+  }
+  const n = Number(value);
+  if (!Number.isInteger(n) || n < 0) {
+    throw new Error("invalid --keep-history: must be integer >= 0");
+  }
+  return n;
+}
+
+function compareEntryNewest(a, b) {
+  const aKey = a.updated_at || a.created_at || a.id || "";
+  const bKey = b.updated_at || b.created_at || b.id || "";
+  if (aKey < bKey) return 1;
+  if (aKey > bKey) return -1;
+  const aCreated = a.created_at || "";
+  const bCreated = b.created_at || "";
+  if (aCreated < bCreated) return 1;
+  if (aCreated > bCreated) return -1;
+  if (a.id < b.id) return 1;
+  if (a.id > b.id) return -1;
+  return 0;
+}
+
+async function readArchiveIds(archiveFile) {
+  if (!await exists(archiveFile)) return new Set();
+  const text = await fs.readFile(archiveFile, "utf8");
+  const lines = text.split(/\n/).filter((line) => line.trim());
+  const ids = new Set();
+  for (const line of lines) {
+    try {
+      const entry = JSON.parse(line);
+      if (entry && entry.id) ids.add(entry.id);
+    } catch {
+      continue;
+    }
+  }
+  return ids;
+}
+
+async function compact(args) {
+  const project = projectAlias(args.project || "default");
+  const memoryRoot = root(args);
+  const projectDir = path.join(memoryRoot, "projects", project);
+  const activeFile = path.join(projectDir, "checkpoints.jsonl");
+  const archiveFile = path.join(projectDir, "archive.jsonl");
+  const keepHistory = parseKeepHistory(args["keep-history"]);
+  const apply = args.apply === true;
+
+  const existing = await readCheckpoints(activeFile);
+  const current = existing.filter((e) => e.status === "current");
+  const historical = existing
+    .filter((e) => e.status === "stale" || e.status === "resolved")
+    .slice()
+    .sort(compareEntryNewest);
+
+  const historicalActive = historical.slice(0, keepHistory);
+  const wouldArchive = historical.slice(keepHistory);
+
+  if (!apply) {
+    console.log("MEMORY_COMPACTION=DRY_RUN");
+    console.log(`PROJECT=${project}`);
+    console.log(`CURRENT=${current.length}`);
+    console.log(`HISTORICAL_ACTIVE=${historicalActive.length}`);
+    console.log(`WOULD_ARCHIVE=${wouldArchive.length}`);
+    console.log(`KEEP_HISTORY=${keepHistory}`);
+    return;
+  }
+
+  if (wouldArchive.length === 0) {
+    console.log("MEMORY_COMPACTION=NOOP");
+    console.log("ARCHIVED=0");
+    return;
+  }
+
+  const archiveIds = await readArchiveIds(archiveFile);
+  const newArchives = wouldArchive.filter((e) => !archiveIds.has(e.id));
+  if (newArchives.length === 0) {
+    console.log("MEMORY_COMPACTION=NOOP");
+    console.log("ARCHIVED=0");
+    return;
+  }
+
+  const activeSet = new Set(current.map((e) => e.id).concat(historicalActive.map((e) => e.id)));
+  const newActive = existing.filter((e) => activeSet.has(e.id));
+
+  const tmpActive = `${activeFile}.tmp-${process.pid}-${Date.now()}`;
+  const activeContent = newActive.map((e) => JSON.stringify(e)).join("\n") + (newActive.length ? "\n" : "");
+  await fs.writeFile(tmpActive, activeContent, "utf8");
+
+  const tmpArchive = `${archiveFile}.tmp-${process.pid}-${Date.now()}`;
+  let existingArchive = "";
+  if (await exists(archiveFile)) {
+    existingArchive = await fs.readFile(archiveFile, "utf8");
+  }
+  const newArchiveContent = newArchives.map((e) => JSON.stringify(e)).join("\n") + "\n";
+  await fs.writeFile(tmpArchive, existingArchive + newArchiveContent, "utf8");
+
+  try {
+    await fs.rename(tmpActive, activeFile);
+  } catch {
+    await fs.rm(activeFile, { force: true });
+    await fs.rename(tmpActive, activeFile);
+  }
+  try {
+    await fs.rename(tmpArchive, archiveFile);
+  } catch {
+    await fs.rm(archiveFile, { force: true });
+    await fs.rename(tmpArchive, archiveFile);
+  }
+
+  console.log("MEMORY_COMPACTION=APPLIED");
+  console.log(`ARCHIVED=${newArchives.length}`);
+  console.log(`ACTIVE_REMAINING=${newActive.length}`);
 }
 
 function assertSafe(text) {

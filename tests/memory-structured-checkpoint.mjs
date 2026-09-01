@@ -78,6 +78,30 @@ function getLineCount(filePath) {
   return text.split(/\n/).filter((line) => line.trim()).length;
 }
 
+function writeCheckpointsJsonl(project, entries, rootDir) {
+  const file = path.join(rootDir, "projects", project, "checkpoints.jsonl");
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const content = entries.map((e) => JSON.stringify(e)).join("\n") + "\n";
+  fs.writeFileSync(file, content, "utf8");
+  return file;
+}
+
+function makeEntry(id, type, scope, content, status, opts = {}) {
+  return {
+    version: 2,
+    id,
+    type,
+    scope,
+    status,
+    created_at: opts.created_at || "2020-01-01T00:00:00.000Z",
+    updated_at: opts.updated_at || "2020-01-01T00:00:00.000Z",
+    supersedes: opts.supersedes || [],
+    source: "engineer-flow checkpoint",
+    confidence: "confirmed",
+    content
+  };
+}
+
 function runTest(name, fn) {
   let passed = true;
   let failures = [];
@@ -868,6 +892,543 @@ function testLegacyUntouched(assert) {
   }
 }
 
+function testRankingCurrentBeatsStale(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("stale001", "general", "project", "PostgreSQL PostgreSQL PostgreSQL PostgreSQL", "stale"),
+      makeEntry("curr001", "general", "project", "PostgreSQL cluster setup", "current")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "PostgreSQL", "--limit", "5"],
+      root
+    );
+    const currPos = result.stdout.indexOf("ID: curr001");
+    const stalePos = result.stdout.indexOf("ID: stale001");
+    assert(currPos >= 0 && stalePos >= 0, "both entries present in output");
+    assert(currPos < stalePos, "CURRENT appears before STALE");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingCurrentBeatsResolved(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("resolved01", "general", "project", "Redis cache Redis cache Redis cache", "resolved"),
+      makeEntry("curr002", "general", "project", "Redis cache setup", "current")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "Redis cache", "--limit", "5"],
+      root
+    );
+    const currPos = result.stdout.indexOf("ID: curr002");
+    const resolvedPos = result.stdout.indexOf("ID: resolved01");
+    assert(currPos >= 0 && resolvedPos >= 0, "both entries present in output");
+    assert(currPos < resolvedPos, "CURRENT appears before RESOLVED");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingLegacyBeatsStale(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("stale002", "general", "project", "Database migration plan database", "stale")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const legacyContent = "## 2024-01-01 000000000000\n\nLegacy block about database migration.\n";
+    createLegacyFile(root, "demo", legacyContent);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "database", "--limit", "5"],
+      root
+    );
+    const legacyPos = result.stdout.indexOf("Legacy block about database migration");
+    const stalePos = result.stdout.indexOf("ID: stale002");
+    assert(legacyPos >= 0 && stalePos >= 0, "both entries present in output");
+    assert(legacyPos < stalePos, "LEGACY appears before STALE");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingScoreWithinCurrent(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("lowscore", "general", "project", "PostgreSQL", "current"),
+      makeEntry("highscore", "general", "project", "PostgreSQL PostgreSQL PostgreSQL database cluster", "current")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "PostgreSQL", "--limit", "5"],
+      root
+    );
+    const highPos = result.stdout.indexOf("ID: highscore");
+    const lowPos = result.stdout.indexOf("ID: lowscore");
+    assert(highPos >= 0 && lowPos >= 0, "both entries present in output");
+    assert(highPos < lowPos, "higher lexical score appears first");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingLimitAfterLifecycle(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("stale003", "general", "project", "PostgreSQL cluster stale info", "stale"),
+      makeEntry("resolved002", "general", "project", "PostgreSQL resolved info", "resolved"),
+      makeEntry("curr003", "general", "project", "PostgreSQL current info", "current"),
+      makeEntry("curr004", "general", "project", "PostgreSQL another current", "current")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "PostgreSQL", "--limit", "2"],
+      root
+    );
+    assert(!result.stdout.includes("stale003"), "STALE excluded by limit");
+    assert(!result.stdout.includes("resolved002"), "RESOLVED excluded by limit");
+    assert(result.stdout.includes("curr003") || result.stdout.includes("curr004"), "CURRENT entries appear");
+    const currentIds = ["curr003", "curr004"].filter((id) => result.stdout.includes(id));
+    assert(currentIds.length === 2, "both CURRENT entries present (limit=2 fills from CURRENT)");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingHistoricalFallback(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("stale004", "general", "project", "Old MongoDB config", "stale"),
+      makeEntry("resolved003", "general", "project", "Old MongoDB history", "resolved")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "MongoDB", "--limit", "5"],
+      root
+    );
+    assert(result.stdout.includes("stale004"), "STALE entry returned when no current");
+    assert(result.stdout.includes("resolved003"), "RESOLVED entry returned when no current");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingEmptyQueryOrder(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("resolved004", "general", "project", "Some content", "resolved"),
+      makeEntry("stale005", "general", "project", "Other content", "stale"),
+      makeEntry("curr005", "general", "project", "More content", "current")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+    createLegacyFile(root, "demo", "## 2024-01-01 000000000000\n\nLegacy content block here.\n");
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--limit", "10"],
+      root
+    );
+
+    const currPos = result.stdout.indexOf("ID: curr005");
+    const legacyPos = result.stdout.indexOf("Legacy content block here");
+    const stalePos = result.stdout.indexOf("ID: stale005");
+    const resolvedPos = result.stdout.indexOf("ID: resolved004");
+
+    assert(currPos >= 0, "current in output");
+    assert(legacyPos >= 0, "legacy in output");
+    assert(stalePos >= 0, "stale in output");
+    assert(resolvedPos >= 0, "resolved in output");
+    assert(currPos < legacyPos, "CURRENT before LEGACY");
+    assert(legacyPos < stalePos, "LEGACY before STALE");
+    assert(stalePos < resolvedPos, "STALE before RESOLVED");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingDeterministicTie(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("aaa001", "general", "project", "Database", "current",
+        { created_at: "2020-01-01T00:00:00.000Z", updated_at: "2020-01-01T00:00:00.000Z" }),
+      makeEntry("bbb001", "general", "project", "Database", "current",
+        { created_at: "2020-01-01T00:00:00.000Z", updated_at: "2020-01-01T00:00:00.000Z" })
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result1 = runMemory(
+      ["recall", "--project", "demo", "--query", "Database", "--limit", "5"],
+      root
+    );
+    const result2 = runMemory(
+      ["recall", "--project", "demo", "--query", "Database", "--limit", "5"],
+      root
+    );
+    assert(result1.stdout === result2.stdout, "identical ordering across runs");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testRankingReadOnly(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("stale006", "general", "project", "PostgreSQL stale", "stale"),
+      makeEntry("curr006", "general", "project", "PostgreSQL current", "current")
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+    const legacyContent = "## 2024-01-01 000000000000\n\nLegacy database memory.\n";
+    const legacyPath = createLegacyFile(root, "demo", legacyContent);
+
+    const jsonlPath = path.join(root, "projects", "demo", "checkpoints.jsonl");
+    const jsonlHashBefore = sha256File(jsonlPath);
+    const legacyHashBefore = sha256File(legacyPath);
+
+    runMemory(["recall", "--project", "demo", "--query", "PostgreSQL", "--limit", "5"], root);
+    runMemory(["recall", "--project", "demo", "--query", "database", "--limit", "5"], root);
+    runMemory(["recall", "--project", "demo", "--query", ""], root);
+
+    const jsonlHashAfter = sha256File(jsonlPath);
+    const legacyHashAfter = sha256File(legacyPath);
+    assert(jsonlHashBefore === jsonlHashAfter, "checkpoints.jsonl unchanged after recall");
+    assert(legacyHashBefore === legacyHashAfter, "current-state.md unchanged after recall");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function compactJsonlPath(root, project) {
+  return path.join(root, "projects", project, "checkpoints.jsonl");
+}
+
+function archiveJsonlPath(root, project) {
+  return path.join(root, "projects", project, "archive.jsonl");
+}
+
+function sha256Optional(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  return sha256File(filePath);
+}
+
+function buildMixedEntries() {
+  return [
+    makeEntry("curr-mix-1", "general", "project", "Current decision one", "current",
+      { created_at: "2026-01-01T00:00:00.000Z", updated_at: "2026-01-01T00:00:00.000Z" }),
+    makeEntry("stale-mix-1", "general", "project", "Old stale one", "stale",
+      { created_at: "2020-01-01T00:00:00.000Z", updated_at: "2020-01-01T00:00:00.000Z" }),
+    makeEntry("stale-mix-2", "general", "project", "Old stale two", "stale",
+      { created_at: "2020-02-01T00:00:00.000Z", updated_at: "2020-02-01T00:00:00.000Z" }),
+    makeEntry("resolved-mix-1", "general", "project", "Old resolved one", "resolved",
+      { created_at: "2020-03-01T00:00:00.000Z", updated_at: "2020-03-01T00:00:00.000Z" })
+  ];
+}
+
+function testCompactionDryRunReadOnly(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+    const activePath = compactJsonlPath(root, "demo");
+    const archivePath = archiveJsonlPath(root, "demo");
+    const activeHashBefore = sha256File(activePath);
+
+    const result = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "1"],
+      root
+    );
+    assert(result.status === 0, "compact dry-run exits 0");
+    assert(result.stdout.includes("MEMORY_COMPACTION=DRY_RUN"), "DRY_RUN marker");
+    assert(result.stdout.includes("WOULD_ARCHIVE=2"), "WOULD_ARCHIVE count");
+    assert(sha256File(activePath) === activeHashBefore, "checkpoints.jsonl unchanged after dry-run");
+    assert(!fs.existsSync(archivePath), "archive.jsonl not created on dry-run");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionCurrentNeverArchived(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "0", "--apply"],
+      root
+    );
+    assert(result.status === 0, "compact apply exits 0");
+    assert(result.stdout.includes("MEMORY_COMPACTION=APPLIED"), "APPLIED marker");
+
+    const archivePath = archiveJsonlPath(root, "demo");
+    const archiveEntries = readJsonl(archivePath);
+    const archiveIds = new Set(archiveEntries.map((e) => e.id));
+    const currentIds = entries.filter((e) => e.status === "current").map((e) => e.id);
+    for (const id of currentIds) {
+      assert(!archiveIds.has(id), `current ${id} never archived`);
+    }
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionRetentionLimit(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "2", "--apply"],
+      root
+    );
+    assert(result.status === 0, "compact apply exits 0");
+    assert(result.stdout.includes("MEMORY_COMPACTION=APPLIED"), "APPLIED marker");
+
+    const activePath = compactJsonlPath(root, "demo");
+    const activeEntries = readJsonl(activePath);
+    const historicalActive = activeEntries.filter(
+      (e) => e.status === "stale" || e.status === "resolved"
+    );
+    assert(historicalActive.length === 2, "exactly 2 historical entries remain active");
+
+    const archivePath = archiveJsonlPath(root, "demo");
+    const archiveEntries = readJsonl(archivePath);
+    const retainedIds = new Set(historicalActive.map((e) => e.id));
+    for (const archived of archiveEntries) {
+      assert(!retainedIds.has(archived.id), `archived ${archived.id} is not in active retention set`);
+    }
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionArchivePreservesObjects(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+
+    const result = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "0", "--apply"],
+      root
+    );
+    assert(result.status === 0, "compact apply exits 0");
+
+    const archivePath = archiveJsonlPath(root, "demo");
+    const archiveEntries = readJsonl(archivePath);
+    assert(archiveEntries.length > 0, "archive has entries");
+
+    for (const original of entries) {
+      if (original.status === "current") continue;
+      const archived = archiveEntries.find((e) => e.id === original.id);
+      assert(!!archived, `archive contains original id ${original.id}`);
+      assert(archived.id === original.id, `id preserved for ${original.id}`);
+      assert(archived.type === original.type, `type preserved for ${original.id}`);
+      assert(archived.scope === original.scope, `scope preserved for ${original.id}`);
+      assert(archived.status === original.status, `status preserved for ${original.id}`);
+      assert(archived.created_at === original.created_at, `created_at preserved for ${original.id}`);
+      assert(archived.updated_at === original.updated_at, `updated_at preserved for ${original.id}`);
+      assert(archived.source === original.source, `source preserved for ${original.id}`);
+      assert(archived.confidence === original.confidence, `confidence preserved for ${original.id}`);
+      assert(archived.content === original.content, `content preserved for ${original.id}`);
+      assert(JSON.stringify(archived.supersedes) === JSON.stringify(original.supersedes), `supersedes preserved for ${original.id}`);
+    }
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionArchiveNoDuplicates(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+
+    runMemory(["compact", "--project", "demo", "--keep-history", "0", "--apply"], root);
+
+    const archivePath = archiveJsonlPath(root, "demo");
+    const firstArchive = readJsonl(archivePath);
+    const firstCount = firstArchive.length;
+
+    writeCheckpointsJsonl("demo", entries, root);
+    runMemory(["compact", "--project", "demo", "--keep-history", "0", "--apply"], root);
+
+    const secondArchive = readJsonl(archivePath);
+    const ids = secondArchive.map((e) => e.id);
+    const uniqueIds = new Set(ids);
+    assert(uniqueIds.size === ids.length, "archive IDs are unique");
+    assert(secondArchive.length === firstCount, "archive count unchanged on re-compact");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionIdempotent(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+
+    runMemory(["compact", "--project", "demo", "--keep-history", "0", "--apply"], root);
+
+    const activePath = compactJsonlPath(root, "demo");
+    const archivePath = archiveJsonlPath(root, "demo");
+    const activeHash1 = sha256File(activePath);
+    const archiveHash1 = sha256File(archivePath);
+
+    const result2 = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "0", "--apply"],
+      root
+    );
+    assert(result2.stdout.includes("MEMORY_COMPACTION=NOOP"), "second compact is NOOP");
+    assert(sha256File(activePath) === activeHash1, "active unchanged after second compact");
+    assert(sha256File(archivePath) === archiveHash1, "archive unchanged after second compact");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionInvalidRetentionRejected(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+    const activePath = compactJsonlPath(root, "demo");
+    const activeHashBefore = sha256File(activePath);
+
+    const r1 = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "-1", "--apply"],
+      root
+    );
+    assert(r1.status !== 0, "--keep-history -1 non-zero exit");
+    assert(sha256File(activePath) === activeHashBefore, "active unchanged after invalid retention");
+
+    const r2 = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "abc", "--apply"],
+      root
+    );
+    assert(r2.status !== 0, "--keep-history abc non-zero exit");
+    assert(sha256File(activePath) === activeHashBefore, "active unchanged after invalid retention");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionLegacyUntouched(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = buildMixedEntries();
+    writeCheckpointsJsonl("demo", entries, root);
+    const legacyContent = "## 2024-01-01 000000000000\n\nLegacy memory about databases.\n";
+    const legacyPath = createLegacyFile(root, "demo", legacyContent);
+    const legacyHashBefore = sha256File(legacyPath);
+
+    runMemory(["compact", "--project", "demo", "--keep-history", "0", "--apply"], root);
+
+    const legacyHashAfter = sha256File(legacyPath);
+    assert(legacyHashBefore === legacyHashAfter, "current-state.md SHA-256 unchanged after compaction");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionArchiveNotRecalled(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("arch-archive-1", "general", "project", "Archived unique keyword about zymurgy", "stale",
+        { created_at: "2020-01-01T00:00:00.000Z", updated_at: "2020-01-01T00:00:00.000Z" }),
+      makeEntry("curr-keep-1", "general", "project", "Current entry", "current",
+        { created_at: "2026-01-01T00:00:00.000Z", updated_at: "2026-01-01T00:00:00.000Z" })
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    runMemory(["compact", "--project", "demo", "--keep-history", "0", "--apply"], root);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "zymurgy", "--limit", "10"],
+      root
+    );
+    assert(!result.stdout.includes("arch-archive-1"), "archived entry not recalled");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionActiveRecallUnchanged(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("ret-curr-1", "general", "project", "Active current about PostgreSQL", "current",
+        { created_at: "2026-01-01T00:00:00.000Z", updated_at: "2026-01-01T00:00:00.000Z" }),
+      makeEntry("ret-hist-1", "general", "project", "Retained historical about PostgreSQL", "stale",
+        { created_at: "2026-01-02T00:00:00.000Z", updated_at: "2026-01-02T00:00:00.000Z" }),
+      makeEntry("ret-hist-2", "general", "project", "Retained historical two about PostgreSQL", "stale",
+        { created_at: "2020-01-01T00:00:00.000Z", updated_at: "2020-01-01T00:00:00.000Z" }),
+      makeEntry("ret-hist-3", "general", "project", "Older historical about PostgreSQL", "stale",
+        { created_at: "2019-01-01T00:00:00.000Z", updated_at: "2019-01-01T00:00:00.000Z" })
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+
+    runMemory(["compact", "--project", "demo", "--keep-history", "2", "--apply"], root);
+
+    const result = runMemory(
+      ["recall", "--project", "demo", "--query", "PostgreSQL", "--limit", "10"],
+      root
+    );
+    assert(result.stdout.includes("ret-curr-1"), "retained current recalled");
+    assert(result.stdout.includes("ret-hist-1"), "retained historical-1 recalled");
+    assert(result.stdout.includes("ret-hist-2"), "retained historical-2 recalled");
+    assert(!result.stdout.includes("ret-hist-3"), "archived historical-3 not recalled");
+
+    const currPos = result.stdout.indexOf("ret-curr-1");
+    const hist1Pos = result.stdout.indexOf("ret-hist-1");
+    assert(currPos >= 0 && hist1Pos >= 0 && currPos < hist1Pos, "current before retained historical (lifecycle ranking preserved)");
+  } finally {
+    cleanup(root);
+  }
+}
+
+function testCompactionNoop(assert) {
+  const root = createTempRoot();
+  try {
+    const entries = [
+      makeEntry("noop-curr-1", "general", "project", "Current only", "current",
+        { created_at: "2026-01-01T00:00:00.000Z", updated_at: "2026-01-01T00:00:00.000Z" })
+    ];
+    writeCheckpointsJsonl("demo", entries, root);
+    const activePath = compactJsonlPath(root, "demo");
+    const activeHashBefore = sha256File(activePath);
+
+    const result = runMemory(
+      ["compact", "--project", "demo", "--keep-history", "0", "--apply"],
+      root
+    );
+    assert(result.status === 0, "compact exits 0");
+    assert(result.stdout.includes("MEMORY_COMPACTION=NOOP"), "NOOP marker");
+    assert(result.stdout.includes("ARCHIVED=0"), "ARCHIVED=0");
+    assert(sha256File(activePath) === activeHashBefore, "active unchanged on NOOP");
+  } finally {
+    cleanup(root);
+  }
+}
+
 function main() {
   console.log("Running structured memory checkpoint regression tests...\n");
 
@@ -895,6 +1456,28 @@ function main() {
   runTest("DEDUPE_BEFORE_SUPERSESSION", testDedupeBeforeSupersedence);
   runTest("LEGACY_UNTOUCHED", testLegacyUntouched);
 
+  runTest("CURRENT_BEATS_STALE", testRankingCurrentBeatsStale);
+  runTest("CURRENT_BEATS_RESOLVED", testRankingCurrentBeatsResolved);
+  runTest("LEGACY_BEATS_STALE", testRankingLegacyBeatsStale);
+  runTest("SCORE_WITHIN_CURRENT", testRankingScoreWithinCurrent);
+  runTest("LIMIT_AFTER_LIFECYCLE", testRankingLimitAfterLifecycle);
+  runTest("HISTORICAL_FALLBACK", testRankingHistoricalFallback);
+  runTest("EMPTY_QUERY_ORDER", testRankingEmptyQueryOrder);
+  runTest("DETERMINISTIC_TIE", testRankingDeterministicTie);
+  runTest("RECALL_READ_ONLY", testRankingReadOnly);
+
+  runTest("DRY_RUN_READ_ONLY", testCompactionDryRunReadOnly);
+  runTest("CURRENT_NEVER_ARCHIVED", testCompactionCurrentNeverArchived);
+  runTest("RETENTION_LIMIT", testCompactionRetentionLimit);
+  runTest("ARCHIVE_PRESERVES_OBJECTS", testCompactionArchivePreservesObjects);
+  runTest("ARCHIVE_NO_DUPLICATES", testCompactionArchiveNoDuplicates);
+  runTest("COMPACTION_IDEMPOTENT", testCompactionIdempotent);
+  runTest("INVALID_RETENTION_REJECTED", testCompactionInvalidRetentionRejected);
+  runTest("LEGACY_UNTOUCHED", testCompactionLegacyUntouched);
+  runTest("ARCHIVE_NOT_RECALLED", testCompactionArchiveNotRecalled);
+  runTest("ACTIVE_RECALL_UNCHANGED", testCompactionActiveRecallUnchanged);
+  runTest("COMPACTION_NOOP", testCompactionNoop);
+
   const allPassed = Object.values(results).every(Boolean);
 
   console.log(
@@ -920,7 +1503,35 @@ function main() {
     "LEGACY_UNTOUCHED",
   ];
 
+  const rankingTests = [
+    "CURRENT_BEATS_STALE",
+    "CURRENT_BEATS_RESOLVED",
+    "LEGACY_BEATS_STALE",
+    "SCORE_WITHIN_CURRENT",
+    "LIMIT_AFTER_LIFECYCLE",
+    "HISTORICAL_FALLBACK",
+    "EMPTY_QUERY_ORDER",
+    "DETERMINISTIC_TIE",
+    "RECALL_READ_ONLY",
+  ];
+
+  const compactionTests = [
+    "DRY_RUN_READ_ONLY",
+    "CURRENT_NEVER_ARCHIVED",
+    "RETENTION_LIMIT",
+    "ARCHIVE_PRESERVES_OBJECTS",
+    "ARCHIVE_NO_DUPLICATES",
+    "COMPACTION_IDEMPOTENT",
+    "INVALID_RETENTION_REJECTED",
+    "LEGACY_UNTOUCHED",
+    "ARCHIVE_NOT_RECALLED",
+    "ACTIVE_RECALL_UNCHANGED",
+    "COMPACTION_NOOP",
+  ];
+
   const lifecycleAllPassed = lifecycleTests.every((name) => results[name]);
+  const rankingAllPassed = rankingTests.every((name) => results[name]);
+  const compactionAllPassed = compactionTests.every((name) => results[name]);
 
   if (allPassed) {
     console.log("MEMORY_REGRESSION=PASS");
@@ -930,9 +1541,21 @@ function main() {
 
   if (lifecycleAllPassed) {
     console.log("MEMORY_LIFECYCLE_REGRESSION=PASS");
-    process.exit(0);
   } else {
     console.log("MEMORY_LIFECYCLE_REGRESSION=FAIL");
+  }
+
+  if (rankingAllPassed) {
+    console.log("RECALL_RANKING_REGRESSION=PASS");
+  } else {
+    console.log("RECALL_RANKING_REGRESSION=FAIL");
+  }
+
+  if (compactionAllPassed) {
+    console.log("MEMORY_COMPACTION_REGRESSION=PASS");
+    process.exit(0);
+  } else {
+    console.log("MEMORY_COMPACTION_REGRESSION=FAIL");
     process.exit(1);
   }
 }
