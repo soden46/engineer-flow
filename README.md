@@ -56,6 +56,7 @@
 - [Verification](#verification)
 - [Engineer Flow Doctor](#engineer-flow-doctor)
 - [Engineer Flow Explain](#engineer-flow-explain)
+- [External Skill Scale Benchmark](#external-skill-scale-benchmark)
 - [Mandatory Security](#mandatory-security)
 - [Repository Structure](#repository-structure)
 - [Development](#development)
@@ -572,6 +573,30 @@ node skills/engineer-flow/scripts/engineer-flow.mjs explain --task "..." --cwd <
 ```
 
 `--task` is required. `--cwd` defaults to the current working directory.
+
+---
+
+## External Skill Scale Benchmark
+
+Engineer Flow can discover a large number of installed external Agent Skills while keeping active development specialists capped at 0-2.
+
+A benchmark harness generates temporary external skill fixtures at 100, 500, and 1000 scales and measures discovery and routing behavior.
+
+Frozen run results:
+
+- routing remained deterministic across all scales
+- retrieval diagnostics remained bounded
+- `specialist_count` never exceeded 2
+
+Raw result: `benchmark-results/external-skill-scale-v1.json`
+
+Reproducible command:
+
+```bash
+npm run benchmark:external-scale
+```
+
+Architectural result: available external knowledge can grow while active development specialists remain capped at 0-2.
 
 ---
 

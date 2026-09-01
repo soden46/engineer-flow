@@ -19,7 +19,8 @@
     "test:security-gate-installer-posix": "node tests/security-gate-installer-posix.mjs",
     "test:memory": "node tests/memory-structured-checkpoint.mjs",
     "test:doctor": "node tests/doctor.mjs",
-    "test:explain": "node tests/explain.mjs"
+    "test:explain": "node tests/explain.mjs",
+    "benchmark:external-scale": "node tests/external-skill-scale-benchmark.mjs"
   },
   "keywords": [
     "agent-skills",

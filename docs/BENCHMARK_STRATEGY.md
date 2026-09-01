@@ -71,3 +71,38 @@ Framework-specific benchmark examples may include Laravel, Odoo, Spring Boot, Fl
 Final benchmark cases must have independently authored expected routing assertions.
 
 Do not tune routing against the final heldout benchmark after evaluation begins.
+
+## External Skill Scale Benchmark
+
+### Methodology
+
+- Temporary generated Agent Skills in an isolated fixture directory
+- Scales: 100, 500, 1000 external skills
+- 3 warmup runs
+- 10 measured runs
+- Median timing reported
+
+### Scenarios
+
+- `INTERNAL_ONLY`: task routes to an existing internal capability
+- `EXPLICIT_EXTERNAL`: task explicitly names a generated external skill
+- `PROJECT_EVIDENCE_EXTERNAL`: project manifest contains an identity term for a generated external skill
+- `NO_RELEVANT_SPECIALIST`: irrelevant task text
+
+### Checks
+
+- Deterministic routing across measured runs
+- Bounded retrieval diagnostics
+- `specialist_count` never exceeds 2
+
+### Frozen Result
+
+`benchmark-results/external-skill-scale-v1.json`
+
+### Limitations
+
+- Synthetic skill corpus
+- Machine-dependent timings
+- Measures discovery and routing scalability
+- Does not measure LLM token or cost outcomes
+- A real-world agent benchmark is still needed for user-facing outcome claims

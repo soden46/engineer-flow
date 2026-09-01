@@ -1,0 +1,150 @@
+{
+  "benchmark": "external-skill-scale",
+  "scales": [
+    {
+      "scale": 100,
+      "external_discovered": 173,
+      "effective_capabilities": 188,
+      "inventory_median_ms": 227.56,
+      "scenarios": {
+        "INTERNAL_ONLY": {
+          "resolve_median_ms": 243.65,
+          "specialist_count": 1,
+          "primary": "database",
+          "support": "NONE",
+          "deterministic": true,
+          "bounded": true
+        },
+        "EXPLICIT_EXTERNAL": {
+          "resolve_median_ms": 397.23,
+          "specialist_count": 1,
+          "primary": "scale-yankee1-skill",
+          "support": "NONE",
+          "deterministic": true,
+          "bounded": true,
+          "intended_found": true
+        },
+        "PROJECT_EVIDENCE_EXTERNAL": {
+          "resolve_median_ms": 377.06,
+          "specialist_count": 2,
+          "primary": "data-processing",
+          "support": "security",
+          "deterministic": true,
+          "bounded": true,
+          "intended_found": false
+        },
+        "NO_RELEVANT_SPECIALIST": {
+          "resolve_median_ms": 256.74,
+          "specialist_count": 0,
+          "primary": "NONE",
+          "support": "NONE",
+          "bounded": true,
+          "mass_activation": false
+        }
+      },
+      "boundedness": {
+        "intent_anchors_bounded": true,
+        "external_matches_bounded": true,
+        "specialist_bounded": true
+      }
+    },
+    {
+      "scale": 500,
+      "external_discovered": 573,
+      "effective_capabilities": 588,
+      "inventory_median_ms": 505.45,
+      "scenarios": {
+        "INTERNAL_ONLY": {
+          "resolve_median_ms": 528.54,
+          "specialist_count": 1,
+          "primary": "database",
+          "support": "NONE",
+          "deterministic": true,
+          "bounded": true
+        },
+        "EXPLICIT_EXTERNAL": {
+          "resolve_median_ms": 476.15,
+          "specialist_count": 1,
+          "primary": "scale-yankee1-skill",
+          "support": "NONE",
+          "deterministic": true,
+          "bounded": true,
+          "intended_found": true
+        },
+        "PROJECT_EVIDENCE_EXTERNAL": {
+          "resolve_median_ms": 447.35,
+          "specialist_count": 2,
+          "primary": "data-processing",
+          "support": "security",
+          "deterministic": true,
+          "bounded": true,
+          "intended_found": false
+        },
+        "NO_RELEVANT_SPECIALIST": {
+          "resolve_median_ms": 428.05,
+          "specialist_count": 0,
+          "primary": "NONE",
+          "support": "NONE",
+          "bounded": true,
+          "mass_activation": false
+        }
+      },
+      "boundedness": {
+        "intent_anchors_bounded": true,
+        "external_matches_bounded": true,
+        "specialist_bounded": true
+      }
+    },
+    {
+      "scale": 1000,
+      "external_discovered": 1073,
+      "effective_capabilities": 1088,
+      "inventory_median_ms": 728.23,
+      "scenarios": {
+        "INTERNAL_ONLY": {
+          "resolve_median_ms": 793.29,
+          "specialist_count": 1,
+          "primary": "database",
+          "support": "NONE",
+          "deterministic": true,
+          "bounded": true
+        },
+        "EXPLICIT_EXTERNAL": {
+          "resolve_median_ms": 757.99,
+          "specialist_count": 1,
+          "primary": "scale-yankee1-skill",
+          "support": "NONE",
+          "deterministic": true,
+          "bounded": true,
+          "intended_found": true
+        },
+        "PROJECT_EVIDENCE_EXTERNAL": {
+          "resolve_median_ms": 768.15,
+          "specialist_count": 2,
+          "primary": "data-processing",
+          "support": "security",
+          "deterministic": true,
+          "bounded": true,
+          "intended_found": false
+        },
+        "NO_RELEVANT_SPECIALIST": {
+          "resolve_median_ms": 732.88,
+          "specialist_count": 0,
+          "primary": "NONE",
+          "support": "NONE",
+          "bounded": true,
+          "mass_activation": false
+        }
+      },
+      "boundedness": {
+        "intent_anchors_bounded": true,
+        "external_matches_bounded": true,
+        "specialist_bounded": true
+      }
+    }
+  ],
+  "max_specialists_invariant": true,
+  "routing_deterministic": true,
+  "diagnostics_bounded": true,
+  "production_changed": false
+}
