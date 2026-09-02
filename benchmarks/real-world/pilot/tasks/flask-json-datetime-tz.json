@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "task_id": "flask-json-datetime-tz",
+  "repository": "pallets/flask",
+  "license": "BSD-3-Clause",
+  "category": "backend/api",
+  "difficulty": "MEDIUM",
+  "leakage_risk": "LOW",
+  "base_commit": "1e112cccaa94dd47e43f9466d859730c412aff1a",
+  "upstream_fix_commit": "d625d411047f335bb8586be3064c7c735ccb0cda",
+  "author_reference": {
+    "issue_or_pr": "pallets/flask#2372"
+  },
+  "agent_prompt": "A Flask application returns JSON responses containing datetime objects that are timezone-aware (not in UTC). When these datetime objects are serialized to JSON, the output incorrectly uses the local time value but labels it as GMT.\n\nFor example, a datetime representing 2017-01-01 12:00:00+08:00 (Asia/Shanghai) should be serialized as \"Sun, 01 Jan 2017 04:00:00 GMT\" (the equivalent UTC time). Instead, it is currently serialized as \"Sun, 01 Jan 2017 12:00:00 GMT\" (the local time value incorrectly labeled as GMT).\n\nFix the JSON serialization so that timezone-aware datetime objects are correctly converted to UTC before being formatted as GMT date strings.",
+  "setup_command": "pip install flask==0.12.2",
+  "pre_validation_command": "python -c \"import flask; assert flask.__version__.startswith('0.12'), f'Expected 0.12.x, got {flask.__version__}'\"",
+  "acceptance_command": "python -c \"\nfrom datetime import datetime, timezone, timedelta\nfrom flask.json import JSONEncoder\n\ntz = timezone(timedelta(hours=8))\ndt = datetime(2017, 1, 1, 12, 0, 0, tzinfo=tz)\nencoder = JSONEncoder()\nresult = encoder.encode(dt)\n\n# 12:00+08:00 = 04:00 UTC\nassert '04:00:00 GMT' in result, f'Expected UTC conversion, got: {result}'\nassert '12:00:00 GMT' not in result, f'Local time should not appear as GMT: {result}'\nprint('PASS')\n\"",
+  "existing_regression_command": null,
+  "expected_behavior": "Timezone-aware datetime objects are converted to UTC before JSON serialization as GMT date strings",
+  "likely_scope": "One-line fix in JSONEncoder.default() to use utctimetuple() instead of timetuple() for aware datetime objects",
+  "verification": {
+    "base_verified": true,
+    "fix_verified": true,
+    "bug_present_at_base": true,
+    "acceptance_fails_at_base": true,
+    "acceptance_passes_at_fix": true,
+    "setup_reproducible": true
+  }
+}

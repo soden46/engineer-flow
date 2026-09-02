@@ -1,0 +1,119 @@
+name: Real-World Pilot Environment Verification
+
+on:
+  push:
+    branches: [main, 'feat/**']
+    paths:
+      - 'benchmarks/real-world/pilot/**'
+  pull_request:
+    paths:
+      - 'benchmarks/real-world/pilot/**'
+  workflow_dispatch:
+
+jobs:
+  verify-environment:
+    name: Verify Benchmark Environment
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Print system information
+        run: |
+          uname -a
+          cat /etc/os-release
+          git --version
+
+      - name: Install Python 3.6 and 3.8
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:deadsnakes/ppa
+          sudo apt-get update
+          sudo apt-get install -y python3.6 python3.6-venv python3.6-dev python3.8 python3.8-venv python3.8-dev
+          python3.6 --version
+          python3.8 --version
+
+      - name: Verify Python 3.6 provisioning (fail-closed)
+        run: |
+          if ! python3.6 --version; then
+            echo "FAIL: Python 3.6 could not be provisioned"
+            exit 1
+          fi
+          if ! python3.8 --version; then
+            echo "FAIL: Python 3.8 could not be provisioned"
+            exit 1
+          fi
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm versions
+        run: |
+          mkdir -p /opt/pnpm10 /opt/pnpm11
+          cd /opt/pnpm10 && npm init -y && npm install pnpm@10.31.0
+          cd /opt/pnpm11 && npm init -y && npm install pnpm@11.5.2
+          sudo ln -sf /opt/pnpm10/node_modules/.bin/pnpm /usr/local/bin/pnpm10
+          sudo ln -sf /opt/pnpm11/node_modules/.bin/pnpm /usr/local/bin/pnpm11
+          sudo ln -sf /opt/pnpm10/node_modules/.bin/pnpm /usr/local/bin/pnpm
+          node --version
+          pnpm10 --version
+          pnpm11 --version
+          pnpm --version
+
+      - name: Verify pnpm versions (fail-closed)
+        run: |
+          PNPM10_VERSION=$(pnpm10 --version)
+          if [ "$PNPM10_VERSION" != "10.31.0" ]; then
+            echo "FAIL: pnpm10 version is $PNPM10_VERSION, expected 10.31.0"
+            exit 1
+          fi
+          PNPM11_VERSION=$(pnpm11 --version)
+          if [ "$PNPM11_VERSION" != "11.5.2" ]; then
+            echo "FAIL: pnpm11 version is $PNPM11_VERSION, expected 11.5.2"
+            exit 1
+          fi
+
+      - name: Verify POSIX shell tools
+        run: |
+          which tail grep sed awk cat head wc cut tr sort uniq tee xargs find diff
+          echo "All POSIX tools available"
+
+      - name: Run environment validation
+        run: node benchmarks/real-world/pilot/run-pilot.mjs validate
+
+      - name: Run plan validation
+        run: node benchmarks/real-world/pilot/run-pilot.mjs plan
+
+      - name: Run isolation check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs isolation-check
+
+      - name: Run environment check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs environment-check
+
+      - name: Print Python version evidence (Flask tasks)
+        run: |
+          echo "=== Python 3.8 (for flask-static-catchall) ==="
+          python3.8 --version
+          python3.8 -m pip --version
+          echo ""
+          echo "=== Python 3.6 (for flask-json-datetime-tz) ==="
+          python3.6 --version
+          python3.6 -m pip --version
+
+      - name: Print Node/pnpm version evidence (Vue tasks)
+        run: |
+          echo "=== Node.js ==="
+          node --version
+          echo ""
+          echo "=== pnpm 10.31.0 (for vue3-vmodel-shadow-dom-focus) ==="
+          pnpm10 --version
+          echo ""
+          echo "=== pnpm 11.5.2 (for vue3-reactivity-failed-set) ==="
+          pnpm11 --version
+
+      - name: Run authoritative setup-check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs setup-check

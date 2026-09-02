@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "task_id": "vue3-reactivity-failed-set",
+  "repository": "vuejs/core",
+  "license": "MIT",
+  "category": "frontend/reactivity",
+  "difficulty": "MEDIUM",
+  "leakage_risk": "LOW",
+  "base_commit": "478e3e83acd34dd213a860be4a2a2bf2090dc26b",
+  "upstream_fix_commit": "e450973eabc0038f398344b981acd8759c246c50",
+  "author_reference": {
+    "issue_or_pr": "vuejs/core#14964"
+  },
+  "agent_prompt": "A Vue 3 application uses a reactive proxy wrapping an object that has a non-writable (writable: false) property defined via Object.defineProperty. When the application attempts to assign a new value to this non-writable property through the reactive proxy, a TypeError is thrown as expected. However, even though the assignment fails and the property value remains unchanged, any computed properties or watchers (effects) that depend on this property are incorrectly re-triggered.\n\nExpected behavior: When a property assignment fails at the JavaScript engine level (e.g., assigning to a non-writable property), dependent effects should NOT be re-run because no actual state change occurred.\n\nFix the reactivity system so that effect triggers (ADD/SET notifications) are only dispatched when the underlying Reflect.set operation succeeds.",
+  "setup_command": "git clone https://github.com/vuejs/core.git vue3-pilot && cd vue3-pilot && git checkout 478e3e83acd34dd213a860be4a2a2bf2090dc26b && pnpm install",
+  "pre_validation_command": "cd vue3-pilot && node -e \"console.log('Vue 3 pilot repo ready')\"",
+  "acceptance_command": "cd vue3-pilot && npx vitest run packages/reactivity/__tests__/reactive.spec.ts -t 'failed set operation should not trigger effects' 2>&1 | tail -20",
+  "existing_regression_command": "cd vue3-pilot && npx vitest run packages/reactivity/__tests__/reactive.spec.ts 2>&1 | tail -10",
+  "expected_behavior": "Failed property assignments on reactive proxies do not trigger dependent effects",
+  "likely_scope": "One-line guard in MutableReactiveHandler.set to only call trigger when Reflect.set returns truthy",
+  "verification": {
+    "base_verified": true,
+    "fix_verified": true,
+    "bug_present_at_base": true,
+    "acceptance_fails_at_base": true,
+    "acceptance_passes_at_fix": true,
+    "setup_reproducible": true
+  }
+}

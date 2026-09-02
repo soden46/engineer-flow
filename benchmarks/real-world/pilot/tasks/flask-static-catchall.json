@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "task_id": "flask-static-catchall",
+  "repository": "pallets/flask",
+  "license": "BSD-3-Clause",
+  "category": "backend/routing",
+  "difficulty": "MEDIUM",
+  "leakage_risk": "LOW",
+  "base_commit": "ffc68840f821fb0a4c41a7b2b4eaad6d71f539b7",
+  "upstream_fix_commit": "93dd1709d05a1cf0e886df6223377bdab3b077fb",
+  "author_reference": {
+    "issue_or_pr": "pallets/flask#3452"
+  },
+  "agent_prompt": "A Flask application is configured with a static folder path that ends with a forward slash (e.g., 'frontend/build/'). The application also defines a custom catch-all route using @app.route('/<path:path>') that should handle any URL path not matched by other routes.\n\nCurrently, when a client requests a path that is not a real static file (for example '/some/custom/path'), instead of the catch-all route handling the request, the static file endpoint intercepts the request and returns a 404.\n\nExpected behavior: When a request path does not correspond to an actual static file, the custom catch-all route should handle the request, not the static endpoint.\n\nFix the routing so that the static endpoint only matches paths that correspond to actual files in the static folder, and all other paths fall through to the catch-all route.",
+  "setup_command": "pip install flask==1.1.1",
+  "pre_validation_command": "python -c \"import flask; assert flask.__version__ == '1.1.1', f'Expected 1.1.1, got {flask.__version__}'\"",
+  "acceptance_command": "python -c \"\nfrom flask import Flask\nimport os\nos.makedirs('frontend/build', exist_ok=True)\napp = Flask(__name__, static_folder='frontend/build/')\n@app.route('/<path:path>')\ndef catch_all(path):\n    return 'catch-all-ok'\nwith app.test_client() as c:\n    r = c.get('/some/custom/path')\n    assert r.status_code == 200, f'Expected 200, got {r.status_code}'\n    assert r.data == b'catch-all-ok', f'Expected catch-all-ok, got {r.data}'\n    print('PASS')\n\"",
+  "existing_regression_command": null,
+  "expected_behavior": "Custom catch-all route handles non-static paths when static_folder ends with a trailing slash",
+  "likely_scope": "One-line fix in Flask app initialization to strip trailing slash from static_url_path when deriving from static_folder",
+  "verification": {
+    "base_verified": true,
+    "fix_verified": true,
+    "bug_present_at_base": true,
+    "acceptance_fails_at_base": true,
+    "acceptance_passes_at_fix": true,
+    "setup_reproducible": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "benchmark_name": "real-world-pilot-v1",
+  "runs_per_task_per_arm": 3,
+  "arms": ["baseline", "engineer-flow"],
+  "seed": "pilot-v1-2026-09-01",
+  "tasks": [
+    "flask-static-catchall.json",
+    "flask-json-datetime-tz.json",
+    "vue3-reactivity-failed-set.json",
+    "vue3-vmodel-shadow-dom-focus.json"
+  ]
+}

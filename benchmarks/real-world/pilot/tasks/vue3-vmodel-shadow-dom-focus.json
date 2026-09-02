@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "task_id": "vue3-vmodel-shadow-dom-focus",
+  "repository": "vuejs/core",
+  "license": "MIT",
+  "category": "frontend/accessibility",
+  "difficulty": "MEDIUM",
+  "leakage_risk": "LOW",
+  "base_commit": "560def426fc38c1710fda7ddd1ac634d67897960",
+  "upstream_fix_commit": "959ded22ab7ea1453f607e0964e1fb6748ece6c7",
+  "author_reference": {
+    "issue_or_pr": "vuejs/core#14196"
+  },
+  "agent_prompt": "A Vue 3 application uses v-model with the trim modifier on an input element that is placed inside nested Shadow DOM roots. When the user types whitespace-padded text into the focused input, the displayed value in the input is immediately trimmed, causing visual noise and disrupting the user's in-progress input.\n\nExpected behavior: When an input with v-model.trim is focused inside Shadow DOM, the displayed input value should remain untrimmed while the user is typing (preserving their in-progress input), while the underlying model value should still receive the trimmed result. This matches the behavior observed for inputs in the regular document tree.\n\nFix the v-model directive so that focus detection works correctly within Shadow DOM boundaries, ensuring consistent trim behavior for focused inputs regardless of whether they are in the light DOM or nested Shadow DOM.",
+  "setup_command": "git clone https://github.com/vuejs/core.git vue3-pilot && cd vue3-pilot && git checkout 560def426fc38c1710fda7ddd1ac634d67897960 && pnpm install",
+  "pre_validation_command": "cd vue3-pilot && npx vitest run packages/runtime-dom/__tests__/directives/vModel.spec.ts",
+  "acceptance_command": "cd vue3-pilot && npx vitest run packages/runtime-dom/__tests__/directives/vModel.spec.ts -t 'should preserve unresolved trimmed text while focused in nested shadow roots'",
+  "existing_regression_command": "cd vue3-pilot && npx vitest run packages/runtime-dom/__tests__/directives/vModel.spec.ts",
+  "acceptance_fixture": {
+    "strategy": "temporary_reconstruction",
+    "target": "packages/runtime-dom/__tests__/directives/vModel.spec.ts",
+    "behavior": "Reconstruct the upstream regression test that verifies v-model.trim preserves untrimmed input value while focused in nested Shadow DOM. The test must be temporarily injected into the isolated checkout before running the acceptance command. The same benchmark-owned acceptance logic must be used for both arms and for base/fix verification."
+  },
+  "expected_behavior": "v-model.trim preserves untrimmed input value while focused in nested Shadow DOM, model receives trimmed value",
+  "likely_scope": "Focus detection in v-model beforeUpdate hook must use root-aware activeElement check to work within Shadow DOM boundaries",
+  "verification": {
+    "base_verified": true,
+    "fix_verified": true,
+    "bug_present_at_base": true,
+    "accessibility_relevance_verified": true,
+    "acceptance_fails_at_base": true,
+    "acceptance_passes_at_fix": true,
+    "setup_reproducible": true,
+    "acceptance_behavior_based": true
+  }
+}

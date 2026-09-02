@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "benchmark_name": "engineer-flow-real-world-pilot-v1",
+  "canonical_platform": {
+    "os": "linux",
+    "distribution": "Ubuntu",
+    "release": "22.04 LTS",
+    "architecture": "x86_64",
+    "shell": "bash",
+    "git": ">=2.30.0"
+  },
+  "task_runtimes": {
+    "flask-static-catchall": {
+      "python": "3.8",
+      "pip_policy": "python -m pip",
+      "node": null,
+      "pnpm": null,
+      "required_tools": ["python", "pip"],
+      "python_justification": "Flask 1.1.1 supports Python 2.7/3.5+ (setup.py python_requires: >=2.7, !=3.0-3.4). Python 3.8 is within supported range."
+    },
+    "flask-json-datetime-tz": {
+      "python": "3.6",
+      "pip_policy": "python -m pip",
+      "node": null,
+      "pnpm": null,
+      "required_tools": ["python", "pip"],
+      "python_justification": "Flask 0.12.2 supports Python 2.6/2.7/3.3-3.6 (setup.py classifiers). Python 3.6 is the latest version officially supported by this release."
+    },
+    "vue3-reactivity-failed-set": {
+      "python": null,
+      "pip_policy": null,
+      "node": "20",
+      "pnpm": "11.5.2",
+      "required_tools": ["node", "pnpm", "npx", "tail"],
+      "pnpm_justification": "Vue 3.5.38 packageManager field specifies pnpm@11.5.2"
+    },
+    "vue3-vmodel-shadow-dom-focus": {
+      "python": null,
+      "pip_policy": null,
+      "node": "20",
+      "pnpm": "10.31.0",
+      "required_tools": ["node", "pnpm", "npx", "tail"],
+      "pnpm_justification": "Vue 3.5.30 packageManager field specifies pnpm@10.31.0"
+    }
+  },
+  "python_pip_alignment": {
+    "requirement": "python and pip MUST refer to the same Python installation",
+    "validation": "python -m pip --version must show the same version as python --version",
+    "note": "Frozen Flask commands invoke bare `pip`. PATH must resolve pip to the same interpreter."
+  },
+  "posix_shell_tools": [
+    "tail",
+    "grep",
+    "sed",
+    "awk",
+    "cat",
+    "head",
+    "wc",
+    "cut",
+    "tr",
+    "sort",
+    "uniq",
+    "tee",
+    "xargs",
+    "find",
+    "diff",
+    "curl",
+    "wget"
+  ],
+  "notes": {
+    "windows_support": "Windows is NOT an official benchmark execution platform. Windows may be used for: validate, plan, isolation-check, repository planning/development only.",
+    "frozen_specs": "Historical task commands (pip, tail, pnpm) are frozen and MUST NOT be rewritten for platform compatibility. The canonical environment MUST satisfy them."
+  }
+}
