@@ -938,6 +938,13 @@ function setupCheck() {
       results[`TASK_${taskNum}_PREVALIDATION`] = preValResult.success ? 'PASS' : 'FAIL'
       results[`TASK_${taskNum}_REGRESSION`] = regressionResult.success ? 'PASS' : 'FAIL'
 
+      if (!setupResult.success || !preValResult.success || !regressionResult.success) {
+        log(`Task ${task.task_id} failed:`)
+        if (!setupResult.success) log(`  SETUP: ${setupResult.error}`)
+        if (!preValResult.success) log(`  PREVALIDATION: ${preValResult.error}`)
+        if (!regressionResult.success) log(`  REGRESSION: ${regressionResult.error}`)
+      }
+
       const repoDirs = readdirSync(runRoot).filter((d) => {
         const stat = statSync(join(runRoot, d))
         return stat.isDirectory() && d !== 'home' && d !== 'config' && d !== 'cache' && d !== 'memory' && d !== 'external-skills' && d !== 'artifacts' && d !== 'venv'
