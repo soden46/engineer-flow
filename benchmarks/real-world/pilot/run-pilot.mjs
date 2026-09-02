@@ -884,6 +884,7 @@ function setupCheck() {
         try {
           containerRuntime = prepareTaskRuntime(runRoot, taskRuntime)
           containerRuntimes.push(containerRuntime)
+          log(`Container prepared for ${task.task_id}: ${containerRuntime.containerName}`)
         } catch (e) {
           results[`TASK_${taskNum}_SETUP`] = 'FAIL'
           results[`TASK_${taskNum}_PREVALIDATION`] = 'FAIL'
@@ -919,7 +920,9 @@ function setupCheck() {
 
       if (useContainer && containerRuntime) {
         setupResult = runTaskCommand(containerRuntime.containerName, task.setup_command, env)
+        log(`Setup result for ${task.task_id}: success=${setupResult.success}, error=${setupResult.error}`)
         preValResult = runTaskCommand(containerRuntime.containerName, task.pre_validation_command, env)
+        log(`Pre-validation result for ${task.task_id}: success=${preValResult.success}, error=${preValResult.error}`)
         regressionResult = task.existing_regression_command
           ? runTaskCommand(containerRuntime.containerName, task.existing_regression_command, env)
           : { success: true, output: '', error: null }
