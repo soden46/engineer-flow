@@ -332,7 +332,7 @@ function buildTaskSpecificEnv(runRoot, arm, taskRuntime) {
   if (taskRuntime.pnpm && taskRuntime.pnpm_command) {
     try {
       const pnpmVersion = taskRuntime.pnpm
-      const pnpmDir = join(runRoot, 'pnpm', pnpmVersion, 'bin')
+      const pnpmDir = join(runRoot, 'pnpm', pnpmVersion, 'node_modules', '.bin')
       if (existsSync(pnpmDir)) {
         pathPrefixes.push(pnpmDir)
       } else {
@@ -937,7 +937,7 @@ function setupCheck() {
           try {
             const pnpmVersion = taskRuntime.pnpm
             const pnpmToolDir = join(runRoot, 'pnpm', pnpmVersion)
-            const pnpmBinDir = join(pnpmToolDir, 'bin')
+            const pnpmBinDir = join(pnpmToolDir, 'node_modules', '.bin')
             if (!existsSync(pnpmBinDir)) {
               mkdirSync(pnpmToolDir, { recursive: true })
               runCommand(`npm install pnpm@${pnpmVersion} --prefix ${pnpmToolDir}`, runRoot, env)
