@@ -1,30 +1,45 @@
-import { describe, it, expect } from 'vitest'
-import { ref, nextTick } from '@vue/runtime-dom'
-
-describe('vModel', () => {
-  it('should preserve unresolved trimmed text while focused in nested shadow roots', async () => {
-    const root = document.createElement('div')
-    document.body.appendChild(root)
-    const shadow1 = root.attachShadow({ mode: 'open' })
-    const inner = document.createElement('div')
-    shadow1.appendChild(inner)
-    const shadow2 = inner.attachShadow({ mode: 'open' })
-    const input = document.createElement('input')
-    shadow2.appendChild(input)
-    const model = ref('')
-    const trimRef = ref('')
-    const Comp = {
-      template: '<input v-model.trim="trimRef" />',
-      setup() {
-        return { trimRef }
-      },
-    }
-    const vm = createApp(Comp).mount(root)
-    input.focus()
-    input.value = '  hello  '
-    input.dispatchEvent(new Event('input'))
-    expect(input.value).toBe('  hello  ')
-    expect(trimRef.value).toBe('hello')
-    document.body.removeChild(root)
+it('should preserve unresolved trimmed text while focused in nested shadow roots', async () => {
+  const model = ref('')
+  const component = defineComponent({
+    render() {
+      return withVModel(
+        h('input', {
+          'onUpdate:modelValue': (value: string) => {
+            model.value = value
+          },
+        }),
+        model.value,
+        {
+          trim: true,
+        },
+      )
+    },
   })
+
+  document.body.appendChild(root)
+  const outerShadowRoot = root.attachShadow({ mode: 'open' })
+  const innerHost = document.createElement('div')
+  outerShadowRoot.appendChild(innerHost)
+  const innerShadowRoot = innerHost.attachShadow({ mode: 'open' })
+
+  try {
+    render(h(component), innerShadowRoot)
+
+    const input = innerShadowRoot.querySelector('input') as HTMLInputElement
+    input.focus()
+
+    expect(document.activeElement).toBe(root)
+    expect(outerShadowRoot.activeElement).toBe(innerHost)
+    expect(innerShadowRoot.activeElement).toBe(input)
+
+    input.value = '    hello, world    '
+    triggerEvent('input', input)
+    await nextTick()
+
+    expect(model.value).toEqual('hello, world')
+    expect(input.value).toEqual('    hello, world    ')
+  } finally {
+    render(null, innerShadowRoot)
+    root.remove()
+  }
 })
