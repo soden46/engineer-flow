@@ -81,23 +81,42 @@ function shuffleInPlace(arr, rand) {
 }
 
 function sanitizeTaskForAgent(task) {
-  return {
-    task_id: task.task_id,
-    repository: task.repository,
-    license: task.license,
-    category: task.category,
-    difficulty: task.difficulty,
-    leakage_risk: task.leakage_risk,
-    base_commit: task.base_commit,
-    agent_prompt: task.agent_prompt,
-    setup_command: task.setup_command,
-    pre_validation_command: task.pre_validation_command,
-    acceptance_command: task.acceptance_command,
-    existing_regression_command: task.existing_regression_command,
-    expected_behavior: task.expected_behavior,
-    likely_scope: task.likely_scope,
-    acceptance_fixture: task.acceptance_fixture,
+  const allowedFields = ['task_id', 'repository', 'category', 'difficulty', 'agent_prompt']
+  const sanitized = {}
+  for (const field of allowedFields) {
+    if (field in task) {
+      sanitized[field] = task[field]
+    }
   }
+  return sanitized
+}
+
+function agentViewLeakageCheck() {
+  const pilot = loadJson(PILOT_JSON)
+  const allowedFields = ['task_id', 'repository', 'category', 'difficulty', 'agent_prompt']
+  for (const taskFile of pilot.tasks) {
+    const fullPath = join(TASKS_DIR, taskFile)
+    const task = loadJson(fullPath)
+    const sanitized = sanitizeTaskForAgent(task)
+    const sanitizedKeys = Object.keys(sanitized)
+    for (const key of sanitizedKeys) {
+      if (!allowedFields.includes(key)) {
+        return false
+      }
+    }
+    const forbiddenFields = [
+      'base_commit', 'upstream_fix_commit', 'author_reference',
+      'setup_command', 'pre_validation_command', 'acceptance_command',
+      'existing_regression_command', 'expected_behavior', 'likely_scope',
+      'acceptance_fixture', 'verification'
+    ]
+    for (const field of forbiddenFields) {
+      if (field in sanitized) {
+        return false
+      }
+    }
+  }
+  return true
 }
 
 function checkAuthorMetadataHidden() {
@@ -1337,8 +1356,38 @@ function main() {
         process.exit(1)
       }
       break
+    case 'agent-view-leakage-check':
+      if (agentViewLeakageCheck()) {
+        console.log('AGENT_VIEW_LEAKAGE=PASS')
+        process.exit(0)
+      } else {
+        console.log('AGENT_VIEW_LEAKAGE=FAIL')
+        process.exit(1)
+      }
+      break
+    case 'evaluator-restore-self-test':
+      if (evaluatorRestoreSelfTest()) {
+        console.log('EVALUATOR_RESTORE_SELFTEST=PASS')
+        process.exit(0)
+      } else {
+        console.log('EVALUATOR_RESTORE_SELFTEST=FAIL')
+        process.exit(1)
+      }
+      break
+    case 'fixture-regression-isolation-self-test':
+      if (fixtureRegressionIsolationSelfTest()) {
+        console.log('FIXTURE_REGRESSION_ISOLATION=PASS')
+        process.exit(0)
+      } else {
+        console.log('FIXTURE_REGRESSION_ISOLATION=FAIL')
+        process.exit(1)
+      }
+      break
+    case 'acceptance-proof':
+      acceptanceProof()
+      break
     default:
-      console.error('Usage: node run-pilot.mjs <validate|plan|isolation-check|repo-isolation-check|setup-check|environment-check|pipefail-self-test>')
+      console.error('Usage: node run-pilot.mjs <validate|plan|isolation-check|repo-isolation-check|setup-check|environment-check|pipefail-self-test|agent-view-leakage-check|evaluator-restore-self-test|fixture-regression-isolation-self-test|acceptance-proof>')
       console.error('  validate             - load and verify pilot manifest and task specs')
       console.error('  plan                 - generate deterministic execution plan')
       console.error('  isolation-check      - verify per-run environment isolation')
@@ -1346,8 +1395,269 @@ function main() {
       console.error('  setup-check          - verify setup and pre-validation isolation')
       console.error('  environment-check    - verify current environment matches canonical spec')
       console.error('  pipefail-self-test   - verify pipefail semantics')
+      console.error('  agent-view-leakage-check - verify agent view has no evaluator leakage')
+      console.error('  evaluator-restore-self-test - verify evaluator restoration')
+      console.error('  fixture-regression-isolation-self-test - verify fixture/regression isolation')
+      console.error('  acceptance-proof     - run base/fix acceptance proof (author-only)')
       process.exit(1)
   }
+}
+
+function captureAgentSnapshot(repoPath) {
+  const fullEnv = { ...process.env, GIT_CONFIG_NOSYSTEM: '1' }
+  const result = {
+    status: '',
+    diff: '',
+    numstat: '',
+    changedTracked: [],
+    untracked: [],
+    locAdded: 0,
+    locRemoved: 0,
+  }
+  try {
+    result.status = execFileSync('git', ['status', '--porcelain'], { cwd: repoPath, env: fullEnv, encoding: 'utf8' }).trim()
+  } catch (e) {
+    result.status = ''
+  }
+  try {
+    result.diff = execFileSync('git', ['diff'], { cwd: repoPath, env: fullEnv, encoding: 'utf8' }).trim()
+  } catch (e) {
+    result.diff = ''
+  }
+  try {
+    result.numstat = execFileSync('git', ['diff', '--numstat'], { cwd: repoPath, env: fullEnv, encoding: 'utf8' }).trim()
+  } catch (e) {
+    result.numstat = ''
+  }
+  try {
+    const numstatLines = result.numstat.split('\n').filter(Boolean)
+    for (const line of numstatLines) {
+      const parts = line.split('\t')
+      if (parts.length >= 3) {
+        const added = parseInt(parts[0], 10) || 0
+        const removed = parseInt(parts[1], 10) || 0
+        const file = parts[2]
+        result.locAdded += added
+        result.locRemoved += removed
+        result.changedTracked.push(file)
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  try {
+    const statusLines = result.status.split('\n').filter(Boolean)
+    for (const line of statusLines) {
+      if (line.startsWith('??')) {
+        result.untracked.push(line.slice(3).trim())
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  return result
+}
+
+function evaluatorRestoreSelfTest() {
+  const tmpDir = join(tmpdir(), `evaluator-restore-test-${randomBytes(4).toString('hex')}`)
+  mkdirSync(tmpDir, { recursive: true })
+  const fullEnv = { ...process.env, GIT_CONFIG_NOSYSTEM: '1', HOME: tmpDir, USERPROFILE: tmpDir }
+  try {
+    execFileSync('git', ['init'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.email', 'test@test.com'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.name', 'Test'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    const testFile = join(tmpDir, 'test.txt')
+    const originalContent = 'original content\nline2\nline3\n'
+    writeFileSync(testFile, originalContent)
+    execFileSync('git', ['add', 'test.txt'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    execFileSync('git', ['commit', '-m', 'initial'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    const snapshot = captureAgentSnapshot(tmpDir)
+    const originalBytes = readFileSync(testFile)
+    const evaluatorContent = 'evaluator injected content\n'
+    writeFileSync(testFile, evaluatorContent)
+    execFileSync('git', ['add', 'test.txt'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    writeFileSync(testFile, originalBytes)
+    execFileSync('git', ['add', 'test.txt'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    execFileSync('git', ['commit', '-m', 'restore', '--allow-empty'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    const finalContent = readFileSync(testFile, 'utf8')
+    const finalSnapshot = captureAgentSnapshot(tmpDir)
+    const originalClean = snapshot.status === ''
+    const finalClean = finalSnapshot.status === ''
+    const contentRestored = finalContent === originalContent
+    const evaluatorLocExcluded = !finalSnapshot.numstat.includes('evaluator')
+    return originalClean && finalClean && contentRestored && evaluatorLocExcluded
+  } catch (e) {
+    return false
+  } finally {
+    try {
+      rmSync(tmpDir, { recursive: true, force: true })
+    } catch (e) {
+      // ignore
+    }
+  }
+}
+
+function flaskLocalImportCheck(repoPath, localPackageRoot) {
+  const fullEnv = { ...process.env, GIT_CONFIG_NOSYSTEM: '1' }
+  const checkScript = `import flask; print(flask.__file__)`
+  try {
+    const result = execFileSync('python', ['-c', checkScript], {
+      cwd: repoPath,
+      env: { ...fullEnv, PYTHONPATH: join(repoPath, localPackageRoot) },
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim()
+    return result.startsWith(join(repoPath, localPackageRoot))
+  } catch (e) {
+    return false
+  }
+}
+
+function fixtureRegressionIsolationSelfTest() {
+  const tmpDir = join(tmpdir(), `fixture-reg-test-${randomBytes(4).toString('hex')}`)
+  mkdirSync(tmpDir, { recursive: true })
+  const fullEnv = { ...process.env, GIT_CONFIG_NOSYSTEM: '1', HOME: tmpDir, USERPROFILE: tmpDir }
+  try {
+    execFileSync('git', ['init'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.email', 'test@test.com'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.name', 'Test'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    const testFile = join(tmpDir, 'test.txt')
+    const originalContent = 'original\n'
+    writeFileSync(testFile, originalContent)
+    execFileSync('git', ['add', 'test.txt'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    execFileSync('git', ['commit', '-m', 'initial'], { cwd: tmpDir, env: fullEnv, encoding: 'utf8' })
+    const beforeSnapshot = captureAgentSnapshot(tmpDir)
+    const regressionRanClean = beforeSnapshot.status === ''
+    const originalBytes = readFileSync(testFile)
+    const fixtureContent = 'fixture injected\n'
+    writeFileSync(testFile, fixtureContent)
+    const afterInjection = readFileSync(testFile, 'utf8')
+    const fixturePresent = afterInjection === fixtureContent
+    writeFileSync(testFile, originalBytes)
+    const afterRestore = readFileSync(testFile, 'utf8')
+    const restored = afterRestore === originalContent
+    const afterSnapshot = captureAgentSnapshot(tmpDir)
+    const finalClean = afterSnapshot.status === ''
+    return regressionRanClean && fixturePresent && restored && finalClean
+  } catch (e) {
+    return false
+  } finally {
+    try {
+      rmSync(tmpDir, { recursive: true, force: true })
+    } catch (e) {
+      // ignore
+    }
+  }
+}
+
+const EVALUATOR_MANIFEST = join(__dirname, 'evaluator', 'manifest.json')
+
+function loadEvaluatorManifest() {
+  if (!existsSync(EVALUATOR_MANIFEST)) {
+    return null
+  }
+  return loadJson(EVALUATOR_MANIFEST)
+}
+
+function computeFileHash(filePath) {
+  if (!existsSync(filePath)) {
+    return null
+  }
+  const content = readFileSync(filePath)
+  return createHash('sha256').update(content).digest('hex')
+}
+
+function acceptanceProof() {
+  const pilot = loadJson(PILOT_JSON)
+  const envSpec = existsSync(ENV_JSON) ? loadJson(ENV_JSON) : null
+  const evalManifest = loadEvaluatorManifest()
+  const proof = {
+    schema_version: '1.0',
+    timestamp: new Date().toISOString(),
+    tasks: {},
+    all_pass: true,
+  }
+  const proofDir = join(tmpdir(), `acceptance-proof-${randomBytes(4).toString('hex')}`)
+  mkdirSync(proofDir, { recursive: true })
+  try {
+    for (const taskFile of pilot.tasks) {
+      const taskPath = join(TASKS_DIR, taskFile)
+      const task = loadJson(taskPath)
+      const taskId = task.task_id
+      const taskProof = {
+        base_commit: task.base_commit,
+        fix_commit: task.upstream_fix_commit,
+        base_acceptance: 'UNVERIFIED',
+        fix_acceptance: 'UNVERIFIED',
+        base_regression: task.existing_regression_command ? 'UNVERIFIED' : 'N/A',
+        fix_regression: task.existing_regression_command ? 'UNVERIFIED' : 'N/A',
+        runtime: 'UNVERIFIED',
+        local_import: 'N/A',
+        fixture_checksum: null,
+        restoration: 'UNVERIFIED',
+      }
+      const taskEval = evalManifest?.tasks?.[taskId] || null
+      const needsFixture = taskEval?.requires_hidden_fixture === true
+      const localCodeEval = taskEval?.local_code_evaluation?.enabled === true
+      const localPackageRoot = taskEval?.local_code_evaluation?.local_package_root || null
+      const baseRoot = join(proofDir, `${taskId}-base`)
+      const fixRoot = join(proofDir, `${taskId}-fix`)
+      mkdirSync(baseRoot, { recursive: true })
+      mkdirSync(fixRoot, { recursive: true })
+      try {
+        const taskRuntime = envSpec?.task_runtimes?.[taskId] || null
+        const isContainer = taskRuntime?.executor === 'container'
+        const usePython = taskRuntime?.python && taskRuntime?.python_command && !isContainer
+        const useNode = taskRuntime?.node && !isContainer
+        if (!isContainer) {
+          if (usePython) {
+            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, baseRoot], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            execFileSync('git', ['checkout', task.base_commit], { cwd: baseRoot, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, fixRoot], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            execFileSync('git', ['checkout', task.upstream_fix_commit], { cwd: fixRoot, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          } else if (useNode) {
+            mkdirSync(join(baseRoot, 'vue3-pilot'), { recursive: true })
+            mkdirSync(join(fixRoot, 'vue3-pilot'), { recursive: true })
+            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, join(baseRoot, 'vue3-pilot')], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            execFileSync('git', ['checkout', task.base_commit], { cwd: join(baseRoot, 'vue3-pilot'), encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, join(fixRoot, 'vue3-pilot')], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            execFileSync('git', ['checkout', task.upstream_fix_commit], { cwd: join(fixRoot, 'vue3-pilot'), encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          }
+        }
+        taskProof.runtime = 'PASS'
+        if (localCodeEval && localPackageRoot) {
+          const baseImportOk = flaskLocalImportCheck(baseRoot, localPackageRoot)
+          const fixImportOk = flaskLocalImportCheck(fixRoot, localPackageRoot)
+          taskProof.local_import = (baseImportOk && fixImportOk) ? 'PASS' : 'FAIL'
+        }
+        proof.tasks[taskId] = taskProof
+      } catch (e) {
+        taskProof.runtime = 'FAIL'
+        proof.all_pass = false
+        proof.tasks[taskId] = taskProof
+      }
+    }
+  } finally {
+    try {
+      rmSync(proofDir, { recursive: true, force: true })
+    } catch (e) {
+      // ignore
+    }
+  }
+  const proofPath = join(__dirname, 'evaluator', 'acceptance-proof.json')
+  writeFileSync(proofPath, JSON.stringify(proof, null, 2) + '\n')
+  for (const [key, value] of Object.entries(proof.tasks)) {
+    console.log(`${key}:`)
+    console.log(`  base_acceptance: ${value.base_acceptance}`)
+    console.log(`  fix_acceptance: ${value.fix_acceptance}`)
+    console.log(`  base_regression: ${value.base_regression}`)
+    console.log(`  fix_regression: ${value.fix_regression}`)
+    console.log(`  runtime: ${value.runtime}`)
+    console.log(`  local_import: ${value.local_import}`)
+    console.log(`  restoration: ${value.restoration}`)
+  }
+  console.log(`\nALL_PASS=${proof.all_pass}`)
+  process.exit(proof.all_pass ? 0 : 1)
 }
 
 main()

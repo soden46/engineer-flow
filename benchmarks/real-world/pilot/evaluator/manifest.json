@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "description": "Author-only evaluator manifest. NEVER copied into agent workspace.",
+  "tasks": {
+    "flask-static-catchall": {
+      "requires_hidden_fixture": false,
+      "acceptance_strategy": "frozen_command",
+      "regression_strategy": "none",
+      "local_code_evaluation": {
+        "enabled": true,
+        "local_package_root": "src",
+        "pythonpath_enforcement": true
+      }
+    },
+    "flask-json-datetime-tz": {
+      "requires_hidden_fixture": false,
+      "acceptance_strategy": "frozen_command",
+      "regression_strategy": "none",
+      "local_code_evaluation": {
+        "enabled": true,
+        "local_package_root": ".",
+        "pythonpath_enforcement": true
+      }
+    },
+    "vue3-reactivity-failed-set": {
+      "requires_hidden_fixture": true,
+      "acceptance_strategy": "hidden_fixture_injection",
+      "hidden_fixture": {
+        "target_file": "packages/reactivity/__tests__/reactive.spec.ts",
+        "test_name": "failed set operation should not trigger effects",
+        "strategy": "behavior_only",
+        "note": "Test absent at base commit. Inject benchmark-owned behavior test derived from upstream fix commit semantics. Do NOT copy upstream implementation fix."
+      },
+      "regression_strategy": "existing_regression_command",
+      "local_code_evaluation": {
+        "enabled": false
+      }
+    },
+    "vue3-vmodel-shadow-dom-focus": {
+      "requires_hidden_fixture": true,
+      "acceptance_strategy": "hidden_fixture_injection",
+      "hidden_fixture": {
+        "target_file": "packages/runtime-dom/__tests__/directives/vModel.spec.ts",
+        "test_name": "should preserve unresolved trimmed text while focused in nested shadow roots",
+        "strategy": "behavior_only",
+        "note": "Test absent at base commit. Inject benchmark-owned behavior test derived from upstream fix commit semantics. Do NOT copy upstream implementation fix."
+      },
+      "regression_strategy": "existing_regression_command",
+      "local_code_evaluation": {
+        "enabled": false
+      }
+    }
+  }
+}
