@@ -907,18 +907,8 @@ function setupCheck() {
 
       if (taskRuntime?.pnpm) {
         try {
-          const pnpm10Path = '/tmp/pnpm10/node_modules/.bin/pnpm'
-          const pnpm11Path = '/tmp/pnpm11/node_modules/.bin/pnpm'
-          let pnpmPath
-          const pnpmVersion = taskRuntime.pnpm
-          if (pnpmVersion.startsWith('10.')) {
-            pnpmPath = pnpm10Path
-          } else if (pnpmVersion.startsWith('11.')) {
-            pnpmPath = pnpm11Path
-          } else {
-            pnpmPath = 'pnpm'
-          }
-          env.PATH = dirname(pnpmPath) + ':' + (process.env.PATH || '')
+          const pnpmDir = execSync('which pnpm', { encoding: 'utf8' }).trim()
+          env.PATH = dirname(pnpmDir) + ':' + (process.env.PATH || '')
         } catch (e) {
           log(`Warning: Failed to set pnpm path for ${task.task_id}: ${e.message}`)
         }
@@ -1133,23 +1123,9 @@ function environmentCheck() {
 
   if (pnpmVersions.size > 0) {
     try {
-      const pnpm10Path = '/tmp/pnpm10/node_modules/.bin/pnpm'
-      const pnpm11Path = '/tmp/pnpm11/node_modules/.bin/pnpm'
       let pnpmPass = true
       for (const pnpmVer of pnpmVersions) {
-        let pnpmPath
-        if (pnpmVer.startsWith('10.')) {
-          pnpmPath = pnpm10Path
-        } else if (pnpmVer.startsWith('11.')) {
-          pnpmPath = pnpm11Path
-        } else {
-          pnpmPath = 'pnpm'
-        }
-        if (!existsSync(pnpmPath)) {
-          pnpmPass = false
-          break
-        }
-        const pnpmVersion = execSync(`${pnpmPath} --version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+        const pnpmVersion = execSync(`pnpm --version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
         const [expectedMajor, expectedMinor, expectedPatch] = pnpmVer.split('.').map(Number)
         const pnpmMatch = pnpmVersion.match(/(\d+)\.(\d+)\.(\d+)/)
         if (pnpmMatch) {
