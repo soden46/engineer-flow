@@ -27,21 +27,19 @@ jobs:
           cat /etc/os-release
           git --version
 
-      - name: Install Python 3.8 for flask-static-catchall
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository -y ppa:deadsnakes/ppa
-          sudo apt-get update
-          sudo apt-get install -y python3.8 python3.8-venv python3.8-dev
-          python3.8 --version
+      - name: Setup Python 3.8.18 for flask-static-catchall
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8.18'
 
-      - name: Verify Python 3.8 provisioning (fail-closed)
+      - name: Verify Python 3.8.18 provisioning (fail-closed)
         run: |
-          if ! python3.8 --version; then
-            echo "FAIL: Python 3.8 could not be provisioned"
+          PYTHON_VERSION=$(python --version)
+          if [ "$PYTHON_VERSION" != "Python 3.8.18" ]; then
+            echo "FAIL: Python version is $PYTHON_VERSION, expected Python 3.8.18"
             exit 1
           fi
+          python -m pip --version
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
@@ -101,9 +99,9 @@ jobs:
 
       - name: Print Python version evidence (Flask tasks)
         run: |
-          echo "=== Python 3.8 (for flask-static-catchall) ==="
-          python3.8 --version
-          python3.8 -m pip --version
+          echo "=== Python 3.8.18 (for flask-static-catchall) ==="
+          python --version
+          python -m pip --version
           echo ""
           echo "=== Python 3.6.15 container (for flask-json-datetime-tz) ==="
           docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 python --version

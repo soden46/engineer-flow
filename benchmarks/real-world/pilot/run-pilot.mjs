@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { tmpdir } from 'node:os'
 import { randomBytes } from 'node:crypto'
-import { execSync } from 'node:child_process'
+import { execSync, execFileSync } from 'node:child_process'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PILOT_JSON = join(__dirname, 'pilot.json')
@@ -315,16 +315,34 @@ function buildTaskSpecificEnv(runRoot, arm, taskRuntime) {
 
   const pathPrefixes = []
 
-  if (taskRuntime.python) {
-    const pythonBin = execSync(`which python${taskRuntime.python}`, { encoding: 'utf8' }).trim()
-    const pythonDir = dirname(pythonBin)
-    pathPrefixes.push(pythonDir)
+  if (taskRuntime.executor === 'container') {
+    return env
   }
 
-  if (taskRuntime.pnpm) {
-    const pnpmBin = execSync(`which pnpm`, { encoding: 'utf8' }).trim()
-    const pnpmDir = dirname(pnpmBin)
-    pathPrefixes.push(pnpmDir)
+  if (taskRuntime.python && taskRuntime.python_command) {
+    try {
+      const pythonBin = execSync(`which ${taskRuntime.python_command}`, { encoding: 'utf8' }).trim()
+      const pythonDir = dirname(pythonBin)
+      pathPrefixes.push(pythonDir)
+    } catch (e) {
+      log(`Warning: Failed to resolve Python executable: ${e.message}`)
+    }
+  }
+
+  if (taskRuntime.pnpm && taskRuntime.pnpm_command) {
+    try {
+      const pnpmVersion = taskRuntime.pnpm
+      const pnpmDir = join(runRoot, 'pnpm', pnpmVersion, 'bin')
+      if (existsSync(pnpmDir)) {
+        pathPrefixes.push(pnpmDir)
+      } else {
+        const pnpmBin = execSync(`which ${taskRuntime.pnpm_command}`, { encoding: 'utf8' }).trim()
+        const pnpmDir = dirname(pnpmBin)
+        pathPrefixes.push(pnpmDir)
+      }
+    } catch (e) {
+      log(`Warning: Failed to resolve pnpm executable: ${e.message}`)
+    }
   }
 
   if (pathPrefixes.length > 0) {
@@ -735,19 +753,19 @@ function prepareTaskRuntime(runRoot, taskRuntime) {
   const imageRef = `${image}@${digest}`
 
   try {
-    execSync(`docker pull ${imageRef}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    execFileSync('docker', ['pull', imageRef], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
   } catch (e) {
     throw new Error(`Failed to pull container image ${imageRef}: ${e.message}`)
   }
 
-  const dockerCmd = [
-    'docker', 'run',
+  const dockerArgs = [
+    'run',
     '-d',
     '--name', containerName,
-    '-e', `HOME=/home`,
-    '-e', `XDG_CONFIG_HOME=/config`,
-    '-e', `XDG_CACHE_HOME=/cache`,
-    '-e', `GIT_CONFIG_NOSYSTEM=1`,
+    '-e', 'HOME=/home',
+    '-e', 'XDG_CONFIG_HOME=/config',
+    '-e', 'XDG_CACHE_HOME=/cache',
+    '-e', 'GIT_CONFIG_NOSYSTEM=1',
     '-v', `${home}:/home`,
     '-v', `${config}:/config`,
     '-v', `${cache}:/cache`,
@@ -759,7 +777,7 @@ function prepareTaskRuntime(runRoot, taskRuntime) {
   ]
 
   try {
-    execSync(dockerCmd.join(' '), { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    execFileSync('docker', dockerArgs, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
   } catch (e) {
     throw new Error(`Failed to start container ${containerName}: ${e.message}`)
   }
@@ -773,7 +791,7 @@ function runTaskCommand(containerName, command, env) {
   }
 
   try {
-    const containerCheck = execSync(`docker inspect -f '{{.State.Running}}' ${containerName}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+    const containerCheck = execFileSync('docker', ['inspect', '-f', '{{.State.Running}}', containerName], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
     if (containerCheck !== 'true') {
       return { success: false, output: '', error: `Container ${containerName} is not running` }
     }
@@ -781,22 +799,18 @@ function runTaskCommand(containerName, command, env) {
     return { success: false, output: '', error: `Container ${containerName} not found: ${e.message}` }
   }
 
-  const envFlags = []
+  const dockerArgs = ['exec']
+
   if (env) {
     for (const [key, value] of Object.entries(env)) {
-      envFlags.push('-e', `${key}=${value}`)
+      dockerArgs.push('-e', `${key}=${value}`)
     }
   }
 
-  const dockerCmd = [
-    'docker', 'exec',
-    ...envFlags,
-    containerName,
-    'sh', '-c', command
-  ]
+  dockerArgs.push(containerName, 'sh', '-c', command)
 
   try {
-    const result = execSync(dockerCmd.join(' '), { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 300000 })
+    const result = execFileSync('docker', dockerArgs, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 300000 })
     return { success: true, output: result.trim(), error: null }
   } catch (e) {
     return { success: false, output: e.stdout ? e.stdout.trim() : '', error: e.stderr ? e.stderr.trim() : e.message }
@@ -811,13 +825,13 @@ function cleanupTaskRuntime(containerRuntime) {
   const { containerName } = containerRuntime
 
   try {
-    execSync(`docker stop ${containerName}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    execFileSync('docker', ['stop', containerName], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
   } catch (e) {
     log(`Warning: Failed to stop container ${containerName}: ${e.message}`)
   }
 
   try {
-    execSync(`docker rm -f ${containerName}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    execFileSync('docker', ['rm', '-f', containerName], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
   } catch (e) {
     log(`Warning: Failed to remove container ${containerName}: ${e.message}`)
   }
@@ -825,7 +839,7 @@ function cleanupTaskRuntime(containerRuntime) {
 
 function verifyContainerCleanup(containerName) {
   try {
-    const result = execSync(`docker ps -a --filter name=${containerName} --format '{{.Names}}'`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    const result = execFileSync('docker', ['ps', '-a', '--filter', `name=${containerName}`, '--format', '{{.Names}}'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
     return result.trim() === ''
   } catch (e) {
     return false
@@ -902,10 +916,14 @@ function setupCheck() {
           continue
         }
       } else {
-        if (taskRuntime?.python) {
+        if (taskRuntime?.python && taskRuntime?.python_command) {
           const venvPath = join(runRoot, 'venv')
-          const pythonCmd = `python${taskRuntime.python}`
+          const pythonCmd = taskRuntime.python_command
           try {
+            const pythonVersion = runCommand(`${pythonCmd} --version`, runRoot, env)
+            if (!pythonVersion.success || !pythonVersion.output.includes(taskRuntime.python)) {
+              throw new Error(`Python version mismatch: expected ${taskRuntime.python}, got ${pythonVersion.output}`)
+            }
             runCommand(`${pythonCmd} -m venv ${venvPath}`, runRoot, env)
             env.PATH = join(venvPath, 'bin') + ':' + (process.env.PATH || '')
             runCommand('python --version', runRoot, env)
@@ -915,14 +933,24 @@ function setupCheck() {
           }
         }
 
-      if (taskRuntime?.pnpm) {
-        try {
-          const pnpmDir = execSync('which pnpm', { encoding: 'utf8' }).trim()
-          env.PATH = dirname(pnpmDir) + ':' + (process.env.PATH || '')
-        } catch (e) {
-          log(`Warning: Failed to set pnpm path for ${task.task_id}: ${e.message}`)
+        if (taskRuntime?.pnpm) {
+          try {
+            const pnpmVersion = taskRuntime.pnpm
+            const pnpmToolDir = join(runRoot, 'pnpm', pnpmVersion)
+            const pnpmBinDir = join(pnpmToolDir, 'bin')
+            if (!existsSync(pnpmBinDir)) {
+              mkdirSync(pnpmToolDir, { recursive: true })
+              runCommand(`npm install pnpm@${pnpmVersion} --prefix ${pnpmToolDir}`, runRoot, env)
+            }
+            env.PATH = pnpmBinDir + ':' + (process.env.PATH || '')
+            const pnpmVersionCheck = runCommand('pnpm --version', runRoot, env)
+            if (!pnpmVersionCheck.success || pnpmVersionCheck.output !== pnpmVersion) {
+              throw new Error(`pnpm version mismatch: expected ${pnpmVersion}, got ${pnpmVersionCheck.output}`)
+            }
+          } catch (e) {
+            log(`Warning: Failed to set pnpm path for ${task.task_id}: ${e.message}`)
+          }
         }
-      }
       }
 
       let setupResult, preValResult, regressionResult
@@ -1084,23 +1112,23 @@ function environmentCheck() {
     try {
       let pythonVersionOutput
       try {
-        pythonVersionOutput = execSync('python3.8 --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+        pythonVersionOutput = execSync('python3 --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
       } catch {
         pythonVersionOutput = execSync('python --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
       }
-      const pyMatch = pythonVersionOutput.match(/Python (\d+)\.(\d+)/)
+      const pyMatch = pythonVersionOutput.match(/Python (\d+)\.(\d+)\.(\d+)/)
       if (pyMatch) {
-        const curMajor = parseInt(pyMatch[1], 10)
-        const curMinor = parseInt(pyMatch[2], 10)
+        const curVersion = `${pyMatch[1]}.${pyMatch[2]}.${pyMatch[3]}`
         let pythonPass = true
         for (const pyVer of pythonVersions) {
-          const [expectedMajor, expectedMinor] = pyVer.split('.').map(Number)
-          if (curMajor !== expectedMajor || curMinor !== expectedMinor) {
+          if (curVersion !== pyVer) {
             pythonPass = false
             break
           }
         }
         results.PYTHON = pythonPass ? 'PASS' : 'FAIL'
+      } else {
+        results.PYTHON = 'FAIL'
       }
     } catch {
       results.PYTHON = 'FAIL'
@@ -1155,10 +1183,18 @@ function environmentCheck() {
 
   if (pnpmVersions.size > 0) {
     try {
-      const pnpmVersion = execSync(`pnpm --version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
-      const pnpmMatch = pnpmVersion.match(/(\d+)\.(\d+)\.(\d+)/)
+      const pnpmVersionOutput = execSync('pnpm --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+      const pnpmMatch = pnpmVersionOutput.match(/(\d+)\.(\d+)\.(\d+)/)
       if (pnpmMatch) {
-        results.PNPM = 'PASS'
+        const curVersion = `${pnpmMatch[1]}.${pnpmMatch[2]}.${pnpmMatch[3]}`
+        let pnpmPass = true
+        for (const pnpmVer of pnpmVersions) {
+          if (curVersion !== pnpmVer) {
+            pnpmPass = false
+            break
+          }
+        }
+        results.PNPM = pnpmPass ? 'PASS' : 'FAIL'
       } else {
         results.PNPM = 'FAIL'
       }
@@ -1233,7 +1269,7 @@ function environmentCheck() {
       log('pip alignment check failed')
     }
     if (results.PNPM === 'FAIL') {
-      log('pnpm check failed')
+      log(`pnpm check failed. Expected: ${Array.from(pnpmVersions).join(', ')}`)
     }
   }
 

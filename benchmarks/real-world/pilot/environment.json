@@ -13,6 +13,7 @@
     "flask-static-catchall": {
       "executor": "host",
       "python": "3.8.18",
+      "python_command": "python3",
       "pip_policy": "python -m pip",
       "node": null,
       "pnpm": null,
@@ -22,30 +23,35 @@
     "flask-json-datetime-tz": {
       "executor": "container",
       "python": "3.6.15",
+      "python_command": "python",
       "pip_policy": "python -m pip",
       "node": null,
       "pnpm": null,
       "required_tools": ["python", "pip"],
       "container_image": "python:3.6.15-buster",
-      "container_digest": "sha256:08e91f391139ff24d82df572307b30ee850b78884ec633cf10f5a6e990dd9920",
+      "container_digest": "sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987",
       "container_platform": "linux/amd64",
       "python_justification": "Flask 0.12.2 supports Python 2.6/2.7/3.3-3.6 (setup.py classifiers). Python 3.6.15 is the latest patch release and is the final version officially supported by this release. Python 3.6 is not available on Ubuntu 22.04 host (deadsnakes PPA only supports 3.7+ on Jammy due to OpenSSL 3 incompatibility)."
     },
     "vue3-reactivity-failed-set": {
       "executor": "host",
       "python": null,
+      "python_command": null,
       "pip_policy": null,
       "node": "20",
       "pnpm": "11.5.2",
+      "pnpm_command": "pnpm",
       "required_tools": ["node", "pnpm", "npx", "tail"],
       "pnpm_justification": "Vue 3.5.38 packageManager field specifies pnpm@11.5.2"
     },
     "vue3-vmodel-shadow-dom-focus": {
       "executor": "host",
       "python": null,
+      "python_command": null,
       "pip_policy": null,
       "node": "20",
       "pnpm": "10.31.0",
+      "pnpm_command": "pnpm",
       "required_tools": ["node", "pnpm", "npx", "tail"],
       "pnpm_justification": "Vue 3.5.30 packageManager field specifies pnpm@10.31.0"
     }
@@ -77,6 +83,7 @@
   "notes": {
     "windows_support": "Windows is NOT an official benchmark execution platform. Windows may be used for: validate, plan, isolation-check, repository planning/development only.",
     "frozen_specs": "Historical task commands (pip, tail, pnpm) are frozen and MUST NOT be rewritten for platform compatibility. The canonical environment MUST satisfy them.",
-    "container_runtimes": "Tasks with executor=container run in pinned Docker containers. The container persists across setup, pre-validation, and regression commands within a single benchmark run."
+    "container_runtimes": "Tasks with executor=container run in pinned Docker containers. The container persists across setup, pre-validation, and regression commands within a single benchmark run.",
+    "container_image_reference": "python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987"
   }
 }
