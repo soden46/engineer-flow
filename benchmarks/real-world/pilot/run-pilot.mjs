@@ -1027,6 +1027,8 @@ function environmentCheck() {
     results.ARCHITECTURE = 'PASS'
   }
 
+  const normalizedArch = currentArch === 'x86_64' ? 'amd64' : currentArch
+
   const taskRuntimes = env.task_runtimes || {}
   const nodeVersions = new Set()
   const pythonVersions = new Set()
@@ -1178,7 +1180,7 @@ function environmentCheck() {
           allContainersValid = false
           break
         }
-        if (runtime.container_platform && runtime.container_platform !== `linux/${currentArch}`) {
+        if (runtime.container_platform && runtime.container_platform !== `linux/${normalizedArch}`) {
           allContainersValid = false
           break
         }
