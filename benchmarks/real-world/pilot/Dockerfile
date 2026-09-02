@@ -1,13 +1,18 @@
-# Engineer Flow Real-World Pilot Benchmark - Canonical Execution Environment
+# Engineer Flow Real-World Pilot Benchmark - Canonical Host Environment
 #
-# This image provides the canonical Linux environment for running the
+# This image provides the canonical Linux HOST environment for running the
 # real-world pilot benchmark tasks. It is NOT part of Engineer Flow itself.
 #
-# Frozen task commands are NOT modified. This environment satisfies them.
+# IMPORTANT: This image does NOT contain Python 3.6. The flask-json-datetime-tz
+# task requires Python 3.6.15, which is not available on Ubuntu 22.04 (Jammy)
+# because deadsnakes PPA only supports Python 3.7+ on Jammy due to OpenSSL 3.
+#
+# The Python 3.6 legacy task runs in a separate pinned container:
+#   python:3.6.15-buster (sha256:08e91f391139ff24d82df572307b30ee850b78884ec633cf10f5a6e990dd9920)
 #
 # Usage:
-#   docker build -t ef-pilot-env benchmarks/real-world/pilot/
-#   docker run --rm ef-pilot-env node run-pilot.mjs environment-check
+#   docker build -t ef-pilot-host benchmarks/real-world/pilot/
+#   docker run --rm ef-pilot-host node run-pilot.mjs environment-check
 
 FROM ubuntu:22.04
 
@@ -29,20 +34,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python 3.6 and 3.8 (required by frozen Flask task base commits)
-# Flask 0.12.2 supports Python 2.6/2.7/3.3-3.6
-# Flask 1.1.1 supports Python 2.7/3.5+
+# Install Python 3.8.18 for flask-static-catchall task
+# Python 3.8 is available via deadsnakes PPA on Ubuntu 22.04
 RUN add-apt-repository -y ppa:deadsnakes/ppa \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-    python3.6 \
-    python3.6-venv \
-    python3.6-dev \
     python3.8 \
     python3.8-venv \
     python3.8-dev \
     && rm -rf /var/lib/apt/lists/* \
-    && python3.6 --version \
     && python3.8 --version
 
 # Install Node.js 20.x (LTS) - satisfies Vue 3.5.x engines requirement: node >=20.0.0
@@ -68,7 +68,6 @@ RUN mkdir -p /opt/pnpm10 /opt/pnpm11 \
 RUN node --version \
     && npm --version \
     && git --version \
-    && python3.6 --version \
     && python3.8 --version \
     && which tail grep sed awk cat head wc cut tr sort uniq tee xargs find diff
 

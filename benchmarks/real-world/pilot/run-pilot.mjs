@@ -714,6 +714,115 @@ function runCommand(command, cwd, env, timeout = 300000) {
   }
 }
 
+function generateContainerName() {
+  return `pilot-task-${randomBytes(4).toString('hex')}`
+}
+
+function prepareTaskRuntime(runRoot, taskRuntime) {
+  if (!taskRuntime || taskRuntime.executor !== 'container') {
+    return null
+  }
+
+  const containerName = generateContainerName()
+  const home = join(runRoot, 'home')
+  const config = join(runRoot, 'config')
+  const cache = join(runRoot, 'cache')
+  const repoRoot = join(runRoot, 'repo')
+  const artifacts = join(runRoot, 'artifacts')
+
+  const image = taskRuntime.container_image
+  const digest = taskRuntime.container_digest
+  const imageRef = `${image}@${digest}`
+
+  try {
+    execSync(`docker pull ${imageRef}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  } catch (e) {
+    throw new Error(`Failed to pull container image ${imageRef}: ${e.message}`)
+  }
+
+  const dockerCmd = [
+    'docker', 'run',
+    '-d',
+    '--name', containerName,
+    '-e', `HOME=/home`,
+    '-e', `XDG_CONFIG_HOME=/config`,
+    '-e', `XDG_CACHE_HOME=/cache`,
+    '-e', `GIT_CONFIG_NOSYSTEM=1`,
+    '-v', `${home}:/home`,
+    '-v', `${config}:/config`,
+    '-v', `${cache}:/cache`,
+    '-v', `${repoRoot}:/repo`,
+    '-v', `${artifacts}:/artifacts`,
+    '-w', '/repo',
+    imageRef,
+    'sleep', 'infinity'
+  ]
+
+  try {
+    execSync(dockerCmd.join(' '), { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  } catch (e) {
+    throw new Error(`Failed to start container ${containerName}: ${e.message}`)
+  }
+
+  return { containerName, imageRef }
+}
+
+function runTaskCommand(containerName, command, env) {
+  if (!containerName) {
+    return { success: false, output: '', error: 'No container available' }
+  }
+
+  const envFlags = []
+  if (env) {
+    for (const [key, value] of Object.entries(env)) {
+      envFlags.push('-e', `${key}=${value}`)
+    }
+  }
+
+  const dockerCmd = [
+    'docker', 'exec',
+    ...envFlags,
+    containerName,
+    'sh', '-c', command
+  ]
+
+  try {
+    const result = execSync(dockerCmd.join(' '), { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 300000 })
+    return { success: true, output: result.trim(), error: null }
+  } catch (e) {
+    return { success: false, output: e.stdout ? e.stdout.trim() : '', error: e.stderr ? e.stderr.trim() : e.message }
+  }
+}
+
+function cleanupTaskRuntime(containerRuntime) {
+  if (!containerRuntime || !containerRuntime.containerName) {
+    return
+  }
+
+  const { containerName } = containerRuntime
+
+  try {
+    execSync(`docker stop ${containerName}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  } catch (e) {
+    log(`Warning: Failed to stop container ${containerName}: ${e.message}`)
+  }
+
+  try {
+    execSync(`docker rm -f ${containerName}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  } catch (e) {
+    log(`Warning: Failed to remove container ${containerName}: ${e.message}`)
+  }
+}
+
+function verifyContainerCleanup(containerName) {
+  try {
+    const result = execSync(`docker ps -a --filter name=${containerName} --format '{{.Names}}'`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    return result.trim() === ''
+  } catch (e) {
+    return false
+  }
+}
+
 function hasAcceptanceFixtureContent(repoRoot, task) {
   const acceptanceCommand = task.acceptance_command || ''
   if (acceptanceCommand.includes('should preserve unresolved trimmed text')) {
@@ -748,6 +857,7 @@ function setupCheck() {
   let allAuthorHidden = true
 
   const runRoots = []
+  const containerRuntimes = []
 
   try {
     for (let i = 0; i < pilot.tasks.length; i++) {
@@ -767,40 +877,62 @@ function setupCheck() {
       const taskRuntime = envSpec?.task_runtimes?.[task.task_id] || null
       const env = buildTaskSpecificEnv(runRoot, 'baseline', taskRuntime)
 
-      if (taskRuntime?.python) {
-        const venvPath = join(runRoot, 'venv')
-        const pythonCmd = `python${taskRuntime.python}`
+      let containerRuntime = null
+      const useContainer = taskRuntime?.executor === 'container'
+
+      if (useContainer) {
         try {
-          runCommand(`${pythonCmd} -m venv ${venvPath}`, runRoot, env)
-          env.PATH = join(venvPath, 'bin') + ':' + (process.env.PATH || '')
-          runCommand('python --version', runRoot, env)
-          runCommand('python -m pip install --upgrade pip', runRoot, env)
+          containerRuntime = prepareTaskRuntime(runRoot, taskRuntime)
+          containerRuntimes.push(containerRuntime)
         } catch (e) {
-          log(`Warning: Failed to create venv for ${task.task_id}: ${e.message}`)
+          results[`TASK_${taskNum}_SETUP`] = 'FAIL'
+          results[`TASK_${taskNum}_PREVALIDATION`] = 'FAIL'
+          results[`TASK_${taskNum}_REGRESSION`] = task.existing_regression_command ? 'FAIL' : 'PASS'
+          log(`Failed to prepare container runtime for ${task.task_id}: ${e.message}`)
+          continue
         }
-      }
-
-      if (taskRuntime?.pnpm) {
-        try {
-          runCommand(`npm install -g pnpm@${taskRuntime.pnpm}`, runRoot, env)
-        } catch (e) {
-          log(`Warning: Failed to install pnpm@${taskRuntime.pnpm} for ${task.task_id}: ${e.message}`)
-        }
-      }
-
-      const setupCmdResult = runCommand(task.setup_command, runRoot, env)
-      results[`TASK_${taskNum}_SETUP`] = setupCmdResult.success ? 'PASS' : 'FAIL'
-
-      const preValResult = runCommand(task.pre_validation_command, runRoot, env)
-      results[`TASK_${taskNum}_PREVALIDATION`] = preValResult.success ? 'PASS' : 'FAIL'
-
-      const regressionCmd = task.existing_regression_command
-      if (regressionCmd && regressionCmd.trim() !== '') {
-        const regressionResult = runCommand(regressionCmd, runRoot, env)
-        results[`TASK_${taskNum}_REGRESSION`] = regressionResult.success ? 'PASS' : 'FAIL'
       } else {
-        results[`TASK_${taskNum}_REGRESSION`] = 'PASS'
+        if (taskRuntime?.python) {
+          const venvPath = join(runRoot, 'venv')
+          const pythonCmd = `python${taskRuntime.python}`
+          try {
+            runCommand(`${pythonCmd} -m venv ${venvPath}`, runRoot, env)
+            env.PATH = join(venvPath, 'bin') + ':' + (process.env.PATH || '')
+            runCommand('python --version', runRoot, env)
+            runCommand('python -m pip install --upgrade pip', runRoot, env)
+          } catch (e) {
+            log(`Warning: Failed to create venv for ${task.task_id}: ${e.message}`)
+          }
+        }
+
+        if (taskRuntime?.pnpm) {
+          try {
+            runCommand(`npm install -g pnpm@${taskRuntime.pnpm}`, runRoot, env)
+          } catch (e) {
+            log(`Warning: Failed to install pnpm@${taskRuntime.pnpm} for ${task.task_id}: ${e.message}`)
+          }
+        }
       }
+
+      let setupResult, preValResult, regressionResult
+
+      if (useContainer && containerRuntime) {
+        setupResult = runTaskCommand(containerRuntime.containerName, task.setup_command, env)
+        preValResult = runTaskCommand(containerRuntime.containerName, task.pre_validation_command, env)
+        regressionResult = task.existing_regression_command
+          ? runTaskCommand(containerRuntime.containerName, task.existing_regression_command, env)
+          : { success: true, output: '', error: null }
+      } else {
+        setupResult = runCommand(task.setup_command, runRoot, env)
+        preValResult = runCommand(task.pre_validation_command, runRoot, env)
+        regressionResult = task.existing_regression_command
+          ? runCommand(task.existing_regression_command, runRoot, env)
+          : { success: true, output: '', error: null }
+      }
+
+      results[`TASK_${taskNum}_SETUP`] = setupResult.success ? 'PASS' : 'FAIL'
+      results[`TASK_${taskNum}_PREVALIDATION`] = preValResult.success ? 'PASS' : 'FAIL'
+      results[`TASK_${taskNum}_REGRESSION`] = regressionResult.success ? 'PASS' : 'FAIL'
 
       const repoDirs = readdirSync(runRoot).filter((d) => {
         const stat = statSync(join(runRoot, d))
@@ -838,6 +970,9 @@ function setupCheck() {
       results.CACHE_ISOLATED = 'FAIL'
     }
   } finally {
+    for (const containerRuntime of containerRuntimes) {
+      cleanupTaskRuntime(containerRuntime)
+    }
     for (const runRoot of runRoots) {
       cleanupRunRoot(runRoot)
     }
@@ -866,6 +1001,7 @@ function environmentCheck() {
     GIT: 'FAIL',
     PNPM: 'FAIL',
     POSIX_TOOLS: 'FAIL',
+    CONTAINER_RUNTIME: 'PASS',
     OFFICIAL_PLATFORM: 'PASS',
   }
 
@@ -894,11 +1030,16 @@ function environmentCheck() {
   const nodeVersions = new Set()
   const pythonVersions = new Set()
   const pnpmVersions = new Set()
+  const containerRuntimes = []
 
   for (const [taskId, runtime] of Object.entries(taskRuntimes)) {
-    if (runtime.node) nodeVersions.add(runtime.node)
-    if (runtime.python) pythonVersions.add(runtime.python)
-    if (runtime.pnpm) pnpmVersions.add(runtime.pnpm)
+    if (runtime.executor === 'container') {
+      containerRuntimes.push({ taskId, runtime })
+    } else {
+      if (runtime.node) nodeVersions.add(runtime.node)
+      if (runtime.python) pythonVersions.add(runtime.python)
+      if (runtime.pnpm) pnpmVersions.add(runtime.pnpm)
+    }
   }
 
   if (nodeVersions.size > 0) {
@@ -916,7 +1057,8 @@ function environmentCheck() {
     results.NODE = 'PASS'
   }
 
-  if (pythonVersions.size > 0) {
+  const hostPythonRequired = pythonVersions.size > 0
+  if (hostPythonRequired) {
     try {
       const pythonVersionOutput = execSync('python --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
       const pyMatch = pythonVersionOutput.match(/Python (\d+)\.(\d+)/)
@@ -949,7 +1091,11 @@ function environmentCheck() {
       results.PIP_ALIGNED = pipMatch[1] === pyMatch[1] ? 'PASS' : 'FAIL'
     }
   } catch {
-    results.PIP_ALIGNED = 'FAIL'
+    if (hostPythonRequired) {
+      results.PIP_ALIGNED = 'FAIL'
+    } else {
+      results.PIP_ALIGNED = 'PASS'
+    }
   }
 
   try {
@@ -1011,6 +1157,35 @@ function environmentCheck() {
   }
   results.POSIX_TOOLS = allToolsPresent ? 'PASS' : 'FAIL'
 
+  let dockerAvailable = false
+  if (containerRuntimes.length > 0) {
+    try {
+      execSync('docker --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+      dockerAvailable = true
+    } catch {
+      dockerAvailable = false
+    }
+
+    if (!dockerAvailable) {
+      results.CONTAINER_RUNTIME = 'FAIL'
+    } else {
+      let allContainersValid = true
+      for (const { taskId, runtime } of containerRuntimes) {
+        if (!runtime.container_image || !runtime.container_digest) {
+          allContainersValid = false
+          break
+        }
+        if (runtime.container_platform && runtime.container_platform !== `linux/${currentArch}`) {
+          allContainersValid = false
+          break
+        }
+      }
+      results.CONTAINER_RUNTIME = allContainersValid ? 'PASS' : 'FAIL'
+    }
+  } else {
+    results.CONTAINER_RUNTIME = 'PASS'
+  }
+
   for (const [key, value] of Object.entries(results)) {
     log(`${key}=${value}`)
   }
@@ -1023,6 +1198,9 @@ function environmentCheck() {
       log(`Official execution requires: ${expectedPlatform}`)
       log(`Current platform: ${process.platform}`)
       log('Windows may be used for: validate, plan, isolation-check, repository planning/development only.')
+    }
+    if (results.CONTAINER_RUNTIME === 'FAIL') {
+      log('Container runtime required but Docker unavailable or container image not pinned.')
     }
   }
 

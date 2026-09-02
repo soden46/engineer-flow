@@ -25,22 +25,17 @@ jobs:
           cat /etc/os-release
           git --version
 
-      - name: Install Python 3.6 and 3.8
+      - name: Install Python 3.8 for flask-static-catchall
         run: |
           sudo apt-get update
           sudo apt-get install -y software-properties-common
           sudo add-apt-repository -y ppa:deadsnakes/ppa
           sudo apt-get update
-          sudo apt-get install -y python3.6 python3.6-venv python3.6-dev python3.8 python3.8-venv python3.8-dev
-          python3.6 --version
+          sudo apt-get install -y python3.8 python3.8-venv python3.8-dev
           python3.8 --version
 
-      - name: Verify Python 3.6 provisioning (fail-closed)
+      - name: Verify Python 3.8 provisioning (fail-closed)
         run: |
-          if ! python3.6 --version; then
-            echo "FAIL: Python 3.6 could not be provisioned"
-            exit 1
-          fi
           if ! python3.8 --version; then
             echo "FAIL: Python 3.8 could not be provisioned"
             exit 1
@@ -77,6 +72,22 @@ jobs:
             exit 1
           fi
 
+      - name: Verify Docker availability
+        run: |
+          if ! docker --version; then
+            echo "FAIL: Docker is not available"
+            exit 1
+          fi
+          docker info
+
+      - name: Pull and verify Python 3.6.15 legacy container
+        run: |
+          docker pull python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987
+          docker images python:3.6.15-buster --format "{{.Repository}}:{{.Tag}}@{{.Digest}}"
+          # Verify the container runs and reports correct Python version
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 python --version
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 pip --version
+
       - name: Verify POSIX shell tools
         run: |
           which tail grep sed awk cat head wc cut tr sort uniq tee xargs find diff
@@ -100,9 +111,10 @@ jobs:
           python3.8 --version
           python3.8 -m pip --version
           echo ""
-          echo "=== Python 3.6 (for flask-json-datetime-tz) ==="
-          python3.6 --version
-          python3.6 -m pip --version
+          echo "=== Python 3.6.15 container (for flask-json-datetime-tz) ==="
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 python --version
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 python -m pip --version
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 pip --version
 
       - name: Print Node/pnpm version evidence (Vue tasks)
         run: |
