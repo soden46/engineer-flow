@@ -1,0 +1,46 @@
+name: Real-World Pilot Adapter Validation
+
+on:
+  push:
+    branches: [main, 'feat/**']
+    paths:
+      - 'benchmarks/real-world/pilot/agent/**'
+      - '.github/workflows/real-world-pilot-adapter.yml'
+  pull_request:
+    paths:
+      - 'benchmarks/real-world/pilot/agent/**'
+      - '.github/workflows/real-world-pilot-adapter.yml'
+  workflow_dispatch:
+
+jobs:
+  adapter-validation:
+    name: Adapter Validation
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Print system information
+        run: |
+          uname -a
+          cat /etc/os-release
+          git --version
+
+      - name: Run environment validation
+        run: node benchmarks/real-world/pilot/run-pilot.mjs validate
+
+      - name: Run plan validation
+        run: node benchmarks/real-world/pilot/run-pilot.mjs plan
+
+      - name: Run isolation check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs isolation-check
+
+      - name: Run agent view leakage check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs agent-view-leakage-check
+
+      - name: Run agent adapter self-test
+        run: node benchmarks/real-world/pilot/agent/agent-adapter-selftest.mjs
+
+      - name: Run EF materialization self-test
+        run: node benchmarks/real-world/pilot/agent/ef-materialization-selftest.mjs
