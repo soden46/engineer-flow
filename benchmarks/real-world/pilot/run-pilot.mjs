@@ -907,8 +907,8 @@ function setupCheck() {
 
       if (taskRuntime?.pnpm) {
         try {
-          const pnpm10Path = '/tmp/pnpm10/bin/pnpm'
-          const pnpm11Path = '/tmp/pnpm11/bin/pnpm'
+          const pnpm10Path = '/tmp/pnpm10/node_modules/.bin/pnpm'
+          const pnpm11Path = '/tmp/pnpm11/node_modules/.bin/pnpm'
           let pnpmPath
           const pnpmVersion = taskRuntime.pnpm
           if (pnpmVersion.startsWith('10.')) {
@@ -1133,8 +1133,8 @@ function environmentCheck() {
 
   if (pnpmVersions.size > 0) {
     try {
-      const pnpm10Path = '/tmp/pnpm10/bin/pnpm'
-      const pnpm11Path = '/tmp/pnpm11/bin/pnpm'
+      const pnpm10Path = '/tmp/pnpm10/node_modules/.bin/pnpm'
+      const pnpm11Path = '/tmp/pnpm11/node_modules/.bin/pnpm'
       let pnpmPass = true
       for (const pnpmVer of pnpmVersions) {
         let pnpmPath
