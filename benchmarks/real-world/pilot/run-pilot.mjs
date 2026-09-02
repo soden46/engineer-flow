@@ -1061,7 +1061,12 @@ function environmentCheck() {
   const hostPythonRequired = pythonVersions.size > 0
   if (hostPythonRequired) {
     try {
-      const pythonVersionOutput = execSync('python --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+      let pythonVersionOutput
+      try {
+        pythonVersionOutput = execSync('python3.8 --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+      } catch {
+        pythonVersionOutput = execSync('python --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+      }
       const pyMatch = pythonVersionOutput.match(/Python (\d+)\.(\d+)/)
       if (pyMatch) {
         const curMajor = parseInt(pyMatch[1], 10)
@@ -1084,8 +1089,14 @@ function environmentCheck() {
   }
 
   try {
-    const pipVersionOutput = execSync('python -m pip --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
-    const pythonVersionOutput = execSync('python --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+    let pipVersionOutput, pythonVersionOutput
+    try {
+      pipVersionOutput = execSync('python3.8 -m pip --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+      pythonVersionOutput = execSync('python3.8 --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+    } catch {
+      pipVersionOutput = execSync('python -m pip --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+      pythonVersionOutput = execSync('python --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+    }
     const pipMatch = pipVersionOutput.match(/pip [\d.]+ from .+ \(python (\d+\.\d+)\)/)
     const pyMatch = pythonVersionOutput.match(/Python (\d+\.\d+)/)
     if (pipMatch && pyMatch) {
