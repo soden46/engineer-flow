@@ -1205,6 +1205,15 @@ function environmentCheck() {
     if (results.CONTAINER_RUNTIME === 'FAIL') {
       log('Container runtime required but Docker unavailable or container image not pinned.')
     }
+    if (results.PYTHON === 'FAIL') {
+      log(`Python check failed. Expected: ${Array.from(pythonVersions).join(', ')}`)
+    }
+    if (results.PIP_ALIGNED === 'FAIL') {
+      log('pip alignment check failed')
+    }
+    if (results.PNPM === 'FAIL') {
+      log('pnpm check failed')
+    }
   }
 
   process.exit(allPass ? 0 : 1)
