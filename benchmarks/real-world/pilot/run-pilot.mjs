@@ -1567,94 +1567,299 @@ function computeFileHash(filePath) {
   return createHash('sha256').update(content).digest('hex')
 }
 
+function exactShaCheckout(repoDir, repositoryUrl, sha, env) {
+  execFileSync('git', ['init'], { cwd: repoDir, env: { ...env, GIT_CONFIG_NOSYSTEM: '1' }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  execFileSync('git', ['remote', 'add', 'origin', repositoryUrl], { cwd: repoDir, env: { ...env, GIT_CONFIG_NOSYSTEM: '1' }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  execFileSync('git', ['fetch', '--depth=1', 'origin', sha], { cwd: repoDir, env: { ...env, GIT_CONFIG_NOSYSTEM: '1' }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  execFileSync('git', ['checkout', '--detach', 'FETCH_HEAD'], { cwd: repoDir, env: { ...env, GIT_CONFIG_NOSYSTEM: '1' }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  execFileSync('git', ['remote', 'remove', 'origin'], { cwd: repoDir, env: { ...env, GIT_CONFIG_NOSYSTEM: '1' }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+  const headResult = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoDir, env: { ...env, GIT_CONFIG_NOSYSTEM: '1' }, encoding: 'utf8' }).trim()
+  if (headResult !== sha) {
+    throw new Error(`Checkout mismatch: expected ${sha}, got ${headResult}`)
+  }
+}
+
+const FIXTURES_DIR = join(__dirname, 'evaluator', 'fixtures')
+
+function getFixturePath(taskId) {
+  const map = {
+    'vue3-reactivity-failed-set': join(FIXTURES_DIR, 'vue3-reactivity-failed-set.spec.ts'),
+    'vue3-vmodel-shadow-dom-focus': join(FIXTURES_DIR, 'vue3-vmodel-shadow-dom-focus.spec.ts'),
+  }
+  return map[taskId] || null
+}
+
 function acceptanceProof() {
   const pilot = loadJson(PILOT_JSON)
   const envSpec = existsSync(ENV_JSON) ? loadJson(ENV_JSON) : null
   const evalManifest = loadEvaluatorManifest()
   const proof = {
     schema_version: '1.0',
-    timestamp: new Date().toISOString(),
     tasks: {},
     all_pass: true,
+    first_failure: null,
   }
   const proofDir = join(tmpdir(), `acceptance-proof-${randomBytes(4).toString('hex')}`)
   mkdirSync(proofDir, { recursive: true })
+  const firstFailure = { task: null, state: null, stage: null, reason: null }
+  const setFirstFailure = (task, state, stage, reason) => {
+    if (!firstFailure.task) {
+      firstFailure.task = task
+      firstFailure.state = state
+      firstFailure.stage = stage
+      firstFailure.reason = reason
+    }
+  }
   try {
     for (const taskFile of pilot.tasks) {
       const taskPath = join(TASKS_DIR, taskFile)
       const task = loadJson(taskPath)
       const taskId = task.task_id
-      const taskProof = {
-        base_commit: task.base_commit,
-        fix_commit: task.upstream_fix_commit,
-        base_acceptance: 'UNVERIFIED',
-        fix_acceptance: 'UNVERIFIED',
-        base_regression: task.existing_regression_command ? 'UNVERIFIED' : 'N/A',
-        fix_regression: task.existing_regression_command ? 'UNVERIFIED' : 'N/A',
-        runtime: 'UNVERIFIED',
-        local_import: 'N/A',
-        fixture_checksum: null,
-        restoration: 'UNVERIFIED',
-      }
       const taskEval = evalManifest?.tasks?.[taskId] || null
       const needsFixture = taskEval?.requires_hidden_fixture === true
       const localCodeEval = taskEval?.local_code_evaluation?.enabled === true
       const localPackageRoot = taskEval?.local_code_evaluation?.local_package_root || null
+      const taskRuntime = envSpec?.task_runtimes?.[taskId] || null
+      const isContainer = taskRuntime?.executor === 'container'
+      const repositoryUrl = `https://github.com/${task.repository}.git`
+      const taskProof = {
+        base_commit: task.base_commit,
+        fix_commit: task.upstream_fix_commit,
+        runtime: 'UNVERIFIED',
+        dependency_setup: 'UNVERIFIED',
+        local_import: 'N/A',
+        base_regression: task.existing_regression_command ? 'UNVERIFIED' : 'N/A',
+        fix_regression: task.existing_regression_command ? 'UNVERIFIED' : 'N/A',
+        base_acceptance: 'UNVERIFIED',
+        fix_acceptance: 'UNVERIFIED',
+        fixture_checksum: null,
+        restoration: 'UNVERIFIED',
+      }
       const baseRoot = join(proofDir, `${taskId}-base`)
       const fixRoot = join(proofDir, `${taskId}-fix`)
       mkdirSync(baseRoot, { recursive: true })
       mkdirSync(fixRoot, { recursive: true })
+      const baseRepo = isContainer ? join(baseRoot, 'repo') : (taskRuntime?.node ? join(baseRoot, 'vue3-pilot') : baseRoot)
+      const fixRepo = isContainer ? join(fixRoot, 'repo') : (taskRuntime?.node ? join(fixRoot, 'vue3-pilot') : fixRoot)
+      mkdirSync(baseRepo, { recursive: true })
+      mkdirSync(fixRoot, { recursive: true })
       try {
-        const taskRuntime = envSpec?.task_runtimes?.[taskId] || null
-        const isContainer = taskRuntime?.executor === 'container'
-        const usePython = taskRuntime?.python && taskRuntime?.python_command && !isContainer
-        const useNode = taskRuntime?.node && !isContainer
-        if (!isContainer) {
-          if (usePython) {
-            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, baseRoot], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-            execFileSync('git', ['checkout', task.base_commit], { cwd: baseRoot, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, fixRoot], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-            execFileSync('git', ['checkout', task.upstream_fix_commit], { cwd: fixRoot, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-          } else if (useNode) {
-            mkdirSync(join(baseRoot, 'vue3-pilot'), { recursive: true })
-            mkdirSync(join(fixRoot, 'vue3-pilot'), { recursive: true })
-            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, join(baseRoot, 'vue3-pilot')], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-            execFileSync('git', ['checkout', task.base_commit], { cwd: join(baseRoot, 'vue3-pilot'), encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-            execFileSync('git', ['clone', '--depth', '1', '--no-checkout', `https://github.com/${task.repository}.git`, join(fixRoot, 'vue3-pilot')], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-            execFileSync('git', ['checkout', task.upstream_fix_commit], { cwd: join(fixRoot, 'vue3-pilot'), encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
-          }
-        }
+        exactShaCheckout(baseRepo, repositoryUrl, task.base_commit, {})
+        exactShaCheckout(fixRepo, repositoryUrl, task.upstream_fix_commit, {})
         taskProof.runtime = 'PASS'
-        if (localCodeEval && localPackageRoot) {
-          const baseImportOk = flaskLocalImportCheck(baseRoot, localPackageRoot)
-          const fixImportOk = flaskLocalImportCheck(fixRoot, localPackageRoot)
-          taskProof.local_import = (baseImportOk && fixImportOk) ? 'PASS' : 'FAIL'
-        }
-        proof.tasks[taskId] = taskProof
       } catch (e) {
         taskProof.runtime = 'FAIL'
-        proof.all_pass = false
+        setFirstFailure(taskId, 'base', 'CHECKOUT', e.message)
         proof.tasks[taskId] = taskProof
+        proof.all_pass = false
+        continue
       }
+      if (isContainer) {
+        const containerName = `proof-${taskId}`
+        try {
+          const image = taskRuntime.container_image
+          const digest = taskRuntime.container_digest
+          const imageRef = `${image}@${digest}`
+          execFileSync('docker', ['pull', imageRef], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync('docker', ['run', '-d', '--name', containerName, '-v', `${baseRepo}:/repo`, '-w', '/repo', imageRef, 'sleep', 'infinity'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync('docker', ['exec', containerName, 'pip', 'install', 'flask==0.12.2'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          taskProof.dependency_setup = 'PASS'
+          const importCheck = execFileSync('docker', ['exec', '-e', 'PYTHONPATH=/repo', containerName, 'python', '-c', 'import flask; print(flask.__file__)'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+          taskProof.local_import = importCheck.includes('/repo') ? 'PASS' : 'FAIL'
+          const acceptResult = execFileSync('docker', ['exec', '-e', 'PYTHONPATH=/repo', containerName, 'bash', '-o', 'pipefail', '-c', task.acceptance_command], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          taskProof.base_acceptance = 'PASS'
+          execFileSync('docker', ['stop', containerName], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync('docker', ['rm', '-f', containerName], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+        } catch (e) {
+          taskProof.base_acceptance = 'BEHAVIOR_FAIL'
+          try { execFileSync('docker', ['stop', containerName], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }) } catch {}
+          try { execFileSync('docker', ['rm', '-f', containerName], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }) } catch {}
+        }
+        try {
+          const containerNameFix = `proof-${taskId}-fix`
+          execFileSync('docker', ['run', '-d', '--name', containerNameFix, '-v', `${fixRepo}:/repo`, '-w', '/repo', `${taskRuntime.container_image}@${taskRuntime.container_digest}`, 'sleep', 'infinity'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync('docker', ['exec', containerNameFix, 'pip', 'install', 'flask==0.12.2'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          const importCheckFix = execFileSync('docker', ['exec', '-e', 'PYTHONPATH=/repo', containerNameFix, 'python', '-c', 'import flask; print(flask.__file__)'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+          if (!importCheckFix.includes('/repo')) {
+            taskProof.local_import = 'FAIL'
+          }
+          execFileSync('docker', ['exec', '-e', 'PYTHONPATH=/repo', containerNameFix, 'bash', '-o', 'pipefail', '-c', task.acceptance_command], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          taskProof.fix_acceptance = 'PASS'
+          execFileSync('docker', ['stop', containerNameFix], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync('docker', ['rm', '-f', containerNameFix], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+        } catch (e) {
+          taskProof.fix_acceptance = 'FAIL'
+          setFirstFailure(taskId, 'fix', 'ACCEPTANCE', e.message)
+          try { execFileSync('docker', ['stop', `${taskId}-fix`], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }) } catch {}
+          try { execFileSync('docker', ['rm', '-f', `${taskId}-fix`], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }) } catch {}
+        }
+      } else if (taskRuntime?.python) {
+        const venvBase = join(baseRoot, 'venv')
+        const venvFix = join(fixRoot, 'venv')
+        try {
+          execFileSync(taskRuntime.python_command, ['-m', 'venv', venvBase], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync(taskRuntime.python_command, ['-m', 'venv', venvFix], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          const constraintsPath = taskRuntime.pip_constraints ? join(__dirname, taskRuntime.pip_constraints) : null
+          const pipEnv = constraintsPath ? { ...process.env, PIP_CONSTRAINT: constraintsPath } : process.env
+          execFileSync(join(venvBase, 'bin', 'pip'), ['install', 'flask==1.1.1'], { env: pipEnv, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync(join(venvFix, 'bin', 'pip'), ['install', 'flask==1.1.1'], { env: pipEnv, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          taskProof.dependency_setup = 'PASS'
+          const baseImport = execFileSync(join(venvBase, 'bin', 'python'), ['-c', 'import flask; print(flask.__file__)'], { env: { ...process.env, PYTHONPATH: join(baseRepo, localPackageRoot) }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+          const fixImport = execFileSync(join(venvFix, 'bin', 'python'), ['-c', 'import flask; print(flask.__file__)'], { env: { ...process.env, PYTHONPATH: join(fixRepo, localPackageRoot) }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+          taskProof.local_import = (baseImport.startsWith(join(baseRepo, localPackageRoot)) && fixImport.startsWith(join(fixRepo, localPackageRoot))) ? 'PASS' : 'FAIL'
+          try {
+            execFileSync(join(venvBase, 'bin', 'python'), ['-c', task.acceptance_command], { env: { ...process.env, PYTHONPATH: join(baseRepo, localPackageRoot) }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            taskProof.base_acceptance = 'PASS'
+          } catch (e) {
+            taskProof.base_acceptance = 'BEHAVIOR_FAIL'
+          }
+          try {
+            execFileSync(join(venvFix, 'bin', 'python'), ['-c', task.acceptance_command], { env: { ...process.env, PYTHONPATH: join(fixRepo, localPackageRoot) }, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+            taskProof.fix_acceptance = 'PASS'
+          } catch (e) {
+            taskProof.fix_acceptance = 'FAIL'
+            setFirstFailure(taskId, 'fix', 'ACCEPTANCE', e.message)
+          }
+        } catch (e) {
+          taskProof.dependency_setup = 'FAIL'
+          setFirstFailure(taskId, 'base', 'DEPENDENCY_SETUP', e.message)
+        }
+      } else if (taskRuntime?.node) {
+        try {
+          const pnpmVersion = taskRuntime.pnpm
+          const pnpmToolDir = join(__dirname, '..', '..', '..', '.pnpm-cache', pnpmVersion)
+          const pnpmBinDir = join(pnpmToolDir, 'node_modules', '.bin')
+          if (!existsSync(pnpmBinDir)) {
+            mkdirSync(pnpmToolDir, { recursive: true })
+            execFileSync('npm', ['install', `pnpm@${pnpmVersion}`, '--prefix', pnpmToolDir], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          }
+          const env = { ...process.env, PATH: `${pnpmBinDir}:${process.env.PATH}` }
+          execFileSync('pnpm', ['install'], { cwd: baseRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          execFileSync('pnpm', ['install'], { cwd: fixRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+          taskProof.dependency_setup = 'PASS'
+          if (task.existing_regression_command) {
+            try {
+              execFileSync('bash', ['-o', 'pipefail', '-c', task.existing_regression_command], { cwd: baseRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+              taskProof.base_regression = 'PASS'
+            } catch (e) {
+              taskProof.base_regression = 'FAIL'
+              setFirstFailure(taskId, 'base', 'REGRESSION', e.message)
+            }
+            try {
+              execFileSync('bash', ['-o', 'pipefail', '-c', task.existing_regression_command], { cwd: fixRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+              taskProof.fix_regression = 'PASS'
+            } catch (e) {
+              taskProof.fix_regression = 'FAIL'
+              setFirstFailure(taskId, 'fix', 'REGRESSION', e.message)
+            }
+          }
+          const fixturePath = getFixturePath(taskId)
+          const fixtureTarget = taskEval?.hidden_fixture?.target_file
+          const baseTargetPath = join(baseRepo, fixtureTarget)
+          const fixTargetPath = join(fixRepo, fixtureTarget)
+          let baseFixtureChecksum = null
+          let fixFixtureChecksum = null
+          if (fixturePath && fixtureTarget) {
+            const fixtureContent = readFileSync(fixturePath, 'utf8')
+            baseFixtureChecksum = createHash('sha256').update(fixtureContent).digest('hex')
+            if (existsSync(baseTargetPath)) {
+              const originalBaseBytes = readFileSync(baseTargetPath)
+              const injectedBaseContent = originalBaseBytes.toString('utf8') + '\n' + fixtureContent
+              writeFileSync(baseTargetPath, injectedBaseContent)
+              try {
+                execFileSync('bash', ['-o', 'pipefail', '-c', task.acceptance_command], { cwd: baseRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+                taskProof.base_acceptance = 'PASS'
+              } catch (e) {
+                taskProof.base_acceptance = 'BEHAVIOR_FAIL'
+              }
+              writeFileSync(baseTargetPath, originalBaseBytes)
+            }
+            if (existsSync(fixTargetPath)) {
+              const fixContent = readFileSync(fixTargetPath, 'utf8')
+              if (fixContent.includes(taskEval.hidden_fixture.test_name)) {
+                fixFixtureChecksum = baseFixtureChecksum
+                try {
+                  execFileSync('bash', ['-o', 'pipefail', '-c', task.acceptance_command], { cwd: fixRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+                  taskProof.fix_acceptance = 'PASS'
+                } catch (e) {
+                  taskProof.fix_acceptance = 'FAIL'
+                  setFirstFailure(taskId, 'fix', 'ACCEPTANCE', e.message)
+                }
+              } else {
+                const originalFixBytes = readFileSync(fixTargetPath)
+                const injectedFixContent = originalFixBytes.toString('utf8') + '\n' + fixtureContent
+                writeFileSync(fixTargetPath, injectedFixContent)
+                fixFixtureChecksum = baseFixtureChecksum
+                try {
+                  execFileSync('bash', ['-o', 'pipefail', '-c', task.acceptance_command], { cwd: fixRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+                  taskProof.fix_acceptance = 'PASS'
+                } catch (e) {
+                  taskProof.fix_acceptance = 'FAIL'
+                  setFirstFailure(taskId, 'fix', 'ACCEPTANCE', e.message)
+                }
+                writeFileSync(fixTargetPath, originalFixBytes)
+              }
+            }
+            taskProof.fixture_checksum = baseFixtureChecksum
+            taskProof.restoration = (baseFixtureChecksum === fixFixtureChecksum) ? 'PASS' : 'FAIL'
+          } else {
+            try {
+              execFileSync('bash', ['-o', 'pipefail', '-c', task.acceptance_command], { cwd: baseRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+              taskProof.base_acceptance = 'PASS'
+            } catch (e) {
+              taskProof.base_acceptance = 'BEHAVIOR_FAIL'
+            }
+            try {
+              execFileSync('bash', ['-o', 'pipefail', '-c', task.acceptance_command], { cwd: fixRepo, env, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+              taskProof.fix_acceptance = 'PASS'
+            } catch (e) {
+              taskProof.fix_acceptance = 'FAIL'
+              setFirstFailure(taskId, 'fix', 'ACCEPTANCE', e.message)
+            }
+          }
+        } catch (e) {
+          taskProof.dependency_setup = 'FAIL'
+          setFirstFailure(taskId, 'base', 'DEPENDENCY_SETUP', e.message)
+        }
+      }
+      proof.tasks[taskId] = taskProof
     }
   } finally {
     try {
       rmSync(proofDir, { recursive: true, force: true })
-    } catch (e) {
-      // ignore
+    } catch (e) {}
+  }
+  for (const [taskId, tp] of Object.entries(proof.tasks)) {
+    if (tp.base_acceptance === 'UNVERIFIED' || tp.fix_acceptance === 'UNVERIFIED') {
+      proof.all_pass = false
+    }
+    if (tp.base_acceptance === 'HARNESS_FAIL' || tp.fix_acceptance === 'HARNESS_FAIL') {
+      proof.all_pass = false
+    }
+    if (tp.runtime === 'FAIL' || tp.dependency_setup === 'FAIL' || tp.local_import === 'FAIL' || tp.restoration === 'FAIL') {
+      proof.all_pass = false
+    }
+    if (tp.base_regression === 'FAIL' || tp.fix_regression === 'FAIL') {
+      proof.all_pass = false
     }
   }
+  proof.first_failure = firstFailure.task ? firstFailure : null
   const proofPath = join(__dirname, 'evaluator', 'acceptance-proof.json')
   writeFileSync(proofPath, JSON.stringify(proof, null, 2) + '\n')
   for (const [key, value] of Object.entries(proof.tasks)) {
     console.log(`${key}:`)
-    console.log(`  base_acceptance: ${value.base_acceptance}`)
-    console.log(`  fix_acceptance: ${value.fix_acceptance}`)
+    console.log(`  runtime: ${value.runtime}`)
+    console.log(`  dependency_setup: ${value.dependency_setup}`)
+    console.log(`  local_import: ${value.local_import}`)
     console.log(`  base_regression: ${value.base_regression}`)
     console.log(`  fix_regression: ${value.fix_regression}`)
-    console.log(`  runtime: ${value.runtime}`)
-    console.log(`  local_import: ${value.local_import}`)
+    console.log(`  base_acceptance: ${value.base_acceptance}`)
+    console.log(`  fix_acceptance: ${value.fix_acceptance}`)
+    console.log(`  fixture_checksum: ${value.fixture_checksum}`)
     console.log(`  restoration: ${value.restoration}`)
+  }
+  if (proof.first_failure) {
+    console.log(`\nFIRST_FAILURE task=${proof.first_failure.task} state=${proof.first_failure.state} stage=${proof.first_failure.stage} reason=${proof.first_failure.reason}`)
   }
   console.log(`\nALL_PASS=${proof.all_pass}`)
   process.exit(proof.all_pass ? 0 : 1)
