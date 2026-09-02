@@ -57,12 +57,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 RUN mkdir -p /opt/pnpm10 /opt/pnpm11 \
     && cd /opt/pnpm10 && npm init -y && npm install pnpm@10.31.0 \
     && cd /opt/pnpm11 && npm init -y && npm install pnpm@11.5.2 \
-    && ln -sf /opt/pnpm10/node_modules/.bin/pnpm /usr/local/bin/pnpm10 \
-    && ln -sf /opt/pnpm11/node_modules/.bin/pnpm /usr/local/bin/pnpm11 \
-    && ln -sf /opt/pnpm10/node_modules/.bin/pnpm /usr/local/bin/pnpm \
-    && pnpm10 --version \
-    && pnpm11 --version \
-    && pnpm --version
+    && /opt/pnpm10/node_modules/.bin/pnpm --version \
+    && /opt/pnpm11/node_modules/.bin/pnpm --version
 
 # Verify all tool versions
 RUN node --version \

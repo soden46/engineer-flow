@@ -905,13 +905,24 @@ function setupCheck() {
           }
         }
 
-        if (taskRuntime?.pnpm) {
-          try {
-            runCommand(`npm install -g pnpm@${taskRuntime.pnpm}`, runRoot, env)
-          } catch (e) {
-            log(`Warning: Failed to install pnpm@${taskRuntime.pnpm} for ${task.task_id}: ${e.message}`)
+      if (taskRuntime?.pnpm) {
+        try {
+          const pnpm10Path = '/opt/pnpm10/node_modules/.bin/pnpm'
+          const pnpm11Path = '/opt/pnpm11/node_modules/.bin/pnpm'
+          let pnpmPath
+          const pnpmVersion = taskRuntime.pnpm
+          if (pnpmVersion.startsWith('10.')) {
+            pnpmPath = pnpm10Path
+          } else if (pnpmVersion.startsWith('11.')) {
+            pnpmPath = pnpm11Path
+          } else {
+            pnpmPath = 'pnpm'
           }
+          env.PATH = dirname(pnpmPath) + ':' + (process.env.PATH || '')
+        } catch (e) {
+          log(`Warning: Failed to set pnpm path for ${task.task_id}: ${e.message}`)
         }
+      }
       }
 
       let setupResult, preValResult, regressionResult
@@ -1122,22 +1133,39 @@ function environmentCheck() {
 
   if (pnpmVersions.size > 0) {
     try {
-      const pnpmVersion = execSync('pnpm --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
-      const pnpmMatch = pnpmVersion.match(/(\d+)\.(\d+)\.(\d+)/)
-      if (pnpmMatch) {
-        const curMajor = parseInt(pnpmMatch[1], 10)
-        const curMinor = parseInt(pnpmMatch[2], 10)
-        const curPatch = parseInt(pnpmMatch[3], 10)
-        let pnpmPass = true
-        for (const pnpmVer of pnpmVersions) {
-          const [expectedMajor, expectedMinor, expectedPatch] = pnpmVer.split('.').map(Number)
+      const pnpm10Path = '/opt/pnpm10/node_modules/.bin/pnpm'
+      const pnpm11Path = '/opt/pnpm11/node_modules/.bin/pnpm'
+      let pnpmPass = true
+      for (const pnpmVer of pnpmVersions) {
+        let pnpmPath
+        if (pnpmVer.startsWith('10.')) {
+          pnpmPath = pnpm10Path
+        } else if (pnpmVer.startsWith('11.')) {
+          pnpmPath = pnpm11Path
+        } else {
+          pnpmPath = 'pnpm'
+        }
+        if (!existsSync(pnpmPath)) {
+          pnpmPass = false
+          break
+        }
+        const pnpmVersion = execSync(`${pnpmPath} --version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+        const [expectedMajor, expectedMinor, expectedPatch] = pnpmVer.split('.').map(Number)
+        const pnpmMatch = pnpmVersion.match(/(\d+)\.(\d+)\.(\d+)/)
+        if (pnpmMatch) {
+          const curMajor = parseInt(pnpmMatch[1], 10)
+          const curMinor = parseInt(pnpmMatch[2], 10)
+          const curPatch = parseInt(pnpmMatch[3], 10)
           if (curMajor !== expectedMajor || curMinor !== expectedMinor || curPatch !== expectedPatch) {
             pnpmPass = false
             break
           }
+        } else {
+          pnpmPass = false
+          break
         }
-        results.PNPM = pnpmPass ? 'PASS' : 'FAIL'
       }
+      results.PNPM = pnpmPass ? 'PASS' : 'FAIL'
     } catch {
       results.PNPM = 'FAIL'
     }

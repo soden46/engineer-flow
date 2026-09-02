@@ -48,25 +48,26 @@ jobs:
 
       - name: Install pnpm versions
         run: |
+          # Install pnpm 10.31.0 in a separate directory
           mkdir -p /opt/pnpm10 /opt/pnpm11
           cd /opt/pnpm10 && npm init -y && npm install pnpm@10.31.0
           cd /opt/pnpm11 && npm init -y && npm install pnpm@11.5.2
-          sudo ln -sf /opt/pnpm10/node_modules/.bin/pnpm /usr/local/bin/pnpm10
-          sudo ln -sf /opt/pnpm11/node_modules/.bin/pnpm /usr/local/bin/pnpm11
-          sudo ln -sf /opt/pnpm10/node_modules/.bin/pnpm /usr/local/bin/pnpm
+          # Verify installations
+          echo "pnpm 10.31.0:"
+          /opt/pnpm10/node_modules/.bin/pnpm --version
+          echo "pnpm 11.5.2:"
+          /opt/pnpm11/node_modules/.bin/pnpm --version
+          echo "Node version:"
           node --version
-          pnpm10 --version
-          pnpm11 --version
-          pnpm --version
 
       - name: Verify pnpm versions (fail-closed)
         run: |
-          PNPM10_VERSION=$(pnpm10 --version)
+          PNPM10_VERSION=$(/opt/pnpm10/node_modules/.bin/pnpm --version)
           if [ "$PNPM10_VERSION" != "10.31.0" ]; then
             echo "FAIL: pnpm10 version is $PNPM10_VERSION, expected 10.31.0"
             exit 1
           fi
-          PNPM11_VERSION=$(pnpm11 --version)
+          PNPM11_VERSION=$(/opt/pnpm11/node_modules/.bin/pnpm --version)
           if [ "$PNPM11_VERSION" != "11.5.2" ]; then
             echo "FAIL: pnpm11 version is $PNPM11_VERSION, expected 11.5.2"
             exit 1
@@ -122,10 +123,10 @@ jobs:
           node --version
           echo ""
           echo "=== pnpm 10.31.0 (for vue3-vmodel-shadow-dom-focus) ==="
-          pnpm10 --version
+          /opt/pnpm10/node_modules/.bin/pnpm --version
           echo ""
           echo "=== pnpm 11.5.2 (for vue3-reactivity-failed-set) ==="
-          pnpm11 --version
+          /opt/pnpm11/node_modules/.bin/pnpm --version
 
       - name: Run authoritative setup-check
         run: node benchmarks/real-world/pilot/run-pilot.mjs setup-check
