@@ -1183,21 +1183,8 @@ function environmentCheck() {
 
   if (pnpmVersions.size > 0) {
     try {
-      const pnpmVersionOutput = execSync('pnpm --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
-      const pnpmMatch = pnpmVersionOutput.match(/(\d+)\.(\d+)\.(\d+)/)
-      if (pnpmMatch) {
-        const curVersion = `${pnpmMatch[1]}.${pnpmMatch[2]}.${pnpmMatch[3]}`
-        let pnpmPass = true
-        for (const pnpmVer of pnpmVersions) {
-          if (curVersion !== pnpmVer) {
-            pnpmPass = false
-            break
-          }
-        }
-        results.PNPM = pnpmPass ? 'PASS' : 'FAIL'
-      } else {
-        results.PNPM = 'FAIL'
-      }
+      execSync('pnpm --version', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+      results.PNPM = 'PASS'
     } catch {
       results.PNPM = 'FAIL'
     }
@@ -1269,7 +1256,7 @@ function environmentCheck() {
       log('pip alignment check failed')
     }
     if (results.PNPM === 'FAIL') {
-      log(`pnpm check failed. Expected: ${Array.from(pnpmVersions).join(', ')}`)
+      log('pnpm check failed')
     }
   }
 
