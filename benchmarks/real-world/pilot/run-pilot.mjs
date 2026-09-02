@@ -772,6 +772,15 @@ function runTaskCommand(containerName, command, env) {
     return { success: false, output: '', error: 'No container available' }
   }
 
+  try {
+    const containerCheck = execSync(`docker inspect -f '{{.State.Running}}' ${containerName}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+    if (containerCheck !== 'true') {
+      return { success: false, output: '', error: `Container ${containerName} is not running` }
+    }
+  } catch (e) {
+    return { success: false, output: '', error: `Container ${containerName} not found: ${e.message}` }
+  }
+
   const envFlags = []
   if (env) {
     for (const [key, value] of Object.entries(env)) {
