@@ -1383,11 +1383,20 @@ function main() {
         process.exit(1)
       }
       break
+    case 'flask-classifier-self-test':
+      if (flaskClassifierSelfTest()) {
+        console.log('FLASK_FAILURE_CLASSIFIER_SELFTEST=PASS')
+        process.exit(0)
+      } else {
+        console.log('FLASK_FAILURE_CLASSIFIER_SELFTEST=FAIL')
+        process.exit(1)
+      }
+      break
     case 'acceptance-proof':
       acceptanceProof()
       break
     default:
-      console.error('Usage: node run-pilot.mjs <validate|plan|isolation-check|repo-isolation-check|setup-check|environment-check|pipefail-self-test|agent-view-leakage-check|evaluator-restore-self-test|fixture-regression-isolation-self-test|acceptance-proof>')
+      console.error('Usage: node run-pilot.mjs <validate|plan|isolation-check|repo-isolation-check|setup-check|environment-check|pipefail-self-test|agent-view-leakage-check|evaluator-restore-self-test|fixture-regression-isolation-self-test|flask-classifier-self-test|acceptance-proof>')
       console.error('  validate             - load and verify pilot manifest and task specs')
       console.error('  plan                 - generate deterministic execution plan')
       console.error('  isolation-check      - verify per-run environment isolation')
@@ -1398,6 +1407,7 @@ function main() {
       console.error('  agent-view-leakage-check - verify agent view has no evaluator leakage')
       console.error('  evaluator-restore-self-test - verify evaluator restoration')
       console.error('  fixture-regression-isolation-self-test - verify fixture/regression isolation')
+      console.error('  flask-classifier-self-test - verify Flask failure classifier')
       console.error('  acceptance-proof     - run base/fix acceptance proof (author-only)')
       process.exit(1)
   }
@@ -1598,20 +1608,57 @@ function getFixtureAnchor(taskId) {
 }
 
 function classifyFlaskFailure(e) {
-  const msg = e.message || ''
-  if (msg.includes('SyntaxError') || msg.includes('EOL while scanning') || msg.includes('SyntaxError:')) {
+  const stderr = (e.stderr || '').toString()
+  const stdout = (e.stdout || '').toString()
+  const msg = (e.message || '').toString()
+  const combined = stderr + '\n' + stdout + '\n' + msg
+  if (combined.includes('SyntaxError') || combined.includes('EOL while scanning') || combined.includes('IndentationError')) {
     return 'HARNESS_FAIL'
   }
-  if (msg.includes('command not found') || msg.includes('Command failed')) {
+  if (combined.includes('ModuleNotFoundError') || combined.includes('ImportError') || combined.includes('No module named')) {
     return 'HARNESS_FAIL'
   }
-  if (msg.includes('ModuleNotFoundError') || msg.includes('ImportError')) {
+  if (combined.includes('command not found') || combined.includes('No such file or directory')) {
     return 'HARNESS_FAIL'
   }
-  if (msg.includes('AssertionError') || msg.includes('AssertionError') || msg.includes('assert')) {
+  if (combined.includes('SyntaxError:') && combined.includes('python -c')) {
+    return 'HARNESS_FAIL'
+  }
+  if (combined.includes('AssertionError') || combined.includes('AssertionError') || (combined.includes('assert') && combined.includes('Traceback'))) {
     return 'BEHAVIOR_FAIL'
   }
+  if (stderr.includes('Traceback') && (stderr.includes('AssertionError') || stderr.includes('assert'))) {
+    return 'BEHAVIOR_FAIL'
+  }
+  if (combined.includes('Traceback') && combined.includes('Error')) {
+    const lines = combined.split('\n')
+    for (const line of lines) {
+      if (line.includes('AssertionError')) {
+        return 'BEHAVIOR_FAIL'
+      }
+    }
+  }
   return 'BEHAVIOR_FAIL'
+}
+
+function flaskClassifierSelfTest() {
+  const behaviorCases = [
+    { stderr: 'Traceback (most recent call last):\n  File "<string>", line 1, in <module>\nAssertionError: Expected 200, got 404', expected: 'BEHAVIOR_FAIL' },
+    { stderr: 'assert False\nAssertionError', expected: 'BEHAVIOR_FAIL' },
+    { stderr: "Traceback:\n  File \"<string>\", line 1\n    import flask; x = \nSyntaxError: EOL while scanning string literal", expected: 'HARNESS_FAIL' },
+    { stderr: 'Traceback:\nModuleNotFoundError: No module named \'flask\'', expected: 'HARNESS_FAIL' },
+    { stderr: 'bash: python: command not found', expected: 'HARNESS_FAIL' },
+  ]
+  for (const tc of behaviorCases) {
+    const e = new Error('test')
+    e.stderr = tc.stderr
+    e.stdout = ''
+    const result = classifyFlaskFailure(e)
+    if (result !== tc.expected) {
+      return false
+    }
+  }
+  return true
 }
 
 function acceptanceProof() {
