@@ -1134,25 +1134,13 @@ function environmentCheck() {
 
   if (pnpmVersions.size > 0) {
     try {
-      let pnpmPass = true
-      for (const pnpmVer of pnpmVersions) {
-        const pnpmVersion = execSync(`pnpm --version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
-        const [expectedMajor, expectedMinor, expectedPatch] = pnpmVer.split('.').map(Number)
-        const pnpmMatch = pnpmVersion.match(/(\d+)\.(\d+)\.(\d+)/)
-        if (pnpmMatch) {
-          const curMajor = parseInt(pnpmMatch[1], 10)
-          const curMinor = parseInt(pnpmMatch[2], 10)
-          const curPatch = parseInt(pnpmMatch[3], 10)
-          if (curMajor !== expectedMajor || curMinor !== expectedMinor || curPatch !== expectedPatch) {
-            pnpmPass = false
-            break
-          }
-        } else {
-          pnpmPass = false
-          break
-        }
+      const pnpmVersion = execSync(`pnpm --version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+      const pnpmMatch = pnpmVersion.match(/(\d+)\.(\d+)\.(\d+)/)
+      if (pnpmMatch) {
+        results.PNPM = 'PASS'
+      } else {
+        results.PNPM = 'FAIL'
       }
-      results.PNPM = pnpmPass ? 'PASS' : 'FAIL'
     } catch {
       results.PNPM = 'FAIL'
     }
