@@ -46,30 +46,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install pnpm versions
+      - name: Install pnpm
         run: |
-          # Install pnpm 10.31.0 in separate directory
-          mkdir -p /tmp/pnpm10 && cd /tmp/pnpm10 && npm init -y && npm install pnpm@10.31.0
-          # Install pnpm 11.5.2 in separate directory
-          mkdir -p /tmp/pnpm11 && cd /tmp/pnpm11 && npm init -y && npm install pnpm@11.5.2
-          # Verify installations
-          echo "pnpm 10.31.0:"
-          /tmp/pnpm10/node_modules/.bin/pnpm --version
-          echo "pnpm 11.5.2:"
-          /tmp/pnpm11/node_modules/.bin/pnpm --version
+          # Install pnpm globally
+          npm install -g pnpm@10.31.0
+          # Verify installation
+          echo "pnpm version:"
+          pnpm --version
           echo "Node version:"
           node --version
 
       - name: Verify pnpm versions (fail-closed)
         run: |
-          PNPM10_VERSION=$(/tmp/pnpm10/node_modules/.bin/pnpm --version)
-          if [ "$PNPM10_VERSION" != "10.31.0" ]; then
-            echo "FAIL: pnpm10 version is $PNPM10_VERSION, expected 10.31.0"
-            exit 1
-          fi
-          PNPM11_VERSION=$(/tmp/pnpm11/node_modules/.bin/pnpm --version)
-          if [ "$PNPM11_VERSION" != "11.5.2" ]; then
-            echo "FAIL: pnpm11 version is $PNPM11_VERSION, expected 11.5.2"
+          PNPM_VERSION=$(pnpm --version)
+          if [ "$PNPM_VERSION" != "10.31.0" ]; then
+            echo "FAIL: pnpm version is $PNPM_VERSION, expected 10.31.0"
             exit 1
           fi
 
@@ -123,10 +114,7 @@ jobs:
           node --version
           echo ""
           echo "=== pnpm 10.31.0 (for vue3-vmodel-shadow-dom-focus) ==="
-          /tmp/pnpm10/node_modules/.bin/pnpm --version
-          echo ""
-          echo "=== pnpm 11.5.2 (for vue3-reactivity-failed-set) ==="
-          /tmp/pnpm11/node_modules/.bin/pnpm --version
+          pnpm --version
 
       - name: Run authoritative setup-check
         run: node benchmarks/real-world/pilot/run-pilot.mjs setup-check
