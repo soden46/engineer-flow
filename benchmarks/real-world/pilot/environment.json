@@ -18,6 +18,7 @@
       "node": null,
       "pnpm": null,
       "required_tools": ["python", "pip"],
+      "pip_constraints": "flask111-constraints.txt",
       "python_justification": "Flask 1.1.1 supports Python 2.7/3.5+ (setup.py python_requires: >=2.7, !=3.0-3.4). Python 3.8.18 is within supported range."
     },
     "flask-json-datetime-tz": {
@@ -38,22 +39,22 @@
       "python": null,
       "python_command": null,
       "pip_policy": null,
-      "node": "20",
+      "node": "22.13.0",
       "pnpm": "11.5.2",
       "pnpm_command": "pnpm",
       "required_tools": ["node", "pnpm", "npx", "tail"],
-      "pnpm_justification": "Vue 3.5.38 packageManager field specifies pnpm@11.5.2"
+      "pnpm_justification": "Vue 3.5.38 packageManager field specifies pnpm@11.5.2. pnpm 11.5.2 requires Node >=22.13."
     },
     "vue3-vmodel-shadow-dom-focus": {
       "executor": "host",
       "python": null,
       "python_command": null,
       "pip_policy": null,
-      "node": "20",
+      "node": "22.13.0",
       "pnpm": "10.31.0",
       "pnpm_command": "pnpm",
       "required_tools": ["node", "pnpm", "npx", "tail"],
-      "pnpm_justification": "Vue 3.5.30 packageManager field specifies pnpm@10.31.0"
+      "pnpm_justification": "Vue 3.5.30 packageManager field specifies pnpm@10.31.0."
     }
   },
   "python_pip_alignment": {

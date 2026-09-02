@@ -725,10 +725,25 @@ function repoIsolationCheck() {
 function runCommand(command, cwd, env, timeout = 300000) {
   const fullEnv = { ...process.env, ...env, GIT_CONFIG_NOSYSTEM: '1' }
   try {
-    const result = execSync(command, { cwd, env: fullEnv, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], timeout })
+    const result = execFileSync('bash', ['-o', 'pipefail', '-c', command], { cwd, env: fullEnv, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], timeout })
     return { success: true, output: result.trim(), error: null }
   } catch (e) {
     return { success: false, output: e.stdout ? e.stdout.trim() : '', error: e.stderr ? e.stderr.trim() : e.message }
+  }
+}
+
+function pipefailSelfTest() {
+  try {
+    execFileSync('bash', ['-o', 'pipefail', '-c', 'false | tail -1'], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    return false
+  } catch {
+    // Expected to fail
+  }
+  try {
+    execFileSync('bash', ['-o', 'pipefail', '-c', "printf 'ok\\n' | tail -1"], { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] })
+    return true
+  } catch {
+    return false
   }
 }
 
@@ -928,6 +943,12 @@ function setupCheck() {
             env.PATH = join(venvPath, 'bin') + ':' + (process.env.PATH || '')
             runCommand('python --version', runRoot, env)
             runCommand('python -m pip install --upgrade pip', runRoot, env)
+            if (taskRuntime.pip_constraints) {
+              const constraintsPath = join(__dirname, taskRuntime.pip_constraints)
+              if (existsSync(constraintsPath)) {
+                env.PIP_CONSTRAINT = constraintsPath
+              }
+            }
           } catch (e) {
             log(`Warning: Failed to create venv for ${task.task_id}: ${e.message}`)
           }
@@ -958,17 +979,35 @@ function setupCheck() {
       if (useContainer && containerRuntime) {
         setupResult = runTaskCommand(containerRuntime.containerName, task.setup_command, env)
         log(`Setup result for ${task.task_id}: success=${setupResult.success}, error=${setupResult.error}`)
-        preValResult = runTaskCommand(containerRuntime.containerName, task.pre_validation_command, env)
-        log(`Pre-validation result for ${task.task_id}: success=${preValResult.success}, error=${preValResult.error}`)
-        regressionResult = task.existing_regression_command
-          ? runTaskCommand(containerRuntime.containerName, task.existing_regression_command, env)
-          : { success: true, output: '', error: null }
+        if (setupResult.success) {
+          preValResult = runTaskCommand(containerRuntime.containerName, task.pre_validation_command, env)
+          log(`Pre-validation result for ${task.task_id}: success=${preValResult.success}, error=${preValResult.error}`)
+          if (preValResult.success && task.existing_regression_command) {
+            regressionResult = runTaskCommand(containerRuntime.containerName, task.existing_regression_command, env)
+          } else if (!preValResult.success) {
+            regressionResult = { success: false, output: '', error: 'Pre-validation failed' }
+          } else {
+            regressionResult = { success: true, output: '', error: null }
+          }
+        } else {
+          preValResult = { success: false, output: '', error: 'Setup failed' }
+          regressionResult = { success: false, output: '', error: 'Setup failed' }
+        }
       } else {
         setupResult = runCommand(task.setup_command, runRoot, env)
-        preValResult = runCommand(task.pre_validation_command, runRoot, env)
-        regressionResult = task.existing_regression_command
-          ? runCommand(task.existing_regression_command, runRoot, env)
-          : { success: true, output: '', error: null }
+        if (setupResult.success) {
+          preValResult = runCommand(task.pre_validation_command, runRoot, env)
+          if (preValResult.success && task.existing_regression_command) {
+            regressionResult = runCommand(task.existing_regression_command, runRoot, env)
+          } else if (!preValResult.success) {
+            regressionResult = { success: false, output: '', error: 'Pre-validation failed' }
+          } else {
+            regressionResult = { success: true, output: '', error: null }
+          }
+        } else {
+          preValResult = { success: false, output: '', error: 'Setup failed' }
+          regressionResult = { success: false, output: '', error: 'Setup failed' }
+        }
       }
 
       results[`TASK_${taskNum}_SETUP`] = setupResult.success ? 'PASS' : 'FAIL'
@@ -1018,12 +1057,17 @@ function setupCheck() {
       results.CACHE_ISOLATED = 'FAIL'
     }
   } finally {
+    let allContainersCleaned = true
     for (const containerRuntime of containerRuntimes) {
       cleanupTaskRuntime(containerRuntime)
+      if (!verifyContainerCleanup(containerRuntime.containerName)) {
+        allContainersCleaned = false
+      }
     }
     for (const runRoot of runRoots) {
       cleanupRunRoot(runRoot)
     }
+    results.CONTAINER_CLEANUP = allContainersCleaned ? 'PASS' : 'FAIL'
   }
 
   for (const [key, value] of Object.entries(results)) {
@@ -1093,11 +1137,10 @@ function environmentCheck() {
   }
 
   if (nodeVersions.size > 0) {
-    const currentNodeMajor = parseInt(process.versions.node.split('.')[0], 10)
+    const currentNodeVersion = process.versions.node
     let nodePass = true
     for (const nodeVer of nodeVersions) {
-      const expectedMajor = parseInt(nodeVer, 10)
-      if (currentNodeMajor !== expectedMajor) {
+      if (currentNodeVersion !== nodeVer) {
         nodePass = false
         break
       }
@@ -1285,14 +1328,24 @@ function main() {
     case 'environment-check':
       environmentCheck()
       break
+    case 'pipefail-self-test':
+      if (pipefailSelfTest()) {
+        console.log('PIPEFAIL_SELFTEST=PASS')
+        process.exit(0)
+      } else {
+        console.log('PIPEFAIL_SELFTEST=FAIL')
+        process.exit(1)
+      }
+      break
     default:
-      console.error('Usage: node run-pilot.mjs <validate|plan|isolation-check|repo-isolation-check|setup-check|environment-check>')
+      console.error('Usage: node run-pilot.mjs <validate|plan|isolation-check|repo-isolation-check|setup-check|environment-check|pipefail-self-test>')
       console.error('  validate             - load and verify pilot manifest and task specs')
-      console.error('    plan                 - generate deterministic execution plan')
+      console.error('  plan                 - generate deterministic execution plan')
       console.error('  isolation-check      - verify per-run environment isolation')
       console.error('  repo-isolation-check - verify historical repository isolation')
       console.error('  setup-check          - verify setup and pre-validation isolation')
       console.error('  environment-check    - verify current environment matches canonical spec')
+      console.error('  pipefail-self-test   - verify pipefail semantics')
       process.exit(1)
   }
 }

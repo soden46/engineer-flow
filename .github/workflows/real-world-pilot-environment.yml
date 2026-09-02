@@ -41,10 +41,10 @@ jobs:
           fi
           python -m pip --version
 
-      - name: Install Node.js 20.x
+      - name: Install Node.js 22.13.0
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22.13.0'
 
       - name: Install pnpm
         run: |
@@ -58,6 +58,11 @@ jobs:
 
       - name: Verify pnpm versions (fail-closed)
         run: |
+          NODE_VERSION=$(node --version)
+          if [ "$NODE_VERSION" != "v22.13.0" ]; then
+            echo "FAIL: Node version is $NODE_VERSION, expected v22.13.0"
+            exit 1
+          fi
           PNPM_VERSION=$(pnpm --version)
           if [ "$PNPM_VERSION" != "10.31.0" ]; then
             echo "FAIL: pnpm version is $PNPM_VERSION, expected 10.31.0"
@@ -115,6 +120,22 @@ jobs:
           echo ""
           echo "=== pnpm 10.31.0 (for vue3-vmodel-shadow-dom-focus) ==="
           pnpm --version
+
+      - name: Run pipefail self-test
+        run: |
+          echo "=== Pipefail self-test ==="
+          if bash -o pipefail -c "false | tail -1"; then
+            echo "FAIL: false | tail -1 should have failed"
+            exit 1
+          else
+            echo "PASS: false | tail -1 correctly failed"
+          fi
+          if bash -o pipefail -c "printf 'ok\n' | tail -1"; then
+            echo "PASS: printf ok | tail -1 correctly succeeded"
+          else
+            echo "FAIL: printf ok | tail -1 should have succeeded"
+            exit 1
+          fi
 
       - name: Run authoritative setup-check
         run: node benchmarks/real-world/pilot/run-pilot.mjs setup-check
