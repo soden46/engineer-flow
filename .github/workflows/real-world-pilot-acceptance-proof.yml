@@ -1,0 +1,147 @@
+name: Real-World Pilot Acceptance Proof
+
+on:
+  push:
+    branches: [main, 'feat/**']
+    paths:
+      - 'benchmarks/real-world/pilot/**'
+      - '.github/workflows/real-world-pilot-acceptance-proof.yml'
+  pull_request:
+    paths:
+      - 'benchmarks/real-world/pilot/**'
+      - '.github/workflows/real-world-pilot-acceptance-proof.yml'
+  workflow_dispatch:
+
+jobs:
+  acceptance-proof:
+    name: Acceptance Proof
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Print system information
+        run: |
+          uname -a
+          cat /etc/os-release
+          git --version
+
+      - name: Setup Python 3.8.18 for flask-static-catchall
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8.18'
+
+      - name: Verify Python 3.8.18 provisioning (fail-closed)
+        run: |
+          PYTHON_VERSION=$(python --version)
+          if [ "$PYTHON_VERSION" != "Python 3.8.18" ]; then
+            echo "FAIL: Python version is $PYTHON_VERSION, expected Python 3.8.18"
+            exit 1
+          fi
+          python -m pip --version
+
+      - name: Install Node.js 22.13.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm@10.31.0
+          echo "pnpm version:"
+          pnpm --version
+          echo "Node version:"
+          node --version
+
+      - name: Verify pnpm versions (fail-closed)
+        run: |
+          NODE_VERSION=$(node --version)
+          if [ "$NODE_VERSION" != "v22.13.0" ]; then
+            echo "FAIL: Node version is $NODE_VERSION, expected v22.13.0"
+            exit 1
+          fi
+          PNPM_VERSION=$(pnpm --version)
+          if [ "$PNPM_VERSION" != "10.31.0" ]; then
+            echo "FAIL: pnpm version is $PNPM_VERSION, expected 10.31.0"
+            exit 1
+          fi
+
+      - name: Verify Docker availability
+        run: |
+          if ! docker --version; then
+            echo "FAIL: Docker is not available"
+            exit 1
+          fi
+          docker info
+
+      - name: Pull and verify Python 3.6.15 legacy container
+        run: |
+          docker pull python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987
+          docker images python:3.6.15-buster --format "{{.Repository}}:{{.Tag}}@{{.Digest}}"
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 python --version
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 pip --version
+
+      - name: Verify POSIX shell tools
+        run: |
+          which tail grep sed awk cat head wc cut tr sort uniq tee xargs find diff
+          echo "All POSIX tools available"
+
+      - name: Run environment validation
+        run: node benchmarks/real-world/pilot/run-pilot.mjs validate
+
+      - name: Run plan validation
+        run: node benchmarks/real-world/pilot/run-pilot.mjs plan
+
+      - name: Run isolation check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs isolation-check
+
+      - name: Run environment check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs environment-check
+
+      - name: Print Python version evidence (Flask tasks)
+        run: |
+          echo "=== Python 3.8.18 (for flask-static-catchall) ==="
+          python --version
+          python -m pip --version
+          echo ""
+          echo "=== Python 3.6.15 container (for flask-json-datetime-tz) ==="
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 python --version
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 python -m pip --version
+          docker run --rm python:3.6.15-buster@sha256:08c787fde0ef9fac8d9244e0d49939ce3dfca27198fac37ac2748c2d3c8fc987 pip --version
+
+      - name: Print Node/pnpm version evidence (Vue tasks)
+        run: |
+          echo "=== Node.js ==="
+          node --version
+          echo ""
+          echo "=== pnpm 10.31.0 (for vue3-vmodel-shadow-dom-focus) ==="
+          pnpm --version
+
+      - name: Run pipefail self-test
+        run: |
+          echo "=== Pipefail self-test ==="
+          if bash -o pipefail -c "false | tail -1"; then
+            echo "FAIL: false | tail -1 should have failed"
+            exit 1
+          else
+            echo "PASS: false | tail -1 correctly failed"
+          fi
+          if bash -o pipefail -c "printf 'ok\n' | tail -1"; then
+            echo "PASS: printf ok | tail -1 correctly succeeded"
+          else
+            echo "FAIL: printf ok | tail -1 should have succeeded"
+            exit 1
+          fi
+
+      - name: Run evaluator self-tests
+        run: |
+          node benchmarks/real-world/pilot/run-pilot.mjs agent-view-leakage-check
+          node benchmarks/real-world/pilot/run-pilot.mjs evaluator-restore-self-test
+          node benchmarks/real-world/pilot/run-pilot.mjs fixture-regression-isolation-self-test
+
+      - name: Run authoritative setup-check
+        run: node benchmarks/real-world/pilot/run-pilot.mjs setup-check
+
+      - name: Run acceptance proof
+        run: node benchmarks/real-world/pilot/run-pilot.mjs acceptance-proof
