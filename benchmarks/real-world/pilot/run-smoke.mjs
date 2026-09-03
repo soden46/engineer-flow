@@ -201,10 +201,9 @@ function materializeEngineerFlow(skillsDir) {
   return sourceDir
 }
 
-function runKiloCli(repoPath, isoHome, taskPrompt, useEngineerFlow) {
+function runKiloCli(repoPath, isoHome, taskPrompt, useEngineerFlow, modelName) {
   const env = {
     ...process.env,
-    BENCH_AGENT_MODEL: process.env.BENCH_AGENT_MODEL,
     KILO_API_KEY: process.env.KILO_API_KEY,
 
     HOME: isoHome.home,
@@ -231,7 +230,7 @@ function runKiloCli(repoPath, isoHome, taskPrompt, useEngineerFlow) {
     'run',
     '--auto',
     '--format', 'json',
-    '--model', process.env.BENCH_AGENT_MODEL,
+    '--model', modelName,
     '--dir', repoPath,
     taskPrompt
   ]
@@ -449,6 +448,12 @@ function main() {
     exit(1)
   }
   results.RUNTIME_MODEL_READY = 'YES'
+  results.REQUESTED_MODEL = benchModel
+
+  // Kilo CLI requires kilo/ prefix for gateway models
+  const modelForKilo = benchModel.startsWith('kilo/')
+    ? benchModel
+    : `kilo/${benchModel}`
 
   const benchKey = process.env.KILO_API_KEY
   if (!benchKey || benchKey.length === 0) {
@@ -541,7 +546,7 @@ function main() {
   log('Running Kilo CLI (baseline, no EF)...')
 
   const baselineStart = Date.now()
-  const baselineResult = runKiloCli(repoA, isoA, TASK_PROMPT, false)
+  const baselineResult = runKiloCli(repoA, isoA, TASK_PROMPT, false, modelForKilo)
   const baselineEnd = Date.now()
   results.SMOKE_BASELINE_EXECUTED = 'YES'
   log(`Baseline exit status: ${baselineResult.status}, timeout: ${baselineResult.signal === 'SIGTERM'}`)
@@ -563,7 +568,11 @@ function main() {
   const baselineTelemetry = extractTelemetry(baselineEvents)
   results.OBSERVED_MODEL = baselineTelemetry.model || 'UNVERIFIED'
   if (baselineTelemetry.model) {
-    results.MODEL_RUNTIME_VERIFICATION = baselineTelemetry.model === process.env.BENCH_AGENT_MODEL ? 'PASS' : 'FAIL'
+    // Kilo Gateway reports models with kilo/ prefix; compare against mapped name
+    const modelMatch = baselineTelemetry.model === modelForKilo ||
+                       baselineTelemetry.model === benchModel ||
+                       baselineTelemetry.model === `kilo/${benchModel}`
+    results.MODEL_RUNTIME_VERIFICATION = modelMatch ? 'PASS' : 'FAIL'
   }
   log(`OBSERVED_MODEL=${results.OBSERVED_MODEL}`)
   log(`MODEL_RUNTIME_VERIFICATION=${results.MODEL_RUNTIME_VERIFICATION}`)
@@ -572,7 +581,7 @@ function main() {
   log('=== 6. ENGINEER FLOW ARM (B) ===')
   log('Running Kilo CLI (with EF skill)...')
 
-  const efResult = runKiloCli(repoB, isoB, TASK_PROMPT, true)
+  const efResult = runKiloCli(repoB, isoB, TASK_PROMPT, true, modelForKilo)
   results.SMOKE_EF_EXECUTED = 'YES'
   log(`EF exit status: ${efResult.status}, duration: ${efResult.durationMs}ms`)
 
