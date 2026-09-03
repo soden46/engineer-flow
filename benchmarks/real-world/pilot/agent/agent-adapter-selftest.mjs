@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync, existsSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
+import { readFileSync, existsSync, writeFileSync, mkdirSync, rmSync, readdirSync, statSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
@@ -31,8 +31,18 @@ function hashDir(dir) {
   if (!existsSync(dir)) return null
   const hashes = []
   const walk = (d) => {
-    const entries = execFileSync('ls', ['-la', d], { encoding: 'utf8' })
-    hashes.push(entries)
+    const items = readdirSync(d).sort()
+    for (const item of items) {
+      const fullPath = join(d, item)
+      const stat = statSync(fullPath)
+      if (stat.isDirectory()) {
+        hashes.push(`dir:${item}`)
+        walk(fullPath)
+      } else if (stat.isFile()) {
+        const hash = createHash('sha256').update(readFileSync(fullPath)).digest('hex')
+        hashes.push(`file:${item}:${hash}`)
+      }
+    }
   }
   walk(dir)
   return createHash('sha256').update(hashes.join('\n')).digest('hex')
@@ -91,21 +101,21 @@ function createEngineerFlowTreatment() {
 
 function materializeEngineerFlowFromCommit(targetDir, commitSha) {
   mkdirSync(targetDir, { recursive: true })
-  const sourceDir = join(__dirname, '..', '..', '..', 'skills', 'engineer-flow')
-  if (!existsSync(sourceDir)) {
-    throw new Error(`Engineer Flow source not found: ${sourceDir}`)
-  }
-  execFileSync('git', ['archive', '--format=tar', commitSha, 'skills/engineer-flow'], {
-    cwd: join(__dirname, '..', '..', '..'),
-    encoding: 'utf8',
-    stdio: ['pipe', 'pipe', 'pipe']
-  })
-  execFileSync('tar', ['xf', '-', '-C', targetDir], {
-    input: execFileSync('git', ['archive', '--format=tar', commitSha, 'skills/engineer-flow'], {
-      cwd: join(__dirname, '..', '..', '..'),
-      encoding: 'buffer'
+  const repoRoot = join(__dirname, '..', '..', '..')
+  const tarPath = join(tmpdir(), `ef-tar-${randomBytes(4).toString('hex')}.tar`)
+  try {
+    execFileSync('git', ['archive', '--format=tar', '--output', tarPath, commitSha, 'skills/engineer-flow'], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe']
     })
-  })
+    execFileSync('tar', ['xf', tarPath, '-C', targetDir], {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe']
+    })
+  } finally {
+    try { rmSync(tarPath) } catch {}
+  }
   return hashDir(join(targetDir, 'skills', 'engineer-flow'))
 }
 
@@ -265,14 +275,23 @@ function agentAdapterSelfTest() {
     const workBef = efEnv.workDir
     mkdirSync(workABaseline, { recursive: true })
     mkdirSync(workBef, { recursive: true })
+    const gitDateEnv = {
+      GIT_AUTHOR_DATE: '2024-01-01T00:00:00Z',
+      GIT_COMMITTER_DATE: '2024-01-01T00:00:00Z'
+    }
+    const baseEnv = { ...process.env }
     execFileSync('git', ['init'], { cwd: workABaseline, encoding: 'utf8' })
     execFileSync('git', ['init'], { cwd: workBef, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.email', 'test@test.com'], { cwd: workABaseline, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.name', 'Test'], { cwd: workABaseline, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.email', 'test@test.com'], { cwd: workBef, encoding: 'utf8' })
+    execFileSync('git', ['config', 'user.name', 'Test'], { cwd: workBef, encoding: 'utf8' })
     writeFileSync(join(workABaseline, 'file.txt'), 'initial\n')
     writeFileSync(join(workBef, 'file.txt'), 'initial\n')
     execFileSync('git', ['add', '.'], { cwd: workABaseline, encoding: 'utf8' })
     execFileSync('git', ['add', '.'], { cwd: workBef, encoding: 'utf8' })
-    execFileSync('git', ['commit', '-m', 'init'], { cwd: workABaseline, encoding: 'utf8' })
-    execFileSync('git', ['commit', '-m', 'init'], { cwd: workBef, encoding: 'utf8' })
+    execFileSync('git', ['commit', '-m', 'init'], { cwd: workABaseline, encoding: 'utf8', env: { ...baseEnv, ...gitDateEnv } })
+    execFileSync('git', ['commit', '-m', 'init'], { cwd: workBef, encoding: 'utf8', env: { ...baseEnv, ...gitDateEnv } })
     const headA = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: workABaseline, encoding: 'utf8' }).trim()
     const headB = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: workBef, encoding: 'utf8' }).trim()
     results.INITIAL_WORKTREE_PARITY = headA === headB ? 'PASS' : 'FAIL'
