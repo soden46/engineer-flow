@@ -1,0 +1,42 @@
+name: Real-World Pilot Smoke
+
+on:
+  push:
+    branches: [main, 'feat/**']
+    paths:
+      - 'benchmarks/real-world/pilot/run-smoke.mjs'
+      - 'benchmarks/real-world/pilot/agent/**'
+      - '.github/workflows/real-world-pilot-smoke.yml'
+  pull_request:
+    paths:
+      - 'benchmarks/real-world/pilot/run-smoke.mjs'
+      - 'benchmarks/real-world/pilot/agent/**'
+      - '.github/workflows/real-world-pilot-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    name: Kilo A/B Smoke
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Print system information
+        run: |
+          uname -a
+          git --version
+          node --version
+
+      - name: Verify version pin
+        run: |
+          npx --yes @kilocode/cli@7.5.9 --version
+
+      - name: Run A/B smoke
+        env:
+          BENCH_AGENT_MODEL: anthropic/claude-sonnet-4.6
+          KILO_API_KEY: ${{ secrets.KILO_API_KEY }}
+        run: node benchmarks/real-world/pilot/run-smoke.mjs
