@@ -11,7 +11,7 @@ import { execFileSync } from 'node:child_process'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const EF_PIN_COMMIT = '73c7661ef6cdb4bdda043a58d5b4bcb4a90d50eb'
 const EF_SOURCE_PATH = 'skills/engineer-flow'
-const REPO_ROOT = join(__dirname, '..', '..', '..')
+const REPO_ROOT = join(__dirname, '..', '..', '..', '..')
 
 function verifyPinnedCommitExists() {
   try {
@@ -31,6 +31,7 @@ function materializeEngineerFlow(targetDir) {
   const tarPath = join(tmpdir(), `ef-tar-${randomBytes(4).toString('hex')}.tar`)
   try {
     execFileSync('git', ['archive', '--format=tar', '--output', tarPath, EF_PIN_COMMIT, EF_SOURCE_PATH], {
+      cwd: REPO_ROOT,
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe']
     })

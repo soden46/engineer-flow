@@ -101,7 +101,7 @@ function createEngineerFlowTreatment() {
 
 function materializeEngineerFlowFromCommit(targetDir, commitSha) {
   mkdirSync(targetDir, { recursive: true })
-  const repoRoot = join(__dirname, '..', '..', '..')
+  const repoRoot = join(__dirname, '..', '..', '..', '..')
   const tarPath = join(tmpdir(), `ef-tar-${randomBytes(4).toString('hex')}.tar`)
   try {
     execFileSync('git', ['archive', '--format=tar', '--output', tarPath, commitSha, 'skills/engineer-flow'], {
