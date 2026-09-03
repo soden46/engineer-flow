@@ -30,15 +30,23 @@ function materializeEngineerFlow(targetDir) {
   mkdirSync(targetDir, { recursive: true })
   const tarPath = join(tmpdir(), `ef-tar-${randomBytes(4).toString('hex')}.tar`)
   try {
-    execFileSync('git', ['archive', '--format=tar', '--output', tarPath, EF_PIN_COMMIT, EF_SOURCE_PATH], {
-      cwd: REPO_ROOT,
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe']
-    })
-    execFileSync('tar', ['-xf', tarPath, '-C', targetDir], {
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe']
-    })
+    try {
+      execFileSync('git', ['archive', '--format=tar', '--output', tarPath, EF_PIN_COMMIT, EF_SOURCE_PATH], {
+        cwd: REPO_ROOT,
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe']
+      })
+    } catch (e) {
+      throw new Error(`git archive failed: ${e.message}\nstderr: ${e.stderr || 'none'}`)
+    }
+    try {
+      execFileSync('tar', ['-xf', tarPath, '-C', targetDir], {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe']
+      })
+    } catch (e) {
+      throw new Error(`tar extract failed: ${e.message}\nstderr: ${e.stderr || 'none'}`)
+    }
   } finally {
     try { rmSync(tarPath) } catch {}
   }
