@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "description": "Benchmark-control facts for real-world A/B pilot. Not production Engineer Flow config. No secrets.",
+  "engineer_flow_source_commit": "73c7661ef6cdb4bdda043a58d5b4bcb4a90d50eb",
+  "engineer_flow_content_hash": "sha256:da62a14fe920408ef6303d75bd97dcd0f52b455a7892941b52480fcdd387b508",
+  "common_config_schema_version": "1.0",
+  "common_config_path": "benchmarks/real-world/pilot/agent/adapter-schema.json",
+  "task_prompt_source": "benchmarks/real-world/pilot/tasks/",
+  "allowed_arm_differences": {
+    "B_only": [
+      "engineer_flow_enabled",
+      "engineer_flow_source_commit",
+      "engineer_flow_content_hash",
+      "engineer_flow_control",
+      "engineer_flow_memory_root",
+      "engineer_flow_diagnostics"
+    ],
+    "A_only": []
+  },
+  "failure_policy": {
+    "setup_infra_failure": "retained_not_scored",
+    "agent_timeout": "scored_failed",
+    "agent_crash": "scored_failed",
+    "agent_completed": "evaluator_determines_acceptance",
+    "evaluator_failure": "not_scored_as_agent_correctness"
+  },
+  "timer_boundary": {
+    "setup_duration_ms": "outside_agent_time",
+    "agent_duration_ms": "from_process_spawn_to_exit",
+    "evaluation_duration_ms": "after_agent_exit"
+  },
+  "network_policy_fields": {
+    "provider_network_required": true,
+    "repository_network_policy": "blocked",
+    "repository_network_enforced": false
+  },
+  "telemetry_fields": [
+    "agent_name",
+    "agent_version",
+    "provider",
+    "model",
+    "started_at",
+    "ended_at",
+    "agent_duration_ms",
+    "exit_status",
+    "timeout",
+    "tool_calls",
+    "retries",
+    "input_tokens",
+    "output_tokens",
+    "total_tokens",
+    "cost",
+    "telemetry_source",
+    "ef_mode",
+    "ef_primary",
+    "ef_support",
+    "ef_specialist_count",
+    "ef_security_review",
+    "ef_external_selected",
+    "ef_memory_used"
+  ],
+  "snapshot_boundary": {
+    "pre_evaluator_snapshot": "git diff + untracked files + numstat captured before evaluator runs",
+    "baseline_exposure": "engineer_flow_enabled=false, all EF fields null"
+  }
+}

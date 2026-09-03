@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "description": "Author-side handoff contract for B3.3b. Immutable benchmark-control inputs consumed by the real agent binder. NO real agent binding performed here.",
+  "lock_version": "locked-at-commit-4e0d420",
+  "inputs": {
+    "common_agent_config": {
+      "schema_path": "benchmarks/real-world/pilot/agent/adapter-schema.json",
+      "fields": [
+        "agent_name",
+        "agent_version",
+        "provider",
+        "model",
+        "timeout_ms",
+        "max_turns_or_equivalent",
+        "max_output_tokens_or_equivalent",
+        "temperature_or_equivalent",
+        "tool_permissions",
+        "network_policy",
+        "working_directory_policy",
+        "environment_policy"
+      ],
+      "constraint": "identical across arms A and B"
+    },
+    "treatment_config": {
+      "baseline_path": "benchmarks/real-world/pilot/agent/adapter-schema.json#baseline_treatment",
+      "ef_path": "benchmarks/real-world/pilot/agent/adapter-schema.json#engineer_flow_treatment"
+    },
+    "task_prompt_source": {
+      "path": "benchmarks/real-world/pilot/tasks/",
+      "constraint": "sanitized before handoff; upstream_fix_commit and author_reference stripped"
+    },
+    "worktree_root_resolution": {
+      "method": "git checkout <pinned_base> into isolated workdir",
+      "baseline_exposure": "engineer_flow_enabled=false, all EF fields null, no EF memory, no EF in worktree"
+    },
+    "engineer_flow_pin": {
+      "source_commit": "73c7661ef6cdb4bdda043a58d5b4bcb4a90d50eb",
+      "content_hash": "sha256:da62a14fe920408ef6303d75bd97dcd0f52b455a7892941b52480fcdd387b508",
+      "materialize_command": "git archive --format=tar --output <tmp>.tar <source_commit> skills/engineer-flow && tar -xf <tmp>.tar -C <target>"
+    },
+    "memory_root_policy": {
+      "baseline": "absent",
+      "engineer_flow": "fresh empty dir per run, no cross-run leakage"
+    },
+    "external_skill_isolation": {
+      "policy": "disabled_both_arms",
+      "external_skills_dir": "isolated per-run, empty"
+    },
+    "timeout_boundary": {
+      "setup_ms": 0,
+      "agent_ms": 300000,
+      "evaluation_ms": "after process exit"
+    },
+    "telemetry_schema": {
+      "fields": [
+        "agent_name", "agent_version", "provider", "model",
+        "started_at", "ended_at", "agent_duration_ms", "exit_status",
+        "timeout", "tool_calls", "retries",
+        "input_tokens", "output_tokens", "total_tokens", "cost",
+        "telemetry_source",
+        "ef_mode", "ef_primary", "ef_support", "ef_specialist_count",
+        "ef_security_review", "ef_external_selected", "ef_memory_used"
+      ],
+      "null_policy": "unavailable_metrics_must_be_null_not_zero_or_estimated"
+    },
+    "failure_classification": {
+      "SETUP_INFRA_FAILURE": "retained_not_scored",
+      "AGENT_TIMEOUT": "scored_failed",
+      "AGENT_CRASH": "scored_failed",
+      "AGENT_COMPLETED": "evaluator_determines_acceptance",
+      "EVALUATOR_FAILURE": "not_scored_as_agent_correctness"
+    },
+    "snapshot_boundary": "git status, git diff, git diff --numstat, untracked files captured before evaluator"
+  },
+  "immutability_requirements": [
+    "task prompt must not be redefined by B3.3b",
+    "engineer_flow_source_commit must not be redefined by B3.3b",
+    "treatment content must not be redefined by B3.3b",
+    "isolation policy must not be redefined by B3.3b",
+    "evaluator boundary must not be redefined by B3.3b"
+  ],
+  "handoff_ready": true,
+  "real_agent_bound": false,
+  "no_credentials_created": true,
+  "no_model_api_invoked": true
+}
