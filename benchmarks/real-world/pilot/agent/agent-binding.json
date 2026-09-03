@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "adapter_id": "kilo-cli-v7.5.9",
+  "agent_name": "Kilo Code CLI",
+  "agent_version": "7.5.9",
+  "provider": null,
+  "model": null,
+  "variant": null,
+  "installation_method": "npx @kilocode/cli@7.5.9",
+  "package_or_binary_identity": "@kilocode/cli@7.5.9",
+  "verified_capabilities": {
+    "kilo_run": true,
+    "auto_flag": true,
+    "model_flag": true,
+    "format_json": true,
+    "dir_flag": true,
+    "agent_flag": true,
+    "variant_flag": true
+  },
+  "runtime_model": null,
+  "runtime_credential": null,
+  "binding_complete": true,
+  "runtime_prepared": false
+}
